@@ -60,4 +60,10 @@ public class UserService {
         return meals;
     }
 
+    public int getTotalCaloriesForCurrentDate() {
+        LocalDate today = LocalDate.now();
+        List<Meal> meals = mealRepository.findByDateTimeBetween(today.atStartOfDay(), today.atTime(23, 59, 59));
+        return meals.stream().mapToInt(Meal::getCalories).sum();
+    }
+
 }

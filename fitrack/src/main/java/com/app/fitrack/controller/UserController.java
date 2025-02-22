@@ -1,5 +1,4 @@
 package com.app.fitrack.controller;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,7 +37,9 @@ public class UserController {
     @GetMapping("/user/dashboard")
     public String dashboard(Model model) {
         List<Meal> meals = service.getMealsForCurrentDate();
+        int totalCalories = service.getTotalCaloriesForCurrentDate(); // Get total calories
         model.addAttribute("meals", meals);
+        model.addAttribute("totalCalories", totalCalories); // Add total calories to model
         return "dashboard"; 
     }
 
