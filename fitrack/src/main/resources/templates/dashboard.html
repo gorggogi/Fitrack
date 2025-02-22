@@ -76,19 +76,12 @@
                     <h3 class="section-title">Your Meals</h3>
                     <div class="add-button">+</div>
                 </div>
-                <div class="meal-item">
+                <div th:each="meal : ${meals}" class="meal-item">
                     <div>
-                        <div>Breakfast</div>
-                        <div class="status">Oatmeal, Banana 90 cal</div>
+                        <div th:text="${meal.mealName}"></div>
+                        <div class="status" th:text="${meal.foodItem} + ' ' + ${meal.calories} + ' cal'"></div>
                     </div>
-                    <span class="time">7:30 AM</span>
-                </div>
-                <div class="meal-item">
-                    <div>
-                        <div>Lunch</div>
-                        <div class="status">Oatmeal, Banana 90 cal</div>
-                    </div>
-                    <span class="time">8:30 AM</span>
+                    <span class="time" th:if="${meal.dateTime}"></span>
                 </div>
             </div>
         </div>
