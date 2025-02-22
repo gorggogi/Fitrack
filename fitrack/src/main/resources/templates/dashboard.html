@@ -81,7 +81,7 @@
                         <div th:text="${meal.mealName}"></div>
                         <div class="status" th:text="${meal.foodItem} + ' ' + ${meal.calories} + ' cal'"></div>
                     </div>
-                    <span class="time" th:if="${meal.dateTime}"></span>
+                    <span class="time" th:text="${#temporals.format(meal.dateTime, 'h:mm a')}"></span>
                 </div>
             </div>
         </div>
