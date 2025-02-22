@@ -74,7 +74,7 @@
             <div class="section-card">
                 <div class="section-header">
                     <h3 class="section-title">Your Meals</h3>
-                    <div class="add-button">+</div>
+                    <button type="button" onclick="window.location.href='/user/addmeal'" class="add-button">+</button>
                 </div>
                 <div th:each="meal : ${meals}" class="meal-item">
                     <div>
