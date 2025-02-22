@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/Fitrack.css">
+</head>
+<body>
+    <div class="container">
+        <header class="navbar">
+            <div class="logo-container">
+                <div class="logo"></div>
+                <span class="site-name">Fitrack</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Workouts</a></li>
+                <li><a href="#">Meals</a></li>
+                <li><a href="#">Goals</a></li>
+            </ul>
+            <div class="user-info">
+                <span th:text="${fullName}" class="user-name"></span>
+                <div class="user-icon" onclick="toggleDropdown()"></div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
+                        <input type="submit" value="Logout" />
+                    </form>
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                </div>
+            </div>
+        </header>
+        <section class="summary-grid">
+            <div class="summary-card">
+                <h2>2,450</h2>
+                <p>Total Calorie Intake</p>
+            </div>
+            <div class="summary-card">
+                <h2>45<span style="font-size: 0.5em">min</span></h2>
+                <p>Total Workout Duration</p>
+            </div>
+            <div class="summary-card">
+                <h2>1</h2>
+                <p>Workouts Completed</p>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Your Workouts</h3>
+                    <div class="add-button">+</div>
+                </div>
+                <div class="workout-item">
+                    <span>Gym</span>
+                    <span>30 mins</span>
+                    <span class="status">Pending</span>
+                </div>
+                <div class="workout-item">
+                    <span>Gym</span>
+                    <span>45 mins</span>
+                    <span class="status">Completed</span>
+                </div>
+                <div class="workout-item">
+                    <span>Gym</span>
+                    <span>30 mins</span>
+                    <span class="status">Pending</span>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Your Meals</h3>
+                    <div class="add-button">+</div>
+                </div>
+                <div class="meal-item">
+                    <div>
+                        <div>Breakfast</div>
+                        <div class="status">Oatmeal, Banana 90 cal</div>
+                    </div>
+                    <span class="time">7:30 AM</span>
+                </div>
+                <div class="meal-item">
+                    <div>
+                        <div>Lunch</div>
+                        <div class="status">Oatmeal, Banana 90 cal</div>
+                    </div>
+                    <span class="time">8:30 AM</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="goals-section">
+            <div class="section-header">
+                <h3 class="section-title">Fitness goals</h3>
+                <div class="add-button">+</div>
+            </div>
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <h4 class="goal-title">Weight Goal</h4>
+                    <div class="progress-bar"></div>
+                    <div class="progress-labels">
+                        <span>Current</span>
+                        <span>Target</span>
+                    </div>
+                </div>
+                <div class="goal-card">
+                    <h4 class="goal-title">Weight Goal</h4>
+                    <div class="progress-bar"></div>
+                    <div class="progress-labels">
+                        <span>Current</span>
+                        <span>Target</span>
+                    </div>
+                </div>
+                <div class="goal-card">
+                    <h4 class="goal-title">Weight Goal</h4>
+                    <div class="progress-bar"></div>
+                    <div class="progress-labels">
+                        <span>Current</span>
+                        <span>Target</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function toggleDropdown() {
+    const dropdown = document.getElementById("dropdownMenu");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+// Close dropdown when clicking outside
+document.addEventListener("click", function(event) {
+    const dropdown = document.getElementById("dropdownMenu");
+    const userInfo = document.querySelector(".user-info");
+
+    if (!userInfo.contains(event.target)) {
+        dropdown.style.display = "none";
+    }
+});
+    </script>
+</body>
+</html>
+

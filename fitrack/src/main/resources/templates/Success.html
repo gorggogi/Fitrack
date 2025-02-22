@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmation</title>
+    <link rel="stylesheet" href="/styles/Join.css"> 
+</head>
+<body>
+    <div class="flex-container">
+        <h1>Registration Successful!</h1>
+        <p th:if = "${message}"> [[${message}]] </p>
+        <button onclick="window.location.href='/user/login'">Login</button>
+    </div>
+</body>
+</html>

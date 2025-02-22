@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/styles/Fitrack.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo-container">
+            <div class="logo"></div>
+            <span class="site-name">Fitrack</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Workouts</a></li>
+            <li><a href="#">Meals</a></li>
+            <li><a href="#">Goals</a></li>
+        </ul>
+        <div class="user-info">
+            <span th:text="${fullName}" class="user-name"></span>
+            <div class="user-icon" onclick="toggleDropdown()"></div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
+                    <input type="submit" value="Logout" />
+                </form>
+                <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+            </div>
+        </div>
+    </header>
+</body>
+</html>
