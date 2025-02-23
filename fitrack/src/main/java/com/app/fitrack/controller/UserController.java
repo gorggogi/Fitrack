@@ -1,4 +1,5 @@
 package com.app.fitrack.controller;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import com.app.fitrack.dto.LoginResponse;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.model.User;
 import com.app.fitrack.service.UserService;
+import com.app.fitrack.service.MealService; // Import MealService
 import com.app.fitrack.service.DuplicateEmailException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
     
     @Autowired
-    private UserService service;
+    private UserService userService; // Keep UserService for user-related operations
+
+    @Autowired
+    private MealService mealService; // Inject MealService
     
     @GetMapping("/user/addmeal")
     public String addMeal(Model model) {
@@ -30,14 +35,14 @@ public class UserController {
     
     @PostMapping("/meals/add")
     public String addMeal(Meal meal) {
-        service.saveMeal(meal);
+        mealService.saveMeal(meal); // Use mealService
         return "redirect:/user/dashboard"; 
     }
 
     @GetMapping("/user/dashboard")
     public String dashboard(Model model) {
-        List<Meal> meals = service.getMealsForCurrentDate();
-        int totalCalories = service.getTotalCaloriesForCurrentDate(); // Get total calories
+        List<Meal> meals = mealService.getMealsForCurrentDate(); // Use mealService
+        int totalCalories = mealService.getTotalCaloriesForCurrentDate(); // Use mealService
         model.addAttribute("meals", meals);
         model.addAttribute("totalCalories", totalCalories); // Add total calories to model
         return "dashboard"; 
@@ -69,10 +74,10 @@ public class UserController {
     @PostMapping("/user/login")
     public String loginUser(@RequestParam String email, @RequestParam String password, RedirectAttributes redi, HttpSession session) {
         LoginRequest loginRequest = new LoginRequest(email, password);
-        LoginResponse response = service.login(loginRequest);
+        LoginResponse response = userService.login(loginRequest);
     
         if (response.isSuccess()) {
-            User user = service.findByEmail(email);
+            User user = userService.findByEmail(email);
             session.setAttribute("firstName", user.getFirstName());
             session.setAttribute("lastName", user.getLastName());
             return "redirect:/user/dashboard";  
@@ -96,7 +101,7 @@ public class UserController {
     @PostMapping("/user/save")
     public String saveUserForm(@ModelAttribute("user") User user, RedirectAttributes redi, Model model) {
         try {
-            service.save(user);
+            userService.save(user);
             redi.addFlashAttribute("message", "You have successfully registered to Fitrack! Login to your account now.");
             return "redirect:/user/success";
         } catch (DuplicateEmailException e) {
