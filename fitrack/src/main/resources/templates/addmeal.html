@@ -39,34 +39,40 @@
 <form th:action="@{/meals/add}" method="post" th:object="${meal}">
 
                 <div class="form-row">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Meal Name</label>
-                        <input type="text" th:field="*{mealName}" placeholder="Enter meal name" required>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Date and Time</label>
-<input type="datetime-local" th:field="*{dateTime}" required>
+            <div class="form-group">
+                <label>Meal Name</label>
+                <input type="text" th:field="*{mealName}" placeholder="Enter meal name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Date and Time</label>
+                <input type="datetime-local" th:field="*{dateTime}" class="form-control" required>
+
 
                     </div>
                 </div>
                 
                 <div id="food-items-container">
-                    <div class="food-item form-row">
-                        <div class="form-group" style="flex: 2;">
-                            <label>Food Item</label>
-                            <input type="text" name="foodItems[0].foodItem" placeholder="Enter food item" required>
+                    <div class="food-item">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Food Item</label>
+                                <input type="text" name="foodItems[0].foodItem" placeholder="Enter food item" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Calories</label>
+                                <input type="number" name="foodItems[0].calories" placeholder="Calories" class="form-control" required>
+                            </div>
+                            <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
                         </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Calories</label>
-                            <input type="number" name="foodItems[0].calories" placeholder="Calories" required>
-                        </div>
-                        <button type="button" class="remove-item" onclick="removeFoodItem(this)" style="display: none;">×</button>
                     </div>
+
                 </div>
 
-                <button type="button" onclick="addFoodItem()">Add Item +</button>
+                <div class="form-actions">
+                    <button type="button" onclick="addFoodItem()" class="btn btn-secondary">Add Item +</button>
+                    <button type="submit" class="btn btn-primary">Save Meal</button>
+                </div>
 
-                <button type="submit" class="primary">Save Meal</button>
             </form>
         </div>
     </div>
@@ -104,18 +110,21 @@ window.onload = function() {
     function addFoodItem() {
         const container = document.getElementById('food-items-container');
         const newItem = document.createElement('div');
-        newItem.className = 'food-item form-row';
+        newItem.className = 'food-item';
         newItem.innerHTML = `
-            <div class="form-group" style="flex: 2;">
-                <label>Food Item</label>
-                <input type="text" name="foodItems[${itemCount}].foodItem" placeholder="Enter food item" required>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Food Item</label>
+                    <input type="text" name="foodItems[${itemCount}].foodItem" placeholder="Enter food item" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Calories</label>
+                    <input type="number" name="foodItems[${itemCount}].calories" placeholder="Calories" class="form-control" required>
+                </div>
+                <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
             </div>
-            <div class="form-group" style="flex: 1;">
-                <label>Calories</label>
-                <input type="number" name="foodItems[${itemCount}].calories" placeholder="Calories" required>
-            </div>
-            <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
         `;
+
         container.appendChild(newItem);
         itemCount++;
     }
