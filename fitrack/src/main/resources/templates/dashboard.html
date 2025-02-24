@@ -79,10 +79,16 @@
                 <div th:each="meal : ${meals}" class="meal-item">
                     <div>
                         <div th:text="${meal.mealName}"></div>
-                        <div class="status" th:text="${meal.foodItem} + ' ' + ${meal.calories} + ' cal'"></div>
+                        <div class="food-items">
+                            <div th:each="foodItem : ${meal.foodItems}" class="food-item">
+                                <span th:text="${foodItem.foodItem}"></span>
+                                <span th:text="${foodItem.calories} + ' cal'"></span>
+                            </div>
+                        </div>
                     </div>
                     <span class="time" th:text="${#temporals.format(meal.dateTime, 'h:mm a')}"></span>
                 </div>
+
             </div>
         </div>
 
@@ -135,7 +141,3 @@ document.addEventListener("click", function(event) {
         dropdown.style.display = "none";
     }
 });
-    </script>
-</body>
-</html>
-
