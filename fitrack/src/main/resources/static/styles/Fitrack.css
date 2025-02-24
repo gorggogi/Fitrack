@@ -1,4 +1,4 @@
-* {
+ * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -344,7 +344,61 @@ h1 {
 
 .form-group {
     margin-bottom: 1.5rem;
+    width: 100%;
 }
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007AFF;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.form-group input[type="datetime-local"] {
+    padding: 0.65rem;
+}
+
+.remove-item {
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.remove-item:hover {
+    background: #ff6b81;
+}
+
+.food-item {
+    background: #f8f8f8;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #eee;
+}
+
 
 .form-row {
     display: flex;
@@ -369,7 +423,32 @@ button {
     font-weight: 500;
     cursor: pointer;
     margin-bottom: 0.5rem;
+    transition: background 0.3s ease;
 }
+
+button:hover {
+    background: #e0e0e0;
+}
+
+button.primary {
+    background: #007AFF;
+    color: white;
+}
+
+button.primary:hover {
+    background: #0066cc;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+}
+
 
 button.primary {
     background: #007AFF;
