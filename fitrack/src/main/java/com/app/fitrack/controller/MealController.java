@@ -1,4 +1,5 @@
 package com.app.fitrack.controller;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.model.MealFoodItem;
 import com.app.fitrack.service.MealService;
-
-
+import com.app.fitrack.service.UserService;
 
 @Controller
 public class MealController {
 
     @Autowired
-    private MealService mealService; // Inject MealService
+    private MealService mealService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/user/addmeal")
     public String addMeal(Model model) {
@@ -27,12 +30,10 @@ public class MealController {
     
     @PostMapping("/meals/add")
     public String addMeal(@ModelAttribute Meal meal) {
-        // Set meal dateTime if not set
         if (meal.getDateTime() == null) {
             meal.setDateTime(LocalDateTime.now());
         }
         
-        // Set meal for each food item
         if (meal.getFoodItems() != null) {
             for (MealFoodItem item : meal.getFoodItems()) {
                 item.setMeal(meal);
@@ -43,13 +44,14 @@ public class MealController {
         return "redirect:/user/dashboard";
     }
 
-
     @GetMapping("/user/dashboard")
     public String dashboard(Model model) {
-        List<Meal> meals = mealService.getMealsForCurrentDate(); // Use mealService
-        int totalCalories = mealService.getTotalCaloriesForCurrentDate(); // Use mealService
+        String fullName = userService.getCurrentUserFullName();
+        List<Meal> meals = mealService.getMealsForCurrentDate();
+        int totalCalories = mealService.getTotalCaloriesForCurrentDate();
         model.addAttribute("meals", meals);
-        model.addAttribute("totalCalories", totalCalories); // Add total calories to model
+        model.addAttribute("totalCalories", totalCalories);
+        model.addAttribute("fullName", fullName);
         return "dashboard"; 
     }
 }
