@@ -74,16 +74,16 @@ public class UserController {
 
 
     @PostMapping("/user/save")
-    public String saveUserForm(@ModelAttribute("user") User user, RedirectAttributes redi, Model model) {
-
+    public String saveUserForm(@ModelAttribute("user") User user, RedirectAttributes redi) {
         try {
             userService.save(user);
             redi.addFlashAttribute("message", "You have successfully registered to Fitrack! Login to your account now.");
             return "redirect:/user/success";
         } catch (DuplicateEmailException e) {
             redi.addFlashAttribute("error", e.getMessage());
-            model.addAttribute("user", user); 
-            return "registration-form"; 
+            redi.addFlashAttribute("user", user);
+            return "redirect:/user/new";
         }
     }
+
 }
