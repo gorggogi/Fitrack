@@ -232,7 +232,7 @@ body {
 .meal-header {
     display: flex;
     align-items: center;
-    font-weight: bold;
+    font-weight: normal;
     width: 100%;
 }
 .meal-time {
@@ -251,6 +251,10 @@ body {
     flex-grow: 1;
 }
 
+.meal-content span {
+    font-size: 12px; /* Adjust as needed */
+    margin-top: 5px;
+}
 
 
 .meal-calories {
@@ -274,6 +278,7 @@ body {
     padding: 1rem 0; 
     border-bottom: 1px solid #eee;
 }
+
 
 .workout-item:last-child, .meal-item:last-child {
     border-bottom: none;
@@ -374,22 +379,27 @@ h1 {
 }
 
 .remove-item {
-    background: #ff4757;
-    color: white;
+    background: none;
+    color: #00000086;
     border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: opacity 0.2s ease-in-out;
+    opacity: 0.6;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: background 0.3s ease;
+    width: 20px;
+    height: 20px;
+    box-sizing: border-box;
+    margin: 0;
 }
 
 .remove-item:hover {
-    background: #ff6b81;
+    opacity: 1;
+    color: #000000;
 }
+
 
 .food-item {
     background: #f8f8f8;
@@ -404,7 +414,7 @@ h1 {
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
-    align-items: flex-end;
+    align-items: center;
 }
 
 .food-item {
