@@ -26,10 +26,6 @@
                         <input type="submit" value="Logout" />
                     </form>
                     <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
                 </div>
             </div>
         </header>
@@ -78,17 +74,17 @@
                 </div>
                 <div th:each="meal : ${meals}" class="meal-item">
                     <div>
-                        <div th:text="${meal.mealName}"></div>
-                        <div class="food-items">
-                            <div th:each="foodItem : ${meal.foodItems}" class="food-item">
-                                <span th:text="${foodItem.foodItem}"></span>
-                                <span th:text="${foodItem.calories} + ' cal'"></span>
-                            </div>
+                        <div class="meal-header">
+                            <span th:text="${meal.mealName}"></span>
+                        </div>
+                        <div class="meal-content">
+                            <span th:each="foodItem : ${meal.foodItems}" 
+                                  th:text="${foodItem.foodItem} + (${foodItemStat.last} ? '' : ', ')"></span>
+                            <span class="meal-calories">(<span th:text="${meal.totalCalories}"></span> cal)</span>
                         </div>
                     </div>
-                    <span class="time" th:text="${#temporals.format(meal.dateTime, 'h:mm a')}"></span>
+                    <span class="meal-time" th:text="${#temporals.format(meal.dateTime, 'h:mm a')}"></span>
                 </div>
-
             </div>
         </div>
 
@@ -128,16 +124,18 @@
 
     <script>
         function toggleDropdown() {
-    const dropdown = document.getElementById("dropdownMenu");
-    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-}
+            const dropdown = document.getElementById("dropdownMenu");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
 
-// Close dropdown when clicking outside
-document.addEventListener("click", function(event) {
-    const dropdown = document.getElementById("dropdownMenu");
-    const userInfo = document.querySelector(".user-info");
+        document.addEventListener("click", function(event) {
+            const dropdown = document.getElementById("dropdownMenu");
+            const userInfo = document.querySelector(".user-info");
 
-    if (!userInfo.contains(event.target)) {
-        dropdown.style.display = "none";
-    }
-});
+            if (!userInfo.contains(event.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
