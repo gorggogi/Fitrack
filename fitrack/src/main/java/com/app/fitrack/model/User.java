@@ -6,6 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.util.List;
 
 @Entity
 @Table (name="users")
@@ -26,8 +29,12 @@ public class User {
 	@Column (nullable=false, name="firstname", length = 45)
 	private String firstName;
 	
-	@Column (nullable=false, name="lastname", length = 45)
-	private String lastName;
+    @Column (nullable=false, name="lastname", length = 45)
+    private String lastName;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Meal> meals;
+
 
 	public Integer getId() {
 		return id;
@@ -65,10 +72,18 @@ public class User {
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public List<Meal> getMeals() {
+        return meals;
+    }
+
+    public void setMeals(List<Meal> meals) {
+        this.meals = meals;
+    }
+
 	
 	
 }
-
