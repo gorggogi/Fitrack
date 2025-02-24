@@ -4,8 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Meal {
@@ -14,9 +18,12 @@ public class Meal {
     private Long id;
 
     private String mealName;
-    private String foodItem;
-    private int calories;
     private LocalDateTime dateTime;
+
+    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MealFoodItem> foodItems;
+
+
 
     public Long getId() {
         return id;
@@ -34,21 +41,18 @@ public class Meal {
         this.mealName = mealName;
     }
 
-    public String getFoodItem() {
-        return foodItem;
+    public List<MealFoodItem> getFoodItems() {
+        return foodItems;
     }
 
-    public void setFoodItem(String foodItem) {
-        this.foodItem = foodItem;
+    public void setFoodItems(List<MealFoodItem> foodItems) {
+        this.foodItems = foodItems;
     }
 
-    public int getCalories() {
-        return calories;
+    public int getTotalCalories() {
+        return foodItems.stream().mapToInt(MealFoodItem::getCalories).sum();
     }
 
-    public void setCalories(int calories) {
-        this.calories = calories;
-    }
 
     public LocalDateTime getDateTime() {
         return dateTime;
