@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.app.fitrack.model.User;
 import com.app.fitrack.repository.UserRepository;
+
 import com.app.fitrack.dto.LoginRequest;
 import com.app.fitrack.dto.LoginResponse;
 
@@ -15,8 +15,7 @@ public class UserService {
     @Autowired
     private UserRepository repo;
 
-    @Autowired
-    private MealService mealService;
+
 
     private String currentUserEmail;
 
@@ -54,7 +53,15 @@ public class UserService {
         return "Unknown User";
     }
 
+    public User getCurrentUser() {
+        if (currentUserEmail == null) {
+            return null;
+        }
+        return findByEmail(currentUserEmail);
+    }
+
     public void setCurrentUserEmail(String email) {
         this.currentUserEmail = email;
     }
+
 }

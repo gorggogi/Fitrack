@@ -71,8 +71,11 @@ public class UserController {
         return "";
     }
 
+
+
     @PostMapping("/user/save")
     public String saveUserForm(@ModelAttribute("user") User user, RedirectAttributes redi, Model model) {
+
         try {
             userService.save(user);
             redi.addFlashAttribute("message", "You have successfully registered to Fitrack! Login to your account now.");
