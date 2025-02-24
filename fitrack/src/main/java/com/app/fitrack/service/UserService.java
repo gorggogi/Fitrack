@@ -16,7 +16,9 @@ public class UserService {
     private UserRepository repo;
 
     @Autowired
-    private MealService mealService; // Update to use MealService
+    private MealService mealService;
+
+    private String currentUserEmail;
 
     public User findByEmail(String email) {
         return repo.findByEmail(email);
@@ -26,6 +28,7 @@ public class UserService {
         User user = findByEmail(loginRequest.getEmail());
         
         if (user != null && user.getPassword().equals(loginRequest.getPassword())) {
+            setCurrentUserEmail(loginRequest.getEmail());
             return new LoginResponse(true, "null");
         }
         
@@ -38,5 +41,20 @@ public class UserService {
         }
         repo.save(user);
         return "redirect:/user/success";
+    }
+
+    public String getCurrentUserFullName() {
+        if (currentUserEmail == null) {
+            return "Guest";
+        }
+        User user = findByEmail(currentUserEmail);
+        if (user != null) {
+            return user.getFirstName() + " " + user.getLastName();
+        }
+        return "Unknown User";
+    }
+
+    public void setCurrentUserEmail(String email) {
+        this.currentUserEmail = email;
     }
 }
