@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
     
     @Autowired
-    private UserService userService; // Keep UserService for user-related operations
+    private UserService userService; 
 
     @GetMapping("/user/success")
     public String showSuccessPage () {
@@ -30,18 +30,6 @@ public class UserController {
     public String showLoginPage(Model model) {
         model.addAttribute("loginRequest", new LoginRequest());  
         return "Login";  
-    }
-
-    @PostMapping("/user/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); 
-        return "redirect:/user/login"; 
-    }
-    
-    @GetMapping ("/user/new")
-    public String showUserPage(Model model) {
-        model.addAttribute("user", new User());
-        return "registration-form";
     }
 
     @PostMapping("/user/login")
@@ -59,6 +47,19 @@ public class UserController {
             return "redirect:/user/login";  
         }
     }
+
+    @PostMapping("/user/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); 
+        return "redirect:/user/login"; 
+    }
+    
+    @GetMapping ("/user/new")
+    public String showUserPage(Model model) {
+        model.addAttribute("user", new User());
+        return "registration-form";
+    }
+
 
     @ModelAttribute("fullName")
     public String getUserFullName(HttpSession session) {

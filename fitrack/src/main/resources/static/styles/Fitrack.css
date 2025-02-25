@@ -236,7 +236,7 @@ body {
     width: 100%;
 }
 .meal-time {
-    margin-left: auto; /* Pushes the timestamp to the far right */
+    margin-left: auto; 
     color: #666;
     font-size: 0.9em;
     min-width: 60px;
@@ -252,7 +252,7 @@ body {
 }
 
 .meal-content span {
-    font-size: 12px; /* Adjust as needed */
+    font-size: 12px; 
     margin-top: 5px;
 }
 
@@ -495,7 +495,7 @@ button.primary {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover effect for meal and workout items */
+
 .workout-item, .meal-item {
     display: flex;
     justify-content: space-between;
