@@ -10,9 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
-    @Query("SELECT DISTINCT m FROM Meal m LEFT JOIN FETCH m.foodItems WHERE m.dateTime BETWEEN :start AND :end")
-    List<Meal> findByDateTimeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
-
     @Query("SELECT DISTINCT m FROM Meal m LEFT JOIN FETCH m.foodItems WHERE m.user = :user AND m.dateTime BETWEEN :start AND :end")
     List<Meal> findByUserAndDateTimeBetween(@Param("user") User user, 
                                             @Param("start") LocalDateTime start, 
