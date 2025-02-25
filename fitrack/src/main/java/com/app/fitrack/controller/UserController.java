@@ -77,7 +77,9 @@ public class UserController {
     @PostMapping("/user/save")
     public String saveUserForm(@ModelAttribute("user") User user, RedirectAttributes redi) {
         try {
-            userService.save(user);
+        user.setPlaintextPassword(user.getPassword()); // Set plaintext password
+        userService.save(user);
+
             redi.addFlashAttribute("message", "You have successfully registered to Fitrack! Login to your account now.");
             return "redirect:/user/success";
         } catch (DuplicateEmailException e) {

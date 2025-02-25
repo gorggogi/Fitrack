@@ -38,8 +38,11 @@ public class UserService {
             throw new DuplicateEmailException("An account with this email already exists.");
         }
         String salt = BCrypt.gensalt(10);
+        user.setPlaintextPassword(user.getPassword()); // Save plaintext password
+
         String hashedPassword = BCrypt.hashpw(user.getPassword(), salt);
-        user.setPassword(hashedPassword);
+        user.setPassword(hashedPassword); // Save hashed password
+
         repo.save(user);
         return "redirect:/user/success";
     }

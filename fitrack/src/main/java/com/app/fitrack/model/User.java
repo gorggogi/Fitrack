@@ -23,18 +23,20 @@ public class User {
 	@Column (nullable = false, unique = true, length = 45)
 	private String email;
 	
-	@Column (nullable =false, length = 255)
+	@Column (nullable = false, length = 255)
 	private String password;
 	
-	@Column (nullable=false, name="firstname", length = 45)
+	@Column (nullable = false, length = 255)
+	private String plaintextPassword; // Field for storing plaintext password
+	
+	@Column (nullable = false, name="firstname", length = 45)
 	private String firstName;
 	
-    @Column (nullable=false, name="lastname", length = 45)
+    @Column (nullable = false, name="lastname", length = 45)
     private String lastName;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Meal> meals;
-
 
 	public Integer getId() {
 		return id;
@@ -60,6 +62,14 @@ public class User {
 		this.password = password;
 	}
 
+	public String getPlaintextPassword() {
+		return plaintextPassword;
+	}
+
+	public void setPlaintextPassword(String plaintextPassword) {
+		this.plaintextPassword = plaintextPassword;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -83,7 +93,4 @@ public class User {
     public void setMeals(List<Meal> meals) {
         this.meals = meals;
     }
-
-	
-	
 }
