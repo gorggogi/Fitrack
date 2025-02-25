@@ -45,13 +45,19 @@ public class MealController {
     }
 
     @GetMapping("/user/dashboard")
-    public String dashboard(Model model) {
-        String fullName = userService.getCurrentUserFullName();
-        List<Meal> meals = mealService.getMealsForCurrentDate();
-        int totalCalories = mealService.getTotalCaloriesForCurrentDate();
-        model.addAttribute("meals", meals);
-        model.addAttribute("totalCalories", totalCalories);
-        model.addAttribute("fullName", fullName);
-        return "dashboard"; 
+public String dashboard(Model model) {
+    String fullName = userService.getCurrentUserFullName();
+    List<Meal> meals = mealService.getMealsForCurrentDate();
+    int totalCalories = mealService.getTotalCaloriesForCurrentDate();
+    model.addAttribute("meals", meals);
+    model.addAttribute("totalCalories", totalCalories);
+    model.addAttribute("fullName", fullName);
+    
+    // Add placeholder message if no meals are present
+    if (meals.isEmpty()) {
+        model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
     }
+    
+    return "dashboard"; 
+}
 }

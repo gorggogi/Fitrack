@@ -513,3 +513,11 @@ button.primary {
     transform: scale(1.02);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
+
+.placeholder-message {
+    color: #000000a0; 
+    font-size: 0.9em;
+    text-align: left;
+    margin: 20px 0; 
+    font-weight: normal;
+}

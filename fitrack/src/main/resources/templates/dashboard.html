@@ -72,6 +72,9 @@
                     <h3 class="section-title">Your Meals</h3>
                     <button type="button" onclick="window.location.href='/user/addmeal'" class="add-button">+</button>
                 </div>
+                <div th:if="${#lists.isEmpty(meals)}" class="placeholder-message">
+                    <p th:text="${placeholderMessage}"></p>
+                </div>
                 <div th:each="meal : ${meals}" class="meal-item">
                     <div>
                         <div class="meal-header">
