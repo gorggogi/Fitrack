@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FitrackApplication<fitrack>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.app.fitrack.FitrackApplication",
+            "projectName": "fitrack",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
