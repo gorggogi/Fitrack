@@ -60,7 +60,6 @@ public class UserController {
         return "registration-form";
     }
 
-
     @ModelAttribute("fullName")
     public String getUserFullName(HttpSession session) {
         String firstName = (String) session.getAttribute("firstName");
@@ -72,13 +71,17 @@ public class UserController {
         return "";
     }
 
-
-
     @PostMapping("/user/save")
-    public String saveUserForm(@ModelAttribute("user") User user, RedirectAttributes redi) {
+    public String saveUserForm(@ModelAttribute("user") User user, @RequestParam String confirmPassword, RedirectAttributes redi) {
         try {
-            userService.save(user);
-            redi.addFlashAttribute("message", "You have successfully registered to Fitrack! Login to your account now.");
+            if (!user.getPassword().equals(confirmPassword)) {
+                redi.addFlashAttribute("error", "Passwords do not match.");
+                redi.addFlashAttribute("user", user);
+                return "redirect:/user/new";
+            } else {
+                userService.save(user);
+                redi.addFlashAttribute("message", "You have successfully registered to Fitrack! Login to your account now.");
+            }
             return "redirect:/user/success";
         } catch (DuplicateEmailException e) {
             redi.addFlashAttribute("error", e.getMessage());
@@ -86,5 +89,4 @@ public class UserController {
             return "redirect:/user/new";
         }
     }
-
 }

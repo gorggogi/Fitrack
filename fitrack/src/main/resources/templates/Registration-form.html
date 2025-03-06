@@ -19,6 +19,9 @@
             <br>
             <label>Create a strong password</label>
             <input type="password" th:field= "*{password}" name="password" required>  <br>
+            <label>Confirm Password</label>
+            <input type="password" th:field="*{confirmPassword}" name="confirmPassword" required> <br>
+
             <p th:if="${error}" th:text="${error}" style="color: red;" id="signup-error"></p>
             <button type="submit">Sign up</button>
             Already have an account? <a href="/user/login">Login here</a>
