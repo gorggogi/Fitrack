@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="/styles/Join.css"> 
+</head>
+<body>
+    <div class="flex-container">
+        <h1>Almost there!</h1>
+        <p th:if="${message}">[[${message}]]</p>
+        <form action="/user/verify-code" method="post">
+            <input type="text" name="code" placeholder="Enter verification code" required />
+            <button type="submit">Verify Code</button>
+        </form>
+        <button onclick="window.location.href='/user/send-code'">Send Code</button>
+        <button onclick="window.location.href='/user/login'">Login</button>
+    </div>
+</body>
+</html>
