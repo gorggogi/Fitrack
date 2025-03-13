@@ -36,27 +36,37 @@ public class UserController {
         return "Login";  
     }
 
-    @PostMapping("/user/login")
-    public String loginUser(@RequestParam String email, @RequestParam String password, RedirectAttributes redi, HttpSession session) {
-        LoginRequest loginRequest = new LoginRequest(email, password);
-        LoginResponse response = userService.login(loginRequest);
-    
-        if (response.isSuccess()) {
-            User user = userService.findByEmail(email);
-            
-        if (!response.isSuccess()) {  
-                redi.addFlashAttribute("error", response.getMessage());  
-                return "redirect:/user/login";  
-            }
+    @PostMapping("/user/resend-verification")
+public String resendVerification(@RequestParam String email, RedirectAttributes redi) {
+    String message = userService.resendVerificationCode(email);
+    redi.addFlashAttribute("message", message);
+    return "redirect:/user/verify";
+}
 
-            session.setAttribute("firstName", user.getFirstName());
-            session.setAttribute("lastName", user.getLastName());
-            return "redirect:/user/dashboard";  
-        } else {
-            redi.addFlashAttribute("error", response.getMessage());
-            return "redirect:/user/login";  
+
+    @PostMapping("/user/login")
+public String loginUser(@RequestParam String email, @RequestParam String password, RedirectAttributes redi, HttpSession session) {
+    LoginRequest loginRequest = new LoginRequest(email, password);
+    LoginResponse response = userService.login(loginRequest);
+
+    if (response.isSuccess()) {
+        User user = userService.findByEmail(email);
+
+        if (!user.isVerified()) {  
+            redi.addFlashAttribute("error", "Your account is not verified. Please verify your email.");
+            redi.addFlashAttribute("email", email);  
+            return "redirect:/user/verify";  
         }
+
+        session.setAttribute("firstName", user.getFirstName());
+        session.setAttribute("lastName", user.getLastName());
+        return "redirect:/user/dashboard";  
+    } else {
+        redi.addFlashAttribute("error", response.getMessage());
+        return "redirect:/user/login";  
     }
+}
+
 
     @PostMapping("/user/logout")
     public String logout(HttpSession session) {

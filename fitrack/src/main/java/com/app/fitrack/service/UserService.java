@@ -33,6 +33,8 @@ public class UserService {
     @Autowired
     private MailUtil2 mailUtil2;
 
+    @Autowired EmailService emailService;
+
     @Value("${app.base-url}") 
     private String baseUrl;
 
@@ -46,18 +48,15 @@ public class UserService {
 
     public LoginResponse login(LoginRequest loginRequest) {
         User user = findByEmail(loginRequest.getEmail());
-        
+    
         if (user == null || !BCrypt.checkpw(loginRequest.getPassword(), user.getPassword())) {
             return new LoginResponse(false, "Invalid email or password. Please try again.");
         }
-        
-        if (!user.isVerified()) {
-            return new LoginResponse(false, "Please verify your email before logging in.");
-        }
-        
+    
         setCurrentUserEmail(loginRequest.getEmail());
-        return new LoginResponse(true, null);
+        return new LoginResponse(true, null);  
     }
+    
 
   
     private String hashPassword(String password) {
@@ -161,7 +160,7 @@ public String resetPassword(String token, String newPassword) {
 
 
     if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-        tokenRepository.delete(verificationToken);  // ✅ Delete expired token
+        tokenRepository.delete(verificationToken);  
         return "Token has expired. Request a new password reset.";
     }
 
@@ -174,6 +173,19 @@ public String resetPassword(String token, String newPassword) {
     return "Password successfully reset. You can now log in with your new password.";
 }
 
+public String resendVerificationCode(String email) {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        return "No account found with this email.";
+    }
+    
+    if (user.isVerified()) {
+        return "Your email is already verified.";
+    }
+
+    emailService.sendVerificationEmail(user);  // 
+    return "A new verification code has been sent to your email.";
+}
 
 
 }

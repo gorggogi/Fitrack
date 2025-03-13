@@ -22,13 +22,19 @@ public class EmailService {
     private VerificationTokenRepository tokenRepository;
 
     public void sendVerificationEmail(User user) {
+  
+        if (tokenRepository.findByUser(user).isPresent()) {
+            tokenRepository.deleteByUser(user);
+        }
+    
         String code = String.format("%06d", new Random().nextInt(999999));
         VerificationToken verificationToken = new VerificationToken(code, user, LocalDateTime.now().plusMinutes(30));
+    
         tokenRepository.save(verificationToken);
-
+    
         String subject = "Your Fitrack Verification Code";
         String body = "Your verification code is: " + code + "\nThis code will expire in 30 minutes.";
-
+    
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject(subject);
@@ -37,6 +43,9 @@ public class EmailService {
     }
 
     public void sendPasswordResetEmail(User user) {
+
+        tokenRepository.findByUser(user).ifPresent(tokenRepository::delete);
+  
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken(token, user, LocalDateTime.now().plusMinutes(30));
         tokenRepository.save(verificationToken);
@@ -54,6 +63,7 @@ public class EmailService {
         message.setText(body);
         mailSender.send(message);
     }
+    
     
 
 
