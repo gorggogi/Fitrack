@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.CascadeType;
 import java.util.List;
@@ -34,7 +35,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Meal> meals;
 
-    private String confirmPassword; 
+    @Column(nullable = false)
+    private boolean verified = false;  
+
+    @Transient
+    private String confirmPassword;
 
     public Integer getId() {
         return id;
@@ -82,6 +87,14 @@ public class User {
 
     public void setMeals(List<Meal> meals) {
         this.meals = meals;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 
     public String getConfirmPassword() {
