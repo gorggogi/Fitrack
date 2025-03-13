@@ -1,5 +1,4 @@
 package com.app.fitrack.service;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -11,7 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
-
+import java.util.UUID;
 import com.app.fitrack.dto.LoginRequest;
 import com.app.fitrack.dto.LoginResponse;
 import com.app.fitrack.model.User;
@@ -30,6 +29,9 @@ public class UserService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private MailUtil2 mailUtil2;
 
     @Value("${app.base-url}") 
     private String baseUrl;
@@ -128,4 +130,52 @@ public class UserService {
     public void setCurrentUserEmail(String email) {
         this.currentUserEmail = email;
     }
+
+
+
+    public String generatePasswordResetToken(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return "User not found.";
+        }
+    
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(token, user, LocalDateTime.now().plusMinutes(30));
+        tokenRepository.save(verificationToken);
+    
+   
+        mailUtil2.sendMail(user.getEmail(), user.getFirstName(), token);
+    
+        return "Password reset link sent to your email.";
+    }
+    
+
+public String resetPassword(String token, String newPassword) {
+    Optional<VerificationToken> tokenOptional = tokenRepository.findByCode(token);
+
+    if (tokenOptional.isEmpty()) {
+        return "Invalid or expired token.";
+    }
+
+    VerificationToken verificationToken = tokenOptional.get();
+
+
+    if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+        tokenRepository.delete(verificationToken);  // ✅ Delete expired token
+        return "Token has expired. Request a new password reset.";
+    }
+
+    User user = verificationToken.getUser();
+    user.setPassword(hashPassword(newPassword));  
+    userRepository.save(user);
+
+    tokenRepository.delete(verificationToken); 
+
+    return "Password successfully reset. You can now log in with your new password.";
 }
+
+
+
+}
+
+

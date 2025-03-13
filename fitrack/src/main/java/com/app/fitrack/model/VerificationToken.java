@@ -24,8 +24,8 @@ public class VerificationToken {
 
     public VerificationToken() {}
 
-    public VerificationToken(String code, User user, LocalDateTime expiryDate) {
-        this.code = code;
+    public VerificationToken(String tokenOrcode, User user, LocalDateTime expiryDate) {
+        this.code = tokenOrcode;
         this.user = user;
         this.expiryDate = expiryDate;
     }

@@ -1,6 +1,4 @@
 package com.app.fitrack.controller;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +12,7 @@ import com.app.fitrack.dto.LoginResponse;
 import com.app.fitrack.model.User;
 import com.app.fitrack.service.UserService;
 import com.app.fitrack.service.DuplicateEmailException;
-
 import jakarta.servlet.http.HttpSession;
-
 @Controller
 public class UserController {
     
@@ -48,9 +44,9 @@ public class UserController {
         if (response.isSuccess()) {
             User user = userService.findByEmail(email);
             
-            if (!user.isVerified()) {
-                redi.addFlashAttribute("error", "Please verify your email before logging in.");
-                return "redirect:/user/login";
+        if (!response.isSuccess()) {  
+                redi.addFlashAttribute("error", response.getMessage());  
+                return "redirect:/user/login";  
             }
 
             session.setAttribute("firstName", user.getFirstName());
@@ -117,11 +113,39 @@ public String verifyUser(@RequestParam String code, RedirectAttributes redi) {
     return "redirect:/user/verify";
 }
 
+    @GetMapping("/user/reset-password")
+    public String showResetPasswordPage() {
+        return "Reset-password";  
+    }
 
+    @PostMapping("/user/reset-password")
+    public String processResetPassword(@RequestParam String email, RedirectAttributes redi) {
+        String message = userService.generatePasswordResetToken(email);
+        redi.addFlashAttribute("message", message);
+        return "redirect:/user/reset-password";
+    }
 
+    @GetMapping("/user/change-password")
+    public String showChangePasswordPage(@RequestParam String token, Model model) {
+        model.addAttribute("token", token);
+        return "Change-password";  // Renders change-password.html
+    }
 
+    @PostMapping("/user/change-password")
+    public String processChangePassword(@RequestParam String token, 
+                                        @RequestParam String newPassword, 
+                                        @RequestParam String confirmPassword, 
+                                        RedirectAttributes redi) {
+        if (!newPassword.equals(confirmPassword)) {
+            redi.addFlashAttribute("error", "Passwords do not match.");
+            return "redirect:/user/change-password?token=" + token;
+        }
 
-    
-
-    
+        String message = userService.resetPassword(token, newPassword);
+        redi.addFlashAttribute("message", message);
+        return "redirect:/user/login";
+    }
 }
+
+    
+
