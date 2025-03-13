@@ -29,6 +29,10 @@ public class UserController {
     return "Verify";
     }
 
+    @GetMapping("/user/resend-code")
+    public String resendVerificationPage() {
+    return "Resend-code";
+    }
     
     @GetMapping("/user/login")
     public String showLoginPage(Model model) {
@@ -40,7 +44,7 @@ public class UserController {
 public String resendVerification(@RequestParam String email, RedirectAttributes redi) {
     String message = userService.resendVerificationCode(email);
     redi.addFlashAttribute("message", message);
-    return "redirect:/user/verify";
+    return "redirect:/user/resend-code";
 }
 
 
@@ -55,7 +59,7 @@ public String loginUser(@RequestParam String email, @RequestParam String passwor
         if (!user.isVerified()) {  
             redi.addFlashAttribute("error", "Your account is not verified. Please verify your email.");
             redi.addFlashAttribute("email", email);  
-            return "redirect:/user/verify";  
+            return "redirect:/user/resend-code";  
         }
 
         session.setAttribute("firstName", user.getFirstName());

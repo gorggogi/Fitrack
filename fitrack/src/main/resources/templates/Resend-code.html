@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Your Account</title>
+    <link rel="stylesheet" href="/styles/Join.css">
+</head>
+<body>
+
+    <div class="flex-container">
+        <h1>Verify Your Email</h1>
+        <div class="form-container">
+            <!-- Success Message -->
+            <p th:if="${message}" th:text="${message}" style="color: green;"></p>
+
+            <!-- Error Message -->
+            <p th:if="${error}" th:text="${error}" style="color: red;"></p>
+
+            <!-- Enter Verification Code -->
+            <form action="/user/verify-code" method="post">
+                <label>Enter Verification Code:</label>
+                <input type="text" name="code" required>
+                <br>
+                <button type="submit">Verify</button>
+            </form>
+
+            <hr>
+
+            <!-- Resend Verification Code -->
+            <form action="/user/resend-verification" method="post">
+                <label>Enter Your Email:</label>
+                <input type="email" name="email" th:value="${email}" required>
+                <br>
+                <button type="submit">Resend Verification Code</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
