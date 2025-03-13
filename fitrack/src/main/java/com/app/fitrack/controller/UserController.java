@@ -142,7 +142,7 @@ public String verifyUser(@RequestParam String code, RedirectAttributes redi) {
     @GetMapping("/user/change-password")
     public String showChangePasswordPage(@RequestParam String token, Model model) {
         model.addAttribute("token", token);
-        return "Change-password";  // Renders change-password.html
+        return "Change-password";  
     }
 
     @PostMapping("/user/change-password")
