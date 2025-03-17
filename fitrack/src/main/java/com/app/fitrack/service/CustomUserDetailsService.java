@@ -1,5 +1,4 @@
 package com.app.fitrack.service;
-
 import com.app.fitrack.model.User;
 import com.app.fitrack.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

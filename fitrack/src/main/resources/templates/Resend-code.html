@@ -10,13 +10,11 @@
     <div class="flex-container">
         <h1>Verify Your Email</h1>
         <div class="form-container">
-            <!-- Success Message -->
+
             <p th:if="${message}" th:text="${message}" style="color: green;"></p>
 
-            <!-- Error Message -->
             <p th:if="${error}" th:text="${error}" style="color: red;"></p>
 
-            <!-- Enter Verification Code -->
             <form action="/user/verify-code" method="post">
                 <label>Enter Verification Code:</label>
                 <input type="text" name="code" required>

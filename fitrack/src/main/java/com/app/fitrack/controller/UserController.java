@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping("/user/resend-code")
 public String resendVerificationPage(@RequestParam(value = "email", required = false) String email, Model model) {
-    model.addAttribute("email", email);  // ✅ Pass email to the form
+    model.addAttribute("email", email); 
     return "Resend-code";
 }
 

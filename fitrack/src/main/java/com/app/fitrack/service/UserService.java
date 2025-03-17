@@ -81,12 +81,6 @@ public String verifyUser(String code) {
     user.setVerified(true);
     userRepository.save(user); 
 
-    UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-    SecurityContextHolder.getContext().setAuthentication(
-        new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-            userDetails, userDetails.getPassword(), userDetails.getAuthorities()
-        )
-    );
 
     tokenRepository.delete(token);
     return "Email successfully verified!";
