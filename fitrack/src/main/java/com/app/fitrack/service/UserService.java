@@ -102,7 +102,7 @@ public class UserService {
     }
 
     @Transactional
-public String generatePasswordResetToken(String email) {
+    public String generatePasswordResetToken(String email) {
     User user = userRepository.findByEmail(email);
     if (user == null) {
         return "User not found.";

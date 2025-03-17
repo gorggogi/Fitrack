@@ -1,4 +1,5 @@
 package com.app.fitrack.controller;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,15 +10,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.app.fitrack.dto.LoginRequest;
 import com.app.fitrack.dto.LoginResponse;
+import com.app.fitrack.model.Meal;
 import com.app.fitrack.model.User;
 import com.app.fitrack.service.UserService;
 import com.app.fitrack.service.DuplicateEmailException;
+import com.app.fitrack.service.MealService;
 import jakarta.servlet.http.HttpSession;
 @Controller
 public class UserController {
     
     @Autowired
     private UserService userService; 
+
+    @Autowired
+    private MealService mealService;
 
     @GetMapping("/user/success")
     public String showSuccessPage() {
@@ -159,6 +165,22 @@ public String verifyUser(@RequestParam String code, RedirectAttributes redi) {
         redi.addFlashAttribute("message", message);
         return "redirect:/user/login";
     }
+
+     @GetMapping("/user/dashboard")
+public String dashboard(Model model) {
+    String fullName = userService.getCurrentUserFullName();
+    List<Meal> meals = mealService.getMealsForCurrentDate();
+    int totalCalories = mealService.getTotalCaloriesForCurrentDate();
+    model.addAttribute("meals", meals);
+    model.addAttribute("totalCalories", totalCalories);
+    model.addAttribute("fullName", fullName);
+    
+    if (meals.isEmpty()) {
+        model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
+    }
+    
+    return "dashboard"; 
+}
 }
 
     
