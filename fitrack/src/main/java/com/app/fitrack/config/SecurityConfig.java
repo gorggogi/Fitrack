@@ -1,5 +1,6 @@
 package com.app.fitrack.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,56 +10,54 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 @Configuration
-@EnableWebSecurity 
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, 
+                                                   @Qualifier("customAuthenticationFailureHandler") 
+                                                   AuthenticationFailureHandler failureHandler) throws Exception {
         return http
-            .csrf(csrf -> csrf  
-                .ignoringRequestMatchers(
-                    "/user/verify-code"  
-                )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/user/verify-code") 
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/styles/**", 
-                    "/images/**", 
-                    "/js/**", 
+                    "/styles/**",
+                    "/images/**",
+                    "/js/**",
                     "/webjars/**"
                 ).permitAll()
                 .requestMatchers(
-                    "/user/login", 
-                    "/user/new", 
-                    "/user/save", 
-                    "/user/verify", 
+                    "/user/login",
+                    "/user/new",
+                    "/user/save",
+                    "/user/verify",
                     "/user/verify-code",
-                    "/user/resend-code", 
-                    "/user/reset-password**", 
+                    "/user/resend-code",
+                     "/user/resend-verification",
+                    "/user/reset-password**",
                     "/user/change-password**",
                     "/error**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/user/login")  
-                .loginProcessingUrl("/user/login")  
-                .defaultSuccessUrl("/user/dashboard", true)  
-                .failureUrl("/user/login?error=true")  
+                .loginPage("/user/login")
+                .loginProcessingUrl("/user/login")
+                .defaultSuccessUrl("/user/dashboard", true)
+                .failureHandler(failureHandler)  
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/user/logout")
-                .logoutSuccessUrl("/user/login?logout=true")  
+                .logoutSuccessUrl("/user/login?logout=true")
             )
             .build();
     }
-    
-
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

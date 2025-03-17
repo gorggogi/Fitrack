@@ -12,8 +12,7 @@
         <div class="form-container">
 
             <p th:if="${message}" th:text="${message}" style="color: green;"></p>
-            <p th:if="${error}" th:text="${error}" style="color: red;"></p>
-
+            <p th:if="${param.error}" style="color: red;">Invalid email or password.</p>
             <form th:action="@{/user/login}" method="post">
                 <label>Email:</label>
                 <input type="email" name="username" required> 
