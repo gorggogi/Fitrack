@@ -18,14 +18,21 @@ public class MealService {
     private UserService userService;
 
     public Meal saveMeal(Meal meal) {
-        User currentUser = userService.getCurrentUser();
+        User currentUser = userService.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user found.");
+        }
         meal.setUser(currentUser);
         return mealRepository.save(meal);
     }
 
     public List<Meal> getMealsForCurrentDate() {
+        User currentUser = userService.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user found.");
+        }
+
         LocalDate today = LocalDate.now();
-        User currentUser = userService.getCurrentUser();
         List<Meal> meals = mealRepository.findByUserAndDateTimeBetween(
             currentUser, today.atStartOfDay(), today.atTime(23, 59, 59));
 
@@ -34,16 +41,21 @@ public class MealService {
                 System.out.println("Meal with ID " + meal.getId() + " has a null dateTime.");
             }
         }
-        
+
         return meals;
     }
-
+    
     public int getTotalCaloriesForCurrentDate() {
+        User currentUser = userService.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user found.");
+        }
+
         LocalDate today = LocalDate.now();
-        User currentUser = userService.getCurrentUser();
         List<Meal> meals = mealRepository.findByUserAndDateTimeBetween(
             currentUser, today.atStartOfDay(), today.atTime(23, 59, 59));
 
         return meals.stream().mapToInt(Meal::getTotalCalories).sum();
     }
 }
+

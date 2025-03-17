@@ -17,7 +17,6 @@ public class MealFoodItem {
     @ManyToOne
     private Meal meal;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

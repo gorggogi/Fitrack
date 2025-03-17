@@ -10,8 +10,9 @@
     <div class="flex-container">
         <h1>Almost there!</h1>
         <p th:if="${message}">[[${message}]]</p>
-        <form action="/user/verify-code" method="post">
+        <form th:action="@{/user/verify-code}" method="post">
             <input type="text" name="code" placeholder="Enter verification code" required />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit">Verify Code</button>
         </form>
         <button onclick="window.location.href='/user/send-code'">Send Code</button>

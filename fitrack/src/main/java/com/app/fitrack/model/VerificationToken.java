@@ -14,7 +14,7 @@ public class VerificationToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String code; // Store the 6-digit verification code
+    private String code; 
 
     @OneToOne
     @JoinColumn(name = "user_id")

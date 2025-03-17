@@ -4,17 +4,20 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
-import com.app.fitrack.dto.LoginRequest;
-import com.app.fitrack.dto.LoginResponse;
 import com.app.fitrack.model.User;
 import com.app.fitrack.model.VerificationToken;
 import com.app.fitrack.repository.UserRepository;
 import com.app.fitrack.repository.VerificationTokenRepository;
+import org.springframework.security.core.Authentication;
 
 @Service
+@Transactional 
 public class UserService {
 
     @Autowired
@@ -26,26 +29,25 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Value("${app.base-url}") 
     private String baseUrl;
-
-    private String currentUserEmail;
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public LoginResponse login(LoginRequest loginRequest) {
-        User user = findByEmail(loginRequest.getEmail());
-    
-        if (user == null || !BCrypt.checkpw(loginRequest.getPassword(), user.getPassword())) {
-            return new LoginResponse(false, "Invalid email or password. Please try again.");
-        }
-    
-        setCurrentUserEmail(loginRequest.getEmail());
-        return new LoginResponse(true, null);  
+    public User getAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
+        String email = authentication.getName();
+        return findByEmail(email);
     }
-    
+    return null;
+}
+
     private String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(10));
     }
@@ -64,42 +66,31 @@ public class UserService {
     }
 
     @Transactional
-    public String verifyUser(String code) {
-        Optional<VerificationToken> tokenOptional = tokenRepository.findByCode(code);
-
-        if (tokenOptional.isEmpty()) {
-            return "Invalid verification code.";
-        }
-
-        VerificationToken token = tokenOptional.get();
-
-        if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
-            return "Verification code has expired.";
-        }
-
-        User user = token.getUser();
-        user.setVerified(true);
-        userRepository.save(user); 
-        tokenRepository.delete(token);
-
-        return "Email successfully verified!";
+public String verifyUser(String code) {
+    Optional<VerificationToken> tokenOptional = tokenRepository.findByCode(code);
+    if (tokenOptional.isEmpty()) {
+        return "Invalid verification code.";
     }
 
-    public String getCurrentUserFullName() {
-        if (currentUserEmail == null) {
-            return "Guest";
-        }
-        User user = findByEmail(currentUserEmail);
-        return (user != null) ? user.getFirstName() + " " + user.getLastName() : "Unknown User";
+    VerificationToken token = tokenOptional.get();
+    if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+        return "Verification code has expired.";
     }
 
-    public User getCurrentUser() {
-        return (currentUserEmail != null) ? findByEmail(currentUserEmail) : null;
-    }
+    User user = token.getUser();
+    user.setVerified(true);
+    userRepository.save(user); 
 
-    public void setCurrentUserEmail(String email) {
-        this.currentUserEmail = email;
-    }
+    UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+    SecurityContextHolder.getContext().setAuthentication(
+        new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+            userDetails, userDetails.getPassword(), userDetails.getAuthorities()
+        )
+    );
+
+    tokenRepository.delete(token);
+    return "Email successfully verified!";
+}
 
     @Transactional
     public String generatePasswordResetToken(String email) {
@@ -117,28 +108,41 @@ public class UserService {
 }
 
 
-    public String resetPassword(String token, String newPassword) {
-        Optional<VerificationToken> tokenOptional = tokenRepository.findByCode(token);
+@Transactional
+public String resetPassword(String token, String newPassword) {
+    Optional<VerificationToken> tokenOptional = tokenRepository.findByCode(token);
 
-        if (tokenOptional.isEmpty()) {
-            return "Invalid or expired token.";
-        }
-
-        VerificationToken verificationToken = tokenOptional.get();
-
-        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            tokenRepository.delete(verificationToken);  
-            return "Token has expired. Request a new password reset.";
-        }
-
-        User user = verificationToken.getUser();
-        user.setPassword(hashPassword(newPassword));  
-        userRepository.save(user);
-
-        tokenRepository.delete(verificationToken); 
-
-        return "Password successfully reset. You can now log in with your new password.";
+    if (tokenOptional.isEmpty()) {
+        return "Invalid or expired token.";
     }
+
+    VerificationToken verificationToken = tokenOptional.get();
+
+    if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+        tokenRepository.delete(verificationToken);  
+        return "Token has expired. Request a new password reset.";
+    }
+
+    String email = verificationToken.getUser().getEmail();
+    User user = userRepository.findByEmail(email);
+
+    if (user == null) {
+        return "User not found.";
+    }
+
+    System.out.println("Old hashed password: " + user.getPassword());
+    String hashed = hashPassword(newPassword);
+    System.out.println("New hashed password: " + hashed);
+
+    user.setPassword(hashed);  
+    userRepository.save(user);
+
+    tokenRepository.delete(verificationToken); 
+
+    return "Password successfully reset. You can now log in with your new password.";
+}
+
+
 
     public String resendVerificationCode(String email) {
         User user = userRepository.findByEmail(email);
