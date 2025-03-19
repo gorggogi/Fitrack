@@ -27,28 +27,21 @@
                         <input type="submit" value="Logout" />
                     </form>
                     <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
                 </div>
             </div>
         </header>
 
         <div class="form-container">
             <h1>Add Meal</h1>
-<form th:action="@{/meals/add}" method="post" th:object="${meal}">
-
+            <form th:action="@{/meals/add}" method="post" th:object="${meal}">
                 <div class="form-row">
-            <div class="form-group">
-                <label>Meal Name</label>
-                <input type="text" th:field="*{mealName}" placeholder="Enter meal name" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Date and Time</label>
-                <input type="datetime-local" th:field="*{dateTime}" class="form-control" required>
-
-
+                    <div class="form-group">
+                        <label>Meal Name</label>
+                        <input type="text" th:field="*{mealName}" placeholder="Enter meal name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date and Time</label>
+                        <input type="datetime-local" th:field="*{dateTime}" class="form-control" required>
                     </div>
                 </div>
                 
@@ -60,20 +53,35 @@
                                 <input type="text" name="foodItems[0].foodItem" placeholder="Enter food item" class="form-control" required>
                             </div>
                             <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" name="foodItems[0].quantity" placeholder="Quantity" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Unit</label>
+                                <select name="foodItems[0].unit" class="form-control" required>
+                                    <option value="g">Grams</option>
+                                    <option value="kg">Kilograms</option>
+                                    <option value="ml">Milliliters</option>
+                                    <option value="l">Liters</option>
+                                    <option value="cup">Cups</option>
+                                    <option value="tbsp">Tablespoons</option>
+                                    <option value="tsp">Teaspoons</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label>Calories</label>
-                                <input type="number" name="foodItems[0].calories" placeholder="Calories" class="form-control" required>
+                                <input type="number" name="foodItems[0].calories" placeholder="Estimated Calories" class="form-control" required>
                             </div>
                             <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="form-actions">
+                    <button type="button" onclick="estimateCalories()" class="btn btn-warning">Estimate Calories</button>
                     <button type="button" onclick="addFoodItem()" class="btn btn-secondary">Add Item +</button>
                     <button type="submit" class="btn btn-primary">Save Meal</button>
                 </div>
-
             </form>
         </div>
     </div>

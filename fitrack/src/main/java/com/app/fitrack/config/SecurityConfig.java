@@ -22,29 +22,31 @@ public class SecurityConfig {
                                                    AuthenticationFailureHandler failureHandler) throws Exception {
         return http
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/user/verify-code") 
+            .ignoringRequestMatchers("/user/verify-code", "/meals/estimate-calories") 
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/styles/**",
-                    "/images/**",
-                    "/js/**",
-                    "/webjars/**"
-                ).permitAll()
-                .requestMatchers(
-                    "/user/login",
-                    "/user/new",
-                    "/user/save",
-                    "/user/verify",
-                    "/user/verify-code",
-                    "/user/resend-code",
-                     "/user/resend-verification",
-                    "/user/reset-password**",
-                    "/user/change-password**",
-                    "/error**"
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
+            .requestMatchers(
+                "/styles/**",
+                "/images/**",
+                "/js/**",
+                "/webjars/**"
+            ).permitAll()
+            .requestMatchers(
+                "/user/login",
+                "/user/new",
+                "/user/save",
+                "/user/verify",
+                "/user/verify-code",
+                "/user/resend-code",
+                "/user/resend-verification",
+                "/user/reset-password**",
+                "/user/change-password**",
+                "/meals/estimate-calories",
+                "/error**"
+            ).permitAll()
+            .requestMatchers("/meals").hasAnyRole("USER", "ADMIN") // ✅ Correct placement
+            .anyRequest().authenticated()
+        )
             .formLogin(form -> form
                 .loginPage("/user/login")
                 .loginProcessingUrl("/user/login")

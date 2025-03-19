@@ -13,6 +13,8 @@ public class MealFoodItem {
 
     private String foodItem;
     private int calories;
+    private double quantity;  
+    private String unit; 
 
     @ManyToOne
     private Meal meal;
@@ -48,4 +50,21 @@ public class MealFoodItem {
     public void setMeal(Meal meal) {
         this.meal = meal;
     }
+
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
 }

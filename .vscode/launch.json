@@ -9,6 +9,16 @@
             "projectName": "fitrack",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-FitrackApplication<lab2>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.app.fitrack.FitrackApplication",
+            "projectName": "lab2",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

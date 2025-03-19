@@ -127,22 +127,24 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         return "redirect:/user/login";
     }
 
-   @GetMapping("/user/dashboard")
-public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-    String email = userDetails.getUsername();
-    User user = userService.findByEmail(email);
-
-    String fullName = user.getFirstName() + " " + user.getLastName();
-    List<Meal> meals = mealService.getMealsForCurrentDate();
-    int totalCalories = mealService.getTotalCaloriesForCurrentDate();
-
-    model.addAttribute("meals", meals);
-    model.addAttribute("totalCalories", totalCalories);
-    model.addAttribute("fullName", fullName);
-
-    if (meals.isEmpty()) {
-        model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
+    @GetMapping("/user/dashboard")
+    public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
+    
+        String fullName = user.getFirstName() + " " + user.getLastName();
+        List<Meal> meals = mealService.getMealsForCurrentDate();
+        int totalCalories = mealService.getTotalCaloriesForCurrentDate();
+    
+        model.addAttribute("meals", meals);
+        model.addAttribute("totalCalories", totalCalories);
+        model.addAttribute("fullName", fullName);
+    
+        if (meals.isEmpty()) {
+            model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
+        }
+    
+        return "dashboard";
     }
-    return "dashboard";
 }
-}
+    
