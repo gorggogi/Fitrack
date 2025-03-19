@@ -44,7 +44,7 @@ public class SecurityConfig {
                 "/meals/estimate-calories",
                 "/error**"
             ).permitAll()
-            .requestMatchers("/meals").hasAnyRole("USER", "ADMIN") // ✅ Correct placement
+            .requestMatchers("/meals").hasAnyRole("USER", "ADMIN") 
             .anyRequest().authenticated()
         )
             .formLogin(form -> form

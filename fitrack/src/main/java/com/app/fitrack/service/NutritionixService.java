@@ -44,7 +44,7 @@ public class NutritionixService {
         System.out.println("API Response: " + response.getBody());
     
         if (response.getBody() != null && !response.getBody().getFoods().isEmpty()) {
-            return (int) response.getBody().getFoods().get(0).getNf_calories();
+            return (int) Math.round (response.getBody().getFoods().get(0).getNf_calories()) ;
         }
     
         return 0;

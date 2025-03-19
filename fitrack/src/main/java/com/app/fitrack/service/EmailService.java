@@ -3,6 +3,7 @@ package com.app.fitrack.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class EmailService {
     @Autowired
     private VerificationTokenRepository tokenRepository;
 
+    @Async
     @Transactional
     public void sendVerificationEmail(User user) {
 
@@ -39,7 +41,7 @@ public class EmailService {
         message.setText(body);
         mailSender.send(message);
     }
-
+    @Async
     @Transactional
     public void sendPasswordResetEmail(User user, String token) {
       
