@@ -23,7 +23,7 @@ public class NutritionixService {
 
     public int getCalories(MealFoodItem foodItem) {
 
-        String query = foodItem.getQuantity() + " " + convertUnit(foodItem.getUnit()) + " of " + foodItem.getFoodItem();
+        String query = foodItem.getQuantity() + " " + (foodItem.getUnit()) + " of " + foodItem.getFoodItem();
 
         String url = "https://trackapi.nutritionix.com/v2/natural/nutrients";
     
@@ -48,27 +48,6 @@ public class NutritionixService {
         }
     
         return 0;
-    }
-
-    private String convertUnit(String shorthandUnit) {
-        switch (shorthandUnit) {
-            case "g":
-                return "grams";
-            case "kg":
-                return "kilograms";
-            case "ml":
-                return "milliliters";
-            case "l":
-                return "liters";
-            case "cup":
-                return "cups";
-            case "tbsp":
-                return "tablespoons";
-            case "tsp":
-                return "teaspoons";
-            default:
-                return shorthandUnit; 
-        }
     }
 }
     

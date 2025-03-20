@@ -33,7 +33,7 @@ function addFoodItem() {
         <div class="form-row">
             <div class="form-group">
                 <label>Food Item</label>
-                <input type="text" name="foodItems[${itemCount}].foodItem" placeholder="Enter food item" class="form-control" required>
+                <input type="text" name="foodItems[${itemCount}].foodItem" placeholder="Enter food" class="form-control" required>
             </div>
             <div class="form-group">
                 <label>Quantity</label>
@@ -42,6 +42,7 @@ function addFoodItem() {
             <div class="form-group">
                 <label>Unit</label>
                 <select name="foodItems[${itemCount}].unit" class="form-control" required>
+                    <option value=" ">N/A</option>
                     <option value="g">Grams</option>
                     <option value="kg">Kilograms</option>
                     <option value="ml">Milliliters</option>
@@ -53,7 +54,7 @@ function addFoodItem() {
             </div>
             <div class="form-group">
                 <label>Calories</label>
-                <input type="number" name="foodItems[${itemCount}].calories" placeholder="Estimated Calories" class="form-control" required>
+                <input type="number" name="foodItems[${itemCount}].calories" placeholder="Estimate" class="form-control" required>
             </div>
             <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
         </div>
