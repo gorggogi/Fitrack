@@ -13,7 +13,6 @@ public class VerificationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String code; 
 
     @OneToOne

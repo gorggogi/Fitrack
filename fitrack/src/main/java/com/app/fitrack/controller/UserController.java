@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.model.User;
+import com.app.fitrack.model.Workout;
 import com.app.fitrack.service.UserService;
+import com.app.fitrack.service.WorkoutService;
 import com.app.fitrack.service.DuplicateEmailException;
 import com.app.fitrack.service.MealService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +28,9 @@ public class UserController {
 
     @Autowired
     private MealService mealService;
+
+    @Autowired
+    private WorkoutService workoutService;
 
     @GetMapping("/user/success")
     public String showSuccessPage() {
@@ -128,28 +133,35 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     }
 
     @GetMapping("/user/dashboard")
-    public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        String email = userDetails.getUsername();
-        User user = userService.findByEmail(email);
+public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    String email = userDetails.getUsername();
+    User user = userService.findByEmail(email);
+
+    String fullName = user.getFirstName() + " " + user.getLastName();
     
-        String fullName = user.getFirstName() + " " + user.getLastName();
-        List<Meal> meals = mealService.getMealsForCurrentDate();
-        int totalCalories = mealService.getTotalCaloriesForCurrentDate();
+    // Fetch meals and workouts for today
+    List<Meal> meals = mealService.getMealsForCurrentDate();
+    List<Workout> workouts = workoutService.getWorkoutsForCurrentDate();
+
+    int totalCalories = mealService.getTotalCaloriesForCurrentDate();
     
-        model.addAttribute("meals", meals);
-        model.addAttribute("totalCalories", totalCalories);
-        model.addAttribute("fullName", fullName);
+   
+    model.addAttribute("meals", meals);
+    model.addAttribute("workouts", workouts);
+    model.addAttribute("totalCalories", totalCalories);
+    model.addAttribute("fullName", fullName);
     
-        if (meals.isEmpty()) {
-            model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
-        }
-    
-        return "dashboard";
+    if (meals.isEmpty()) {
+        model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
     }
 
-    @GetMapping("/user/addworkout")
-    public String workout() {
-        return "addworkout";
+    if (workouts.isEmpty()) {
+        model.addAttribute("workoutPlaceholder", "No workouts logged today. Stay active!");
     }
+
+    return "dashboard";
+}
+
+
 }
     

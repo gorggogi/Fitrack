@@ -15,7 +15,6 @@ public class Meal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String mealName;
     private LocalDateTime dateTime;
 

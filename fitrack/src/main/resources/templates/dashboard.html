@@ -52,23 +52,23 @@
                     <h3 class="section-title">Your Workouts</h3>
                     <button type="button" onclick="window.location.href='/user/addworkout'" class="add-button">+</button>
                 </div>
-                <div class="workout-item">
-                    <span>Gym</span>
-                    <span>30 mins</span>
-                    <span class="status">Pending</span>
+            
+                <div th:if="${#lists.isEmpty(workouts)}" class="placeholder-message">
+                    <p th:text="${workoutPlaceholder}"></p>
                 </div>
-                <div class="workout-item">
-                    <span>Gym</span>
-                    <span>45 mins</span>
-                    <span class="status">Completed</span>
-                </div>
-                <div class="workout-item">
-                    <span>Gym</span>
-                    <span>30 mins</span>
-                    <span class="status">Pending</span>
-                </div>
-            </div>
+            
+                <div th:each="workout : ${workouts}" class="workout-item"
+     th:attr="data-id=${workout.id}, 
+              data-name=${workout.workoutName}, 
+              data-duration=${workout.duration}, 
+              data-calories=${workout.burnedCalories}"
+     onclick="openModal(this)">
+    <span th:text="${workout.workoutName}"></span>
+    <span th:text="${workout.duration} + ' mins'"></span>
+    <span class="status">Pending</span>
+</div>
 
+            </div>            
             <div class="section-card">
                 <div class="section-header">
                     <h3 class="section-title">Your Meals</h3>
@@ -126,5 +126,17 @@
             </div>
         </section>
     </div>
+
+    <!-- Workout Details Modal -->
+<div id="workoutModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modalWorkoutName"></h2>
+        <p><strong>Duration:</strong> <span id="modalDuration"></span> mins</p>
+        <p><strong>Burned Calories:</strong> <span id="modalCalories"></span> kcal</p>
+        <button onclick="markAsDone()" class="btn btn-success">Mark as Done</button>
+    </div>
+</div>
+
 </body>
 </html>
