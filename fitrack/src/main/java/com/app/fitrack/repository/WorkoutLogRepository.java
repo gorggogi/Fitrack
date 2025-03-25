@@ -3,9 +3,16 @@ package com.app.fitrack.repository;
 import com.app.fitrack.model.WorkoutLog;
 import com.app.fitrack.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface WorkoutLogRepository extends JpaRepository<WorkoutLog, Long> {
-    List<WorkoutLog> findByUser(User user);
+    @Query("SELECT COUNT(w) > 0 FROM WorkoutLog w WHERE w.user = :user AND w.workoutName = :workoutName AND DATE(w.completedAt) = :date")
+boolean existsByUserAndWorkoutNameAndDate(@Param("user") User user, 
+                                          @Param("workoutName") String workoutName, 
+                                          @Param("date") LocalDate date);
+
 }

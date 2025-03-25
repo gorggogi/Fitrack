@@ -3,7 +3,9 @@ package com.app.fitrack.controller;
 import com.app.fitrack.model.Workout;
 import com.app.fitrack.service.WorkoutService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +36,16 @@ public String saveWorkout(@RequestParam(value = "repeatDays", required = false) 
 }
 
 @PostMapping("/user/workouts/{id}/mark-done")
-public ResponseEntity<String> markWorkoutAsDone(@PathVariable Long id) {
+public ResponseEntity<Map<String, Object>> markWorkoutAsDone(@PathVariable Long id) {
     workoutService.logWorkout(id);
-    return ResponseEntity.ok("Workout logged successfully!");
+
+    // Return JSON response
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", "Workout logged successfully!");
+    response.put("workoutId", id);
+    return ResponseEntity.ok(response);
 }
+
 
 
     

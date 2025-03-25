@@ -8,6 +8,7 @@ import com.app.fitrack.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.List;
@@ -33,7 +34,7 @@ public class WorkoutService {
 
         workout.setUser(currentUser);
 
-        // ✅ Ensure dateTime is set before saving
+  
         if (workout.getDateTime() == null) {
             workout.setDateTime(LocalDateTime.now());
         }
@@ -47,17 +48,22 @@ public class WorkoutService {
         throw new IllegalStateException("No authenticated user found.");
     }
 
-    // Get today's day name (e.g., "Monday", "Tuesday")
+
     String today = LocalDateTime.now().getDayOfWeek()
                     .getDisplayName(TextStyle.FULL, Locale.ENGLISH);
 
-    // Fetch all workouts and filter those scheduled for today
     return workoutRepository.findByUser(currentUser)
             .stream()
-            .filter(workout -> workout.getRepeatDays().contains("Daily") ||
-                               workout.getRepeatDays().contains(today))
+            .filter(workout -> 
+                (workout.getRepeatDays().contains("Daily") || workout.getRepeatDays().contains(today)) &&
+                !workoutLogRepository.existsByUserAndWorkoutNameAndDate(
+                    currentUser, workout.getWorkoutName(), LocalDate.now() 
+                )
+            )
             .toList();
 }
+
+    
 
 public void logWorkout(Long workoutId) {
     User currentUser = userService.getAuthenticatedUser();

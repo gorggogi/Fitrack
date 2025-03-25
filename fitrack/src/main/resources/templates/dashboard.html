@@ -68,6 +68,7 @@
     <span class="status">Pending</span>
 </div>
 
+
             </div>            
             <div class="section-card">
                 <div class="section-header">
@@ -128,15 +129,20 @@
     </div>
 
     <!-- Workout Details Modal -->
-<div id="workoutModal" class="modal" style="display: none;">
+   <!-- ✅ Workout Details Modal -->
+<!-- ✅ Workout Details Modal -->
+<div id="workoutModal" class="modal" style="display:none;">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="document.getElementById('workoutModal').style.display='none'">&times;</span>
         <h2 id="modalWorkoutName"></h2>
-        <p><strong>Duration:</strong> <span id="modalDuration"></span> mins</p>
-        <p><strong>Burned Calories:</strong> <span id="modalCalories"></span> kcal</p>
-        <button onclick="markAsDone()" class="btn btn-success">Mark as Done</button>
+        <p>Duration: <span id="modalWorkoutDuration"></span></p>
+        <p>Calories: <span id="modalWorkoutCalories"></span></p>
+        <button id="markAsDoneButton">Mark as Done</button>
     </div>
 </div>
+
+
+    
 
 </body>
 </html>
