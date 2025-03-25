@@ -146,5 +146,10 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     
         return "dashboard";
     }
+
+    @GetMapping("/user/addworkout")
+    public String workout() {
+        return "addworkout";
+    }
 }
     
