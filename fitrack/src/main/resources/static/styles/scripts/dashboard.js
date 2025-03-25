@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.log("🚀 Reloading page...");
                     location.reload();
                 }
-            }, 500); 
+            }); 
 
             modal.style.display = "none";
         })
