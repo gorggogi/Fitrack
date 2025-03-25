@@ -28,7 +28,7 @@ public class WorkoutController {
 public String saveWorkout(@RequestParam(value = "repeatDays", required = false) List<String> repeatDays, 
                           @ModelAttribute Workout workout) {
     if (repeatDays == null || repeatDays.isEmpty()) {
-        repeatDays = List.of("Daily"); // Default to daily if none selected
+        repeatDays = List.of("Daily"); 
     }
     workout.setRepeatDays(repeatDays);
     workoutService.saveWorkout(workout);  
@@ -39,7 +39,7 @@ public String saveWorkout(@RequestParam(value = "repeatDays", required = false) 
 public ResponseEntity<Map<String, Object>> markWorkoutAsDone(@PathVariable Long id) {
     workoutService.logWorkout(id);
 
-    // Return JSON response
+
     Map<String, Object> response = new HashMap<>();
     response.put("message", "Workout logged successfully!");
     response.put("workoutId", id);

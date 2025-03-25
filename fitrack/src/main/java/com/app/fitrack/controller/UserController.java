@@ -139,7 +139,7 @@ public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model 
 
     String fullName = user.getFirstName() + " " + user.getLastName();
     
-    // Fetch meals and workouts for today
+
     List<Meal> meals = mealService.getMealsForCurrentDate();
     List<Workout> workouts = workoutService.getWorkoutsForCurrentDate();
 
@@ -150,7 +150,7 @@ public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model 
     model.addAttribute("workouts", workouts);
     model.addAttribute("totalCalories", totalCalories);
     model.addAttribute("fullName", fullName);
-    
+
     if (meals.isEmpty()) {
         model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
     }

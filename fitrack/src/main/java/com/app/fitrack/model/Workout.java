@@ -26,7 +26,7 @@ public class Workout {
     @Column(nullable = false)
     private double burnedCalories;
 
-    @ElementCollection(fetch = FetchType.EAGER)  // Allows storing multiple days
+    @ElementCollection(fetch = FetchType.EAGER)  
     @CollectionTable(name = "workout_repeat_days", joinColumns = @JoinColumn(name = "workout_id"))
     @Column(name = "repeat_day")
     private List<String> repeatDays;  
@@ -36,7 +36,7 @@ public class Workout {
 
     public Workout() {
     this.dateTime = LocalDateTime.now();
-    this.repeatDays = new ArrayList<>(List.of("Daily"));  // Make list modifiable
+    this.repeatDays = new ArrayList<>(List.of("Daily")); 
 }
   
     public Long getId() {

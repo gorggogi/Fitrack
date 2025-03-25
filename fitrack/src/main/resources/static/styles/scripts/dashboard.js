@@ -15,31 +15,21 @@ document.addEventListener("click", function(event) {
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("workoutModal");
     const markAsDoneButton = document.getElementById("markAsDoneButton");
-    const placeholder = document.getElementById("workoutPlaceholder");
 
-    // ✅ Ensure modal and button exist before using them
     if (!modal || !markAsDoneButton) {
         console.error("⚠️ Modal or Mark as Done button not found.");
         return;
     }
 
-    // ✅ Attach click event to all workout items dynamically
+
     document.querySelectorAll(".workout-item").forEach(item => {
-        item.addEventListener("click", function () {
-            openModal(this);
-        });
+        item.addEventListener("click", () => openModal(item));
     });
 
-    // ✅ Mark Workout as Done
+
     markAsDoneButton.addEventListener("click", function () {
         const workoutId = this.getAttribute("data-id");
-        if (!workoutId) {
-            console.error("⚠️ Workout ID not found!");
-            return;
-        }
-
-        // ✅ Immediately close modal (before network request)
-        modal.style.display = "none";
+        if (!workoutId) return console.error("⚠️ Workout ID not found!");
 
         fetch(`/user/workouts/${workoutId}/mark-done`, {
             method: "POST",
@@ -48,58 +38,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 "X-CSRF-TOKEN": document.querySelector("input[name=_csrf]")?.value || ""
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.text();  // ✅ Expecting plain text response
-        })
+        .then(response => response.ok ? response.text() : Promise.reject(`HTTP error: ${response.status}`))
         .then(() => {
-            console.log("✅ Workout logged successfully!");
+            document.querySelector(`.workout-item[data-id="${workoutId}"]`)?.remove();
 
-            // ✅ Remove workout from dashboard
-            const workoutElement = document.querySelector(`.workout-item[data-id="${workoutId}"]`);
-            if (workoutElement) {
-                workoutElement.remove();
-            }
+            setTimeout(() => {
+                if (document.querySelectorAll(".workout-item").length === 0) {
+                    console.log("🚀 Reloading page...");
+                    location.reload();
+                }
+            }, 500); 
 
-            // ✅ Show placeholder only if no workouts are left
-            if (document.querySelectorAll(".workout-item").length === 0 && placeholder) {
-                placeholder.style.display = "block";
-            }
+            modal.style.display = "none";
         })
-        .catch(error => console.error("❌ Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Something went wrong. Please try again.");
+        });
     });
 
-    // ✅ Close modal when clicking outside
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    };
+
+    window.addEventListener("click", event => {
+        if (event.target === modal) modal.style.display = "none";
+    });
 });
 
-// ✅ Function to open the modal and display workout details
+
 function openModal(workoutElement) {
     const modal = document.getElementById("workoutModal");
-    if (!modal) {
-        console.error("⚠️ Workout modal not found.");
-        return;
-    }
+    if (!modal) return console.error("⚠️ Workout modal not found.");
 
-    const workoutId = workoutElement.getAttribute("data-id");
-    const workoutName = workoutElement.getAttribute("data-name");
-    const duration = workoutElement.getAttribute("data-duration");
-    const calories = workoutElement.getAttribute("data-calories");
+    document.getElementById("modalWorkoutName").innerText = workoutElement.getAttribute("data-name");
+    document.getElementById("modalWorkoutDuration").innerText = workoutElement.getAttribute("data-duration") + " mins";
+    document.getElementById("modalWorkoutCalories").innerText = workoutElement.getAttribute("data-calories") + " cal";
 
-    document.getElementById("modalWorkoutName").innerText = workoutName;
-    document.getElementById("modalWorkoutDuration").innerText = duration + " mins";
-    document.getElementById("modalWorkoutCalories").innerText = calories + " cal";
-
-    const markAsDoneButton = document.getElementById("markAsDoneButton");
-    if (markAsDoneButton) {
-        markAsDoneButton.setAttribute("data-id", workoutId);
-    }
-
+    document.getElementById("markAsDoneButton").setAttribute("data-id", workoutElement.getAttribute("data-id"));
     modal.style.display = "block";
 }
+

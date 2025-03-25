@@ -54,7 +54,7 @@
                 </div>
             
                 <div th:if="${#lists.isEmpty(workouts)}" class="placeholder-message">
-                    <p th:text="${workoutPlaceholder}"></p>
+                    <p th:text="${workoutPlaceholder}" ></p>
                 </div>
             
                 <div th:each="workout : ${workouts}" class="workout-item"
@@ -140,9 +140,5 @@
         <button id="markAsDoneButton">Mark as Done</button>
     </div>
 </div>
-
-
-    
-
 </body>
 </html>
