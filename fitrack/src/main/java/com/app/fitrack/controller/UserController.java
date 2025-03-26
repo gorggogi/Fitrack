@@ -161,7 +161,7 @@ public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model 
     }
 
     if (workouts.isEmpty()) {
-        model.addAttribute("workoutPlaceholder", "No workouts logged today. Stay active!");
+        model.addAttribute("workoutPlaceholder", "No workouts scheduled today. Stay active!");
     }
 
     return "dashboard";
