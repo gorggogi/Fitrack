@@ -1,6 +1,5 @@
-
 body {
-    font-family: sans-serif;
+    font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
     display: flex;
     justify-content: center;
@@ -13,29 +12,32 @@ body {
 .form-container { 
     background-color: #fff;
     padding: 20px;
-    
-    
 }
 
 .flex-container {
-	background-color: #fff;
+    background-color: #fff;
     display: flex;
     flex-direction: column;
     width: 350px; 
     padding: 30px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Improved shadow */
     border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
 }
 
 
 h1 {
     text-align: center;
     margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
 }
 
 label {
     margin-bottom: 5px;
-    color: #555;
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 input[type="email"],
@@ -47,6 +49,7 @@ input[type="text"] {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box; 
+    transition: all 0.2s ease-in-out;
 }
 
 input[type="email"]:focus,
@@ -54,33 +57,111 @@ input[type="password"]:focus,
 input[type="text"]:focus { 
     border-color: #4CAF50;
     outline: none;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
+/* ✅ Style for Disabled Button */
 button {
     background-color: #4CAF50;
     color: white;
-    padding: 10px;
+    padding: 12px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     width: 100%; 
     margin-bottom: 10px;
     box-sizing: border-box; 
+    font-size: 16px;
+    font-weight: 500;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 button:hover {
     background-color: #45a049;
+    transform: scale(1.02);
+}
+
+/* ✅ Disabled Button Styling */
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 a {
     color: #4CAF50;
     text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
 }
 
 a:hover {
     text-decoration: underline;
+    color: #388E3C;
 }
 
+/* ✅ Terms Checkbox Styling */
+.terms-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}
 
+.terms-container input {
+    margin-right: 8px;
+}
 
+.terms-page-container {
+    background-color: #fff;
+    width: 80%;
+    max-width: 500px; /* Reduced width for a compact look */
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
+    text-align: left;
+}
+
+.terms-page-container h1 {
+    text-align: center;
+    color: #000000;
+    font-size: 22px; /* Slightly smaller font size */
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.terms-page-container h2 {
+    color: #000000;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+.terms-page-container p {
+    line-height: 1.6;
+    color: #333;
+    font-size: 14px;
+}
+
+.back-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.back-button {
+    background-color: #45a049;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+    transform: scale(1.03);
+}

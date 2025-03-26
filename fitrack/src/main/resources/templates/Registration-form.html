@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Sign up</title>
     <link rel="stylesheet" href="/styles/Join.css">
+    <script defer src="/styles/scripts/signup.js"></script> <!-- ✅ JavaScript -->
 </head>
 <body>
 	<div class="flex-container">
 	<h1>Create your account</h1>
     <div class="form-container">
-        <form th:action="@{/user/save}" method="post" th:object = "${user}">
+        <form th:action="@{/user/save}" method="post" th:object="${user}">
             <label>First Name:</label>
             <input type="text" th:field="*{firstName}" name="firstname" required>
             <label>Last Name:</label>
@@ -18,13 +19,22 @@
             <input type="email" th:field="*{email}" name="email" required>
             <br>
             <label>Create a strong password</label>
-            <input type="password" th:field= "*{password}" name="password" required>  <br>
+            <input type="password" th:field="*{password}" name="password" required>  
+            <br>
             <label>Confirm Password</label>
-            <input type="password" th:field="*{confirmPassword}" name="confirmPassword" required> <br>
+            <input type="password" th:field="*{confirmPassword}" name="confirmPassword" required> 
+            <br>
 
+            <div>
+                <input type="checkbox" id="termsCheckbox">
+                <label for="termsCheckbox">I accept the <a href="/user/terms">Terms and Conditions</a></label>
+            </div>
+
+ 
             <p th:if="${error}" th:text="${error}" style="color: red;" id="signup-error"></p>
-            <button type="submit">Sign up</button>
-            Already have an account? <a href="/user/login">Login here</a>
+            <button type="submit" id="signupButton" disabled>Sign up</button>
+
+            <p>Already have an account? <a href="/user/login">Login here</a></p>
         </form>
     </div>
     </div>

@@ -42,7 +42,7 @@ function addFoodItem() {
             <div class="form-group">
                 <label>Unit</label>
                 <select name="foodItems[${itemCount}].unit" class="form-control" required>
-                    <option value=" ">N/A</option>
+                    <option value=" ">" "</option>
                     <option value="g">Grams</option>
                     <option value="kg">Kilograms</option>
                     <option value="ml">Milliliters</option>

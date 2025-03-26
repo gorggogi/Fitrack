@@ -37,6 +37,11 @@ public class UserController {
         return "Success";
     }
 
+    @GetMapping("/user/terms")
+public String showTermsPage() {
+    return "terms";  
+}
+
     @GetMapping("/user/verify")
     public String showVerificationPage() {
         return "Verify";

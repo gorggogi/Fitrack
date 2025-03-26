@@ -43,6 +43,7 @@ public class SecurityConfig {
                 "/user/change-password**",
                 "/meals/estimate-calories",
                 "/user/saveworkout",
+                "/user/terms",
                 "/error**"
             ).permitAll()
             .requestMatchers("/meals").hasAnyRole("USER", "ADMIN") 

@@ -402,25 +402,24 @@ h1 {
 
 
 .food-item {
-    background: #f8f8f8;
+    background: #ffffff;
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
-    border: 1px solid #eee;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
 }
 
 
 .form-row {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1rem;
+    
     align-items: center;
-}
-
-.food-item {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border: 1px
 }
 
 button {
@@ -523,7 +522,7 @@ button.primary {
 }
 
 .modal {
-    display: none; /* Hidden by default */
+    display: none; 
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -550,7 +549,7 @@ button.primary {
 }
 
 .repeat-days input {
-    display: none; /* Hide default checkboxes */
+    display: none; 
 }
 
 .repeat-days label {
@@ -563,12 +562,12 @@ button.primary {
     border: 2px solid transparent;
 }
 
-/* 👇 Change color when hovered */
+
 .repeat-days label:hover {
     background: #e0e0e0;
 }
 
-/* 👇 Change color when checked */
+
 .repeat-days input:checked + label {
     background: #007bff;
     color: white;
