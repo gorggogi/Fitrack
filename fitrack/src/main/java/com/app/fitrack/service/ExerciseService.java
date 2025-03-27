@@ -1,8 +1,7 @@
 package com.app.fitrack.service;
 
 import com.app.fitrack.config.NutritionixConfig;
-import com.app.fitrack.model.MealFoodItem;
-import com.app.fitrack.model.FoodResponse;
+import com.app.fitrack.model.ExerciseResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
@@ -11,21 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-
-public class NutritionixService {
+public class ExerciseService {
 
     private final NutritionixConfig config;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public NutritionixService(NutritionixConfig config) {
+    public ExerciseService(NutritionixConfig config) {
         this.config = config;
     }
 
-    public int getCalories(MealFoodItem foodItem) {
+    public int getBurnedCalories(String workoutName, double duration) {
+        String query = duration + " minutes of " + workoutName;
 
-        String query = foodItem.getQuantity() + " " + (foodItem.getUnit()) + " of " + foodItem.getFoodItem();
-
-        String url = "https://trackapi.nutritionix.com/v2/natural/nutrients";
+        String url = "https://trackapi.nutritionix.com/v2/natural/exercise";
     
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -37,17 +34,16 @@ public class NutritionixService {
     
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
     
-        System.out.println("Sending API Request: " + body);
+        System.out.println("Sending Exercise API Request: " + body);
         
-        ResponseEntity<FoodResponse> response = restTemplate.postForEntity(url, entity, FoodResponse.class);
+        ResponseEntity<ExerciseResponse> response = restTemplate.postForEntity(url, entity, ExerciseResponse.class);
     
-        System.out.println("API Response: " + response.getBody());
+        System.out.println("Exercise API Response: " + response.getBody());
     
-        if (response.getBody() != null && !response.getBody().getFoods().isEmpty()) {
-            return (int) Math.round (response.getBody().getFoods().get(0).getNf_calories()) ;
+        if (response.getBody() != null && !response.getBody().getExercises().isEmpty()) {
+            return (int) Math.round(response.getBody().getExercises().get(0).getNf_calories());
         }
     
         return 0;
     }
-}
-    
+} 
