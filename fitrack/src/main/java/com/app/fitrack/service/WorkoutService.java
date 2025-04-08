@@ -84,4 +84,9 @@ public void logWorkout(Long workoutId) {
     workoutLogRepository.save(log);
 }
 
+public List<Workout> getWorkoutsForLast7Days(String email) {
+    LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+    return workoutRepository.findByUserEmailAndDateTimeAfter(email, sevenDaysAgo);
+}
+
 }

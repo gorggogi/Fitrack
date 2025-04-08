@@ -1,18 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="/styles/Join.css">
+    <style>
+        .profile-prompt {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
-
     <div class="flex-container">
         <h1>Login to your account</h1>
         <div class="form-container">
-
-            <p th:if="${message}" th:text="${message}" style="color: green;"></p>
-            <p th:if="${param.error}" style="color: red;">Invalid email or password.</p>
+            <div th:if="${showProfilePrompt}" class="profile-prompt">
+                <p th:text="${message}">Message</p>
+                <p>After logging in, you'll be prompted to complete your profile information.</p>
+            </div>
+            <p th:if="${message != null and !showProfilePrompt}" th:text="${message}" style="color: green;">Message</p>
+            <p th:if="${param.error != null}" style="color: red;">Invalid email or password.</p>
             <form th:action="@{/user/login}" method="post">
                 <label>Email:</label>
                 <input type="email" name="username" required> 

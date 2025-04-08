@@ -18,6 +18,8 @@ import com.app.fitrack.service.WorkoutService;
 import com.app.fitrack.service.DuplicateEmailException;
 import com.app.fitrack.service.MealService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 
 @Controller
@@ -56,6 +58,9 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     
     @GetMapping("/user/login")
     public String showLoginPage(Model model) {
+        if (model.containsAttribute("message")) {
+            model.addAttribute("showProfilePrompt", true);
+        }
         return "Login";  
     }
 
@@ -96,7 +101,7 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         String result = userService.verifyUser(code); 
 
         if (result.equals("Email successfully verified!")) { 
-            redi.addFlashAttribute("message", result);
+            redi.addFlashAttribute("message", "Email verified successfully! Please log in to complete your profile.");
             return "redirect:/user/login";
         }
 
@@ -155,6 +160,7 @@ public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model 
     model.addAttribute("workouts", workouts);
     model.addAttribute("totalCalories", totalCalories);
     model.addAttribute("fullName", fullName);
+    model.addAttribute("user", user);
 
     if (meals.isEmpty()) {
         model.addAttribute("placeholderMessage", "You haven't had any meals today yet. Grab something to eat!");
@@ -167,6 +173,80 @@ public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model 
     return "dashboard";
 }
 
+@GetMapping("/user/profile")
+public String showProfilePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    String email = userDetails.getUsername();
+    User user = userService.findByEmail(email);
+    model.addAttribute("user", user);
+    return "profile";
+}
+
+@PostMapping("/user/profile/create")
+public String createProfile(@AuthenticationPrincipal UserDetails userDetails,
+                          @RequestParam(required = false) Integer age,
+                          @RequestParam(required = false) String gender,
+                          @RequestParam(required = false) Double height,
+                          @RequestParam(required = false) Double weight,
+                          RedirectAttributes redi) {
+    String email = userDetails.getUsername();
+    String result = userService.createUserProfile(email, age, gender, height, weight);
+    redi.addFlashAttribute("successMessage", "Profile created successfully!");
+    return "redirect:/user/dashboard";
+}
+
+@PostMapping("/user/profile/update")
+public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
+                          @RequestParam(required = false) Integer age,
+                          @RequestParam(required = false) String gender,
+                          @RequestParam(required = false) Double height,
+                          @RequestParam(required = false) Double weight,
+                          RedirectAttributes redi) {
+    String email = userDetails.getUsername();
+    User user = userService.findByEmail(email);
+    
+    if (user != null) {
+        user.setAge(age);
+        user.setGender(gender);
+        user.setHeight(height);
+        user.setWeight(weight);
+        userService.createUserProfile(email, age, gender, height, weight);
+        redi.addFlashAttribute("successMessage", "Profile updated successfully!");
+    }
+    
+    return "redirect:/user/dashboard";
+}
+
+@GetMapping("/user/analytics")
+public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    String email = userDetails.getUsername();
+    User user = userService.findByEmail(email);
+    
+    // Get workout data for the last 7 days
+    List<Workout> workouts = workoutService.getWorkoutsForLast7Days(email);
+    
+    // Initialize arrays for chart data
+    int[] workoutCounts = new int[7];
+    int[] caloriesBurned = new int[7];
+    
+    // Calculate workout frequency and calories burned for each day
+    for (Workout workout : workouts) {
+        LocalDate workoutDate = workout.getDateTime().toLocalDate();
+        LocalDate today = LocalDate.now();
+        int daysAgo = (int) ChronoUnit.DAYS.between(workoutDate, today);
+        
+        if (daysAgo < 7) {
+            int index = 6 - daysAgo; // 0 = today, 6 = 6 days ago
+            workoutCounts[index]++;
+            caloriesBurned[index] += workout.getBurnedCalories();
+        }
+    }
+    
+    model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
+    model.addAttribute("workoutData", workoutCounts);
+    model.addAttribute("caloriesData", caloriesBurned);
+    
+    return "analytics";
+}
 
 }
     

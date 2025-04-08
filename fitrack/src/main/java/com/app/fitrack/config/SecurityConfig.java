@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -19,7 +20,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, 
                                                    @Qualifier("customAuthenticationFailureHandler") 
-                                                   AuthenticationFailureHandler failureHandler) throws Exception {
+                                                   AuthenticationFailureHandler failureHandler,
+                                                   CustomAuthenticationSuccessHandler successHandler) throws Exception {
         return http
             .csrf(csrf -> csrf
             .ignoringRequestMatchers("/user/verify-code", "/meals/estimate-calories") 
@@ -44,6 +46,8 @@ public class SecurityConfig {
                 "/meals/estimate-calories",
                 "/user/saveworkout",
                 "/user/terms",
+                "/user/profile",
+                "/user/profile/create",
                 "/error**"
             ).permitAll()
             .requestMatchers("/meals").hasAnyRole("USER", "ADMIN") 
@@ -52,7 +56,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/user/login")
                 .loginProcessingUrl("/user/login")
-                .defaultSuccessUrl("/user/dashboard", true)
+                .successHandler(successHandler)
                 .failureHandler(failureHandler)  
                 .permitAll()
             )

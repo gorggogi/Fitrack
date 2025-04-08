@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/Fitrack.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Fitness Analytics</title>
+</head>
+<body>
+    <div class="container">
+        <header class="navbar">
+            <div class="logo-container">
+                <div class="logo"></div>
+                <span class="site-name">Fitrack</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/user/dashboard">Dashboard</a></li>
+                <li><a href="/user/analytics" class="active">Analytics</a></li>
+                <li><a href="#">Workouts</a></li>
+                <li><a href="#">Meals</a></li>
+            </ul>
+            <div class="user-info">
+                <span th:text="${fullName}" class="user-name"></span>
+                <div class="user-icon" onclick="toggleDropdown()"></div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <input type="submit" value="Logout" />
+                    </form>
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="analytics-container">
+            <h1 class="analytics-title">Fitness Analytics</h1>
+            
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h2>Workout Frequency</h2>
+                    <canvas id="workoutFrequencyChart"></canvas>
+                </div>
+                
+                <div class="analytics-card">
+                    <h2>Calories Burned</h2>
+                    <canvas id="caloriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const workoutData = /*[[${workoutData}]]*/ [];
+        const caloriesData = /*[[${caloriesData}]]*/ [];
+        
+        // Workout Frequency Chart
+        const workoutCtx = document.getElementById('workoutFrequencyChart').getContext('2d');
+        new Chart(workoutCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Workouts',
+                    data: workoutData,
+                    backgroundColor: 'rgba(0, 122, 255, 0.5)',
+                    borderColor: 'rgba(0, 122, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        // Calories Chart
+        const caloriesCtx = document.getElementById('caloriesChart').getContext('2d');
+        new Chart(caloriesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Calories Burned',
+                    data: caloriesData,
+                    fill: false,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

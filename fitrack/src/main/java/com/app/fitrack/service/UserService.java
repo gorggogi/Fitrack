@@ -146,4 +146,20 @@ public String resetPassword(String token, String newPassword) {
         emailService.sendVerificationEmail(user);
         return "A new verification code has been sent to your email.";
     }
+
+    @Transactional
+    public String createUserProfile(String email, Integer age, String gender, Double height, Double weight) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return "User not found.";
+        }
+
+        if (age != null) user.setAge(age);
+        if (gender != null) user.setGender(gender);
+        if (height != null) user.setHeight(height);
+        if (weight != null) user.setWeight(weight);
+
+        userRepository.save(user);
+        return "Profile created successfully.";
+    }
 }

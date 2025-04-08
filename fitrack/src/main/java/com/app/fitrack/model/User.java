@@ -38,6 +38,18 @@ public class User {
     @Column(nullable = false)
     private boolean verified = false;  
 
+    @Column(nullable = true)
+    private Integer age;
+
+    @Column(nullable = true, length = 10)
+    private String gender;
+
+    @Column(nullable = true)
+    private Double height; // in centimeters
+
+    @Column(nullable = true)
+    private Double weight; // in kilograms
+
     @Transient
     private String confirmPassword;
 
@@ -95,6 +107,38 @@ public class User {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Double getHeight() {
+        return height;
+    }
+
+    public void setHeight(Double height) {
+        this.height = height;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 
     public String getConfirmPassword() {
