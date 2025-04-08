@@ -7,12 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface WorkoutLogRepository extends JpaRepository<WorkoutLog, Long> {
     @Query("SELECT COUNT(w) > 0 FROM WorkoutLog w WHERE w.user = :user AND w.workoutName = :workoutName AND DATE(w.completedAt) = :date")
-boolean existsByUserAndWorkoutNameAndDate(@Param("user") User user, 
-                                          @Param("workoutName") String workoutName, 
-                                          @Param("date") LocalDate date);
+    boolean existsByUserAndWorkoutNameAndDate(@Param("user") User user, 
+                                              @Param("workoutName") String workoutName, 
+                                              @Param("date") LocalDate date);
 
+    List<WorkoutLog> findByUserAndCompletedAtBetween(User user, LocalDateTime start, LocalDateTime end);
 }

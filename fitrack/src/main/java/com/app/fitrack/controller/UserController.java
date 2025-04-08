@@ -25,6 +25,10 @@ import com.app.fitrack.service.BodyMeasurementService;
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.time.format.DateTimeFormatter;
 
 
 @Controller
@@ -255,27 +259,77 @@ public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Mo
         }
     }
     
-    // Get body measurements
-    List<BodyMeasurement> measurements = bodyMeasurementService.getMeasurementsForUser(user);
-    BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0); // Still get latest from descending list
+    // Get body measurements (descending order initially)
+    List<BodyMeasurement> measurementsDesc = bodyMeasurementService.getMeasurementsForUser(user);
+    BodyMeasurement latestMeasurement = measurementsDesc.isEmpty() ? null : measurementsDesc.get(0);
 
-    // Reverse the list for chronological charting
-    java.util.Collections.reverse(measurements); 
+    // Create a copy and reverse for chronological charting
+    List<BodyMeasurement> measurementsChronological = new ArrayList<>(measurementsDesc);
+    java.util.Collections.reverse(measurementsChronological);
 
-    // Calculate progress
+    // Calculate progress (uses descending list internally)
     double weightProgress = bodyMeasurementService.calculateProgress(user, "weight");
-    double bmiProgress = bodyMeasurementService.calculateProgress(user, "bmi"); // Get BMI progress
-    
+    double bmiProgress = bodyMeasurementService.calculateProgress(user, "bmi");
+
+    // --- Start Projection Calculation ---
+    List<Map<String, Object>> projectionData = new ArrayList<>();
+    final int PROJECTION_DAYS = 14; // Project for 2 weeks
+    final double KCAL_PER_KG = 7700.0; // Approx kcal deficit/surplus for 1kg change
+    final double DEFAULT_ACTIVITY_FACTOR = 1.725; // Very active
+    final int AVG_PERIOD_DAYS = 7; // Use last 7 days for averages
+
+    if (latestMeasurement != null) { // Need a starting point for projection
+        double tdee = userService.calculateTDEE(user, DEFAULT_ACTIVITY_FACTOR);
+        double avgIntake = mealService.getAverageDailyCalories(user, AVG_PERIOD_DAYS);
+        double avgExerciseBurn = workoutService.getAverageDailyExerciseCalories(user, AVG_PERIOD_DAYS);
+        
+        logger.info("[showAnalytics] TDEE: {}, Avg Intake: {}, Avg Exercise Burn: {}", tdee, avgIntake, avgExerciseBurn);
+
+        if (tdee > 0) { // Avoid division by zero or projecting if TDEE is unknown
+            double dailyBalance = avgIntake - (tdee + avgExerciseBurn);
+            double dailyWeightChangeKg = dailyBalance / KCAL_PER_KG;
+            
+            logger.info("[showAnalytics] Daily Balance: {} kcal, Daily Weight Change: {} kg", dailyBalance, dailyWeightChangeKg);
+
+            double currentWeight = latestMeasurement.getWeight();
+            LocalDateTime currentDate = latestMeasurement.getDateTime();
+
+            // Add the latest actual point to projection series start
+            Map<String, Object> startPoint = new HashMap<>();
+            startPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+            startPoint.put("weight", currentWeight);
+            projectionData.add(startPoint);
+
+            for (int i = 1; i <= PROJECTION_DAYS; i++) {
+                currentDate = currentDate.plusDays(1);
+                currentWeight += dailyWeightChangeKg;
+                
+                Map<String, Object> projectedPoint = new HashMap<>();
+                projectedPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+                 // Format weight to 1 decimal place for consistency
+                projectedPoint.put("weight", Math.round(currentWeight * 10.0) / 10.0); 
+                projectionData.add(projectedPoint);
+            }
+             logger.info("[showAnalytics] Generated {} projection points.", projectionData.size());
+        } else {
+            logger.warn("[showAnalytics] Cannot calculate projection because TDEE is zero or invalid.");
+        }
+    } else {
+        logger.warn("[showAnalytics] Cannot calculate projection because there are no measurements.");
+    }
+    // --- End Projection Calculation ---
+
     // Add all attributes to the model
     model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
     model.addAttribute("workoutData", workoutCounts);
     model.addAttribute("caloriesData", caloriesBurned);
-    model.addAttribute("measurements", measurements); // Pass the reversed list
+    model.addAttribute("measurements", measurementsChronological); // Pass the chronological list for chart
     model.addAttribute("latestMeasurement", latestMeasurement); // Keep latest for display
     model.addAttribute("weightProgress", weightProgress);
-    model.addAttribute("bmiProgress", bmiProgress); // Add BMI progress to model
-    model.addAttribute("user", user); // Pass the updated user object
+    model.addAttribute("bmiProgress", bmiProgress);
+    model.addAttribute("user", user); 
     model.addAttribute("bodyMeasurementService", bodyMeasurementService);
+    model.addAttribute("projectionData", projectionData); // Add projection data
     
     return "analytics";
 }

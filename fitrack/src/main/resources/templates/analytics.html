@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/Fitrack.css">
+    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Moment.js and adapter REMOVED -->
     <title>Fitness Analytics</title>
 </head>
 <body>
@@ -95,6 +97,7 @@
         const workoutData = /*[[${workoutData}]]*/ [];
         const caloriesData = /*[[${caloriesData}]]*/ [];
         const bodyMeasurements = /*[[${measurements}]]*/ [];
+        const projectionDataRaw = /*[[${projectionData}]]*/ [];
         
         // Workout Frequency Chart
         const workoutCtx = document.getElementById('workoutFrequencyChart').getContext('2d');
@@ -149,29 +152,83 @@
 
         // Body Composition Chart
         const bodyCtx = document.getElementById('bodyCompositionChart').getContext('2d');
-        const dates = bodyMeasurements.map(m => new Date(m.dateTime).toLocaleDateString());
-        const weights = bodyMeasurements.map(m => m.weight);
-        const bmi = bodyMeasurements.map(m => {
+        
+        // --- Prepare Data for Chart (Sequential Style) --- 
+        const dateOptions = { month: 'short', day: 'numeric' }; // Format for labels
+
+        // Actual measurements data
+        const actualLabels = bodyMeasurements.map(m => new Date(m.dateTime).toLocaleDateString('en-US', dateOptions));
+        const actualWeights = bodyMeasurements.map(m => m.weight);
+        const actualBmi = bodyMeasurements.map(m => {
+            if (!m.user || !m.user.height || m.user.height <= 0 || m.weight == null) return null; 
             const heightInMeters = m.user.height / 100;
             return m.weight / (heightInMeters * heightInMeters);
-        });
+        }); // Keep nulls here so data arrays align
 
+        // Projection data
+        let lastActualDate = bodyMeasurements.length > 0 ? new Date(bodyMeasurements[bodyMeasurements.length - 1].dateTime) : new Date();
+        const projectionLabels = [];
+        const projectionWeights = [];
+
+        if (projectionDataRaw.length > 0) {
+            const rawProjectionWeights = projectionDataRaw.map(p => p.weight);
+
+            // Create projection labels, starting from the day after the last measurement
+            // Note: Date object manipulation modifies the object in place
+            let currentDateForLabel = new Date(lastActualDate.getTime()); // Clone date for label generation
+            for(let i = 0; i < projectionDataRaw.length; i++) {
+                 // We need labels for the *projected* days, including the first projection day which aligns with the last actual day visually
+                 // Let's generate labels based on the raw projection dates from backend
+                 // projectionLabels.push(new Date(projectionDataRaw[i].date + 'T00:00:00').toLocaleDateString('en-US', dateOptions));
+                 // Correction: Generate labels sequentially starting *after* last actual date for the axis
+                 if (i > 0) { // Start adding labels from the day *after* the last actual measurement
+                     currentDateForLabel.setDate(currentDateForLabel.getDate() + 1);
+                     projectionLabels.push(currentDateForLabel.toLocaleDateString('en-US', dateOptions));
+                 }
+            }
+
+            // Pad actual data with nulls to align graph points
+            const paddingLength = actualLabels.length -1 ; 
+            const paddedProjectionWeights = Array(paddingLength).fill(null).concat(rawProjectionWeights);
+             projectionWeights.push(...paddedProjectionWeights);
+        }
+        
+        // Combine labels - projectionLabels now contains labels for days *after* the last measurement
+        const combinedLabels = actualLabels.concat(projectionLabels); 
+
+        
+        // --- Create Chart --- 
         new Chart(bodyCtx, {
             type: 'line',
             data: {
-                labels: dates,
+                labels: combinedLabels, // Use the combined labels array
                 datasets: [
                     {
                         label: 'Weight (kg)',
-                        data: weights,
+                        data: actualWeights,
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        yAxisID: 'y'
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        yAxisID: 'y',
+                        spanGaps: false 
                     },
                     {
                         label: 'BMI',
-                        data: bmi,
+                        data: actualBmi,
                         borderColor: 'rgba(255, 159, 64, 1)',
-                        yAxisID: 'y2'
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        yAxisID: 'y2',
+                        spanGaps: false
+                    },
+                    {
+                        label: 'Projected Weight (kg)',
+                        data: projectionWeights, // Use padded data
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderDash: [5, 5], 
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        yAxisID: 'y',
+                        fill: false,
+                        pointRadius: 2,
+                        spanGaps: true // Connect projected points
                     }
                 ]
             },
@@ -181,7 +238,26 @@
                     mode: 'index',
                     intersect: false,
                 },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Body Composition Trends & Projection'
+                    },
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
                 scales: {
+                    x: { // Default category/linear axis
+                       title: {
+                           display: true,
+                           text: 'Measurement Sequence / Projection'
+                       }
+                    },
                     y: {
                         type: 'linear',
                         display: true,
@@ -200,7 +276,7 @@
                             text: 'BMI'
                         },
                         grid: {
-                            drawOnChartArea: false
+                            drawOnChartArea: false 
                         }
                     }
                 }

@@ -167,4 +167,39 @@ public String resetPassword(String token, String newPassword) {
     public User saveUser(User user) {
         return userRepository.save(user);
     }
+
+    public double calculateBMR(User user) {
+        if (user == null || user.getWeight() == null || user.getHeight() == null || user.getAge() == null || user.getGender() == null) {
+            // Log this? Return 0 or throw exception?
+            // Returning 0 for now, assuming TDEE calculation will handle it.
+            return 0.0; 
+        }
+
+        double weight = user.getWeight(); // kg
+        double height = user.getHeight(); // cm
+        int age = user.getAge(); // years
+        String gender = user.getGender();
+
+        double bmr;
+        if ("Male".equalsIgnoreCase(gender)) {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+        } else if ("Female".equalsIgnoreCase(gender)) {
+            bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+        } else {
+            // Handle "Other" or unspecified - perhaps average the male/female results or use a unisex formula?
+            // For now, averaging male and female as a rough estimate
+            double bmrMale = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+            double bmrFemale = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+            bmr = (bmrMale + bmrFemale) / 2.0;
+        }
+        return bmr > 0 ? bmr : 0.0; // Ensure BMR is not negative
+    }
+
+    public double calculateTDEE(User user, double activityFactor) {
+        double bmr = calculateBMR(user);
+        if (bmr <= 0) {
+            return 0.0; // Cannot calculate TDEE without a valid BMR
+        }
+        return bmr * activityFactor;
+    }
 }
