@@ -162,4 +162,9 @@ public String resetPassword(String token, String newPassword) {
         userRepository.save(user);
         return "Profile created successfully.";
     }
+
+    // Add a general save method
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }

@@ -20,10 +20,16 @@ import com.app.fitrack.service.MealService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import com.app.fitrack.model.BodyMeasurement;
+import com.app.fitrack.service.BodyMeasurementService;
+import java.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Controller
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService; 
@@ -33,6 +39,9 @@ public class UserController {
 
     @Autowired
     private WorkoutService workoutService;
+
+    @Autowired
+    private BodyMeasurementService bodyMeasurementService;
 
     @GetMapping("/user/success")
     public String showSuccessPage() {
@@ -82,8 +91,6 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         try {
             if (!user.getPassword().equals(confirmPassword)) {
                 redi.addFlashAttribute("error", "Passwords do not match.");
-                redi.addFlashAttribute("user", user);
-                return "redirect:/user/new";
             }
 
             userService.registerUser(user); 
@@ -219,7 +226,14 @@ public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
 @GetMapping("/user/analytics")
 public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Model model) {
     String email = userDetails.getUsername();
+    logger.info("[showAnalytics] Request received for user email: {}", email);
     User user = userService.findByEmail(email);
+    
+    if (user == null) {
+        logger.warn("[showAnalytics] User not found for email: {}. Redirecting to login.", email);
+        return "redirect:/login";
+    }
+    logger.info("[showAnalytics] User fetched. Weight from User object: {}", user.getWeight());
     
     // Get workout data for the last 7 days
     List<Workout> workouts = workoutService.getWorkoutsForLast7Days(email);
@@ -241,11 +255,75 @@ public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Mo
         }
     }
     
+    // Get body measurements
+    List<BodyMeasurement> measurements = bodyMeasurementService.getMeasurementsForUser(user);
+    BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0); // Still get latest from descending list
+
+    // Reverse the list for chronological charting
+    java.util.Collections.reverse(measurements); 
+
+    // Calculate progress
+    double weightProgress = bodyMeasurementService.calculateProgress(user, "weight");
+    double bmiProgress = bodyMeasurementService.calculateProgress(user, "bmi"); // Get BMI progress
+    
+    // Add all attributes to the model
     model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
     model.addAttribute("workoutData", workoutCounts);
     model.addAttribute("caloriesData", caloriesBurned);
+    model.addAttribute("measurements", measurements); // Pass the reversed list
+    model.addAttribute("latestMeasurement", latestMeasurement); // Keep latest for display
+    model.addAttribute("weightProgress", weightProgress);
+    model.addAttribute("bmiProgress", bmiProgress); // Add BMI progress to model
+    model.addAttribute("user", user); // Pass the updated user object
+    model.addAttribute("bodyMeasurementService", bodyMeasurementService);
     
     return "analytics";
+}
+
+@GetMapping("/user/measurements")
+public String showMeasurementsForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    String email = userDetails.getUsername();
+    User user = userService.findByEmail(email);
+    model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
+    model.addAttribute("currentWeight", user.getWeight());
+    return "body-measurements";
+}
+
+@PostMapping("/user/measurements/save")
+public String saveMeasurements(@AuthenticationPrincipal UserDetails userDetails,
+                             @RequestParam Double weight,
+                             @RequestParam(required = false) String notes,
+                             RedirectAttributes redi) {
+    String email = userDetails.getUsername();
+    User user = userService.findByEmail(email);
+    logger.info("[saveMeasurements] User fetched. Current weight from User object: {}", user.getWeight());
+    
+    // Create and save the new measurement record
+    BodyMeasurement measurement = new BodyMeasurement();
+    measurement.setUser(user);
+    measurement.setDateTime(LocalDateTime.now());
+    measurement.setWeight(weight);
+    measurement.setNotes(notes);
+    bodyMeasurementService.saveMeasurement(measurement);
+
+    // Also update the main user profile weight
+    logger.info("[saveMeasurements] Updating User object weight to: {}", weight);
+    user.setWeight(weight);
+    try {
+        User savedUser = userService.saveUser(user); // Assuming a method like this exists in UserService
+        logger.info("[saveMeasurements] User saved via userService.saveUser. Weight on returned User object: {}", savedUser.getWeight());
+    } catch (Exception e) {
+        logger.error("[saveMeasurements] Error saving user via userService.saveUser", e);
+        // Decide how to handle error - maybe add error message to redi?
+    }
+    
+    // Optional: Re-fetch user to confirm DB state immediately after save (for debugging)
+    // User userAfterSave = userService.findByEmail(email);
+    // logger.info("[saveMeasurements] User re-fetched after save. Weight: {}", userAfterSave.getWeight());
+
+    redi.addFlashAttribute("successMessage", "Measurement saved successfully!");
+    logger.info("[saveMeasurements] Redirecting after saving measurement.");
+    return "redirect:/user/analytics"; // Redirect directly to analytics
 }
 
 }

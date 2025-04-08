@@ -46,6 +46,47 @@
                     <h2>Calories Burned</h2>
                     <canvas id="caloriesChart"></canvas>
                 </div>
+
+                <div class="analytics-card">
+                    <h2>Body Composition</h2>
+                    <div class="body-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Current Weight</span>
+                            <span class="stat-value" th:text="${user.weight != null ? user.weight + ' kg' : '--'}">--</span>
+                            <span class="stat-change" th:classappend="${weightProgress > 0 ? 'positive' : 'negative'}"
+                                  th:text="${weightProgress != 0 ? (weightProgress > 0 ? '+' : '') + weightProgress + ' kg' : ''}"></span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">BMI</span>
+                            <span class="stat-value" th:text="${user.weight != null && user.height != null ? #numbers.formatDecimal(bodyMeasurementService.calculateCurrentBMI(user), 1, 1) : '--'}">--</span>
+                            <span class="stat-category" th:text="${user.weight != null && user.height != null ? '(' + bodyMeasurementService.getBMICategory(bodyMeasurementService.calculateCurrentBMI(user)) + ')' : ''}"></span>
+                            <span class="stat-change" th:classappend="${bmiProgress > 0 ? 'positive' : 'negative'}"
+                                  th:text="${bmiProgress != 0 ? (bmiProgress > 0 ? '+' : '') + #numbers.formatDecimal(bmiProgress, 1, 1) : ''}"></span>
+                        </div>
+                    </div>
+                    <div class="add-measurement">
+                        <a href="/user/measurements" class="primary">Add New Measurement</a>
+                    </div>
+                    <canvas id="bodyCompositionChart"></canvas>
+                </div>
+
+                <div class="analytics-card">
+                    <h2>Progress Timeline</h2>
+                    <div class="timeline">
+                        <div th:each="measurement : ${measurements}" class="timeline-item">
+                            <div class="timeline-date" th:text="${#temporals.format(measurement.dateTime, 'MMM dd')}"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-metric">
+                                    <span>Weight:</span>
+                                    <span th:text="${measurement.weight} + ' kg'"></span>
+                                </div>
+                                <div th:if="${measurement.notes != null and not measurement.notes.isEmpty()}" class="timeline-notes">
+                                    <span th:text="${measurement.notes}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -53,6 +94,7 @@
     <script th:inline="javascript">
         const workoutData = /*[[${workoutData}]]*/ [];
         const caloriesData = /*[[${caloriesData}]]*/ [];
+        const bodyMeasurements = /*[[${measurements}]]*/ [];
         
         // Workout Frequency Chart
         const workoutCtx = document.getElementById('workoutFrequencyChart').getContext('2d');
@@ -100,6 +142,66 @@
                 scales: {
                     y: {
                         beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Body Composition Chart
+        const bodyCtx = document.getElementById('bodyCompositionChart').getContext('2d');
+        const dates = bodyMeasurements.map(m => new Date(m.dateTime).toLocaleDateString());
+        const weights = bodyMeasurements.map(m => m.weight);
+        const bmi = bodyMeasurements.map(m => {
+            const heightInMeters = m.user.height / 100;
+            return m.weight / (heightInMeters * heightInMeters);
+        });
+
+        new Chart(bodyCtx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'Weight (kg)',
+                        data: weights,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'BMI',
+                        data: bmi,
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        yAxisID: 'y2'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Weight (kg)'
+                        }
+                    },
+                    y2: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'BMI'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
                     }
                 }
             }
