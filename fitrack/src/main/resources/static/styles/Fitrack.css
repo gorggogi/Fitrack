@@ -864,3 +864,236 @@ button.primary {
     color: var(--error-color);
 }
 
+.recommendations-container {
+    margin-top: 1rem;
+}
+
+.recommendation-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.recommendation-section h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+.status-item, .projection-item, .protein-target {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 4px;
+}
+
+.status-label, .projection-label, .target-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.status-value, .projection-value, .target-value {
+    font-weight: 600;
+}
+
+.projection-value.positive {
+    color: #28a745;
+}
+
+.projection-value.negative {
+    color: #dc3545;
+}
+
+.recommendation-text {
+    padding: 0.8rem;
+    background: white;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+    color: #333;
+}
+
+.macronutrient-targets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.target-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.target-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.target-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.recommendation-text {
+    white-space: pre-line;
+    line-height: 1.6;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recommendation-text ul {
+    margin: 0.5rem 0;
+    padding-left: 1rem;
+}
+
+.recommendation-text li {
+    margin-bottom: 0.5rem;
+}
+
+.recommendation-section {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.recommendation-section h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.status-item, .projection-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.status-label, .projection-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.status-value, .projection-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.projection-value.positive {
+    color: #28a745;
+}
+
+.projection-value.negative {
+    color: #dc3545;
+}
+
+.body-composition-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.composition-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-timeline {
+    margin-top: 1rem;
+}
+
+.progress-timeline h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.timeline-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1rem;
+    padding: 0.8rem;
+    border-bottom: 1px solid #eee;
+}
+
+.timeline-item:last-child {
+    border-bottom: none;
+}
+
+.timeline-date {
+    font-weight: 500;
+    color: #666;
+}
+
+.timeline-weight {
+    font-weight: 600;
+    color: #333;
+}
+
+.timeline-notes {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Scrollbar styling for timeline */
+.timeline-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.timeline-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+

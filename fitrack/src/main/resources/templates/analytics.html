@@ -51,19 +51,20 @@
 
                 <div class="analytics-card">
                     <h2>Body Composition</h2>
-                    <div class="body-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Current Weight</span>
-                            <span class="stat-value" th:text="${currentUserWeight != null ? currentUserWeight + ' kg' : '--'}">--</span>
-                            <span class="stat-change" th:classappend="${weightProgress > 0 ? 'positive' : 'negative'}"
-                                  th:text="${weightProgress != 0 ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : ''}"></span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">BMI</span>
-                            <span class="stat-value" th:text="${currentBmiValue > 0 ? #numbers.formatDecimal(currentBmiValue, 1, 1) : '--'}">--</span>
-                            <span class="stat-category" th:text="${currentBmiValue > 0 ? '(' + currentBmiCategory + ')' : ''}"></span>
-                            <span class="stat-change" th:classappend="${bmiProgress > 0 ? 'positive' : 'negative'}"
-                                  th:text="${bmiProgress != 0 ? (bmiProgress > 0 ? '+' : '') + #numbers.formatDecimal(bmiProgress, 1, 1) : ''}"></span>
+                    <div class="body-composition-container">
+                        <div class="composition-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Current Weight:</span>
+                                <span class="stat-value" th:text="${currentUserWeight != null ? #numbers.formatDecimal(currentUserWeight, 1, 1) + ' kg' : '--'}">--</span>
+                                <span class="stat-change" th:classappend="${weightProgress > 0 ? 'positive' : 'negative'}"
+                                      th:text="${weightProgress != 0 ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : ''}">--</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">BMI:</span>
+                                <span class="stat-value" th:text="${currentBmiValue != null ? #numbers.formatDecimal(currentBmiValue, 1, 1) : '--'}">--</span>
+                                <span class="stat-category" th:text="${currentBmiCategory}">--</span>
+                            </div>
+        
                         </div>
                     </div>
                     <div class="add-measurement">
@@ -77,27 +78,75 @@
                         <label class="form-check-label" for="toggleProjection">Show Weight Projection</label>
                     </div>
                     <p class="chart-note" style="margin-top: 0.5rem;">Weight projection is an estimate based on recent activity and TDEE. Accuracy varies.</p>
+                    
+                    <div class="progress-timeline">
+                        <h3>Progress Timeline</h3>
+                        <div class="timeline-container">
+                            <div class="timeline-item" th:each="entry : ${timelineData}">
+                                <div class="timeline-date" th:text="${entry.date}">--</div>
+                                <div class="timeline-weight" th:text="${entry.weight + ' kg'}">--</div>
+                                <div class="timeline-notes" th:text="${entry.notes}">--</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="analytics-card">
-                    <h2>Progress Timeline</h2>
-                    <div class="timeline">
-                         <div th:if="${#lists.isEmpty(timelineData)}" class="placeholder-message">
-                            <p>No measurements recorded yet.</p>
-                         </div>
-                         <div th:each="entry : ${timelineData}" class="timeline-item">
-                            <div class="timeline-date" th:text="${entry.date}">Date</div>
-                            <div class="timeline-content">
-                                <div class="timeline-metric">
-                                    <span>Weight:</span>
-                                    <span th:text="${entry.weight != null ? #numbers.formatDecimal(entry.weight, 1, 1) + ' kg' : '--'}">Weight</span>
+                    <h2>Personalized Recommendations</h2>
+                    <div class="recommendations-container">
+                        <div class="recommendation-section">
+                            <h3>Current Status</h3>
+                            <div class="status-item">
+                                <span class="status-label">Average Daily Calories:</span>
+                                <span class="status-value" th:text="${avgDailyCalories != null ? #numbers.formatDecimal(avgDailyCalories, 0, 0) + ' kcal' : '--'}">--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Average Daily Exercise:</span>
+                                <span class="status-value" th:text="${avgDailyExercise != null ? #numbers.formatDecimal(avgDailyExercise, 0, 0) + ' kcal' : '--'}">--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Estimated TDEE:</span>
+                                <span class="status-value" th:text="${tdee != null ? #numbers.formatDecimal(tdee, 0, 0) + ' kcal' : '--'}">--</span>
+                            </div>
+                        </div>
+
+                        <div class="recommendation-section">
+                            <h3>Weight Change Projection</h3>
+                            <div class="projection-item" th:if="${weeklyWeightChange != null}">
+                                <span class="projection-label">Weekly Change:</span>
+                                <span class="projection-value" th:classappend="${weeklyWeightChange > 0 ? 'positive' : 'negative'}"
+                                      th:text="${weeklyWeightChange != 0 ? (weeklyWeightChange > 0 ? '+' : '') + #numbers.formatDecimal(weeklyWeightChange, 1, 1) + ' kg/week' : 'Stable'}">--</span>
+                            </div>
+                            <div class="recommendation-text" th:text="${weightRecommendation}">--</div>
+                        </div>
+
+                        <div class="recommendation-section">
+                            <h3>Nutrition Plan</h3>
+                            <div class="macronutrient-targets">
+                                <div class="target-item">
+                                    <span class="target-label">Protein:</span>
+                                    <span class="target-value" th:text="${proteinNeeds != null ? #numbers.formatDecimal(proteinNeeds, 0, 0) + ' g/day' : '--'}">--</span>
                                 </div>
-                                <div th:if="${entry.notes != null and not #strings.isEmpty(entry.notes)}" class="timeline-notes">
-                                    <span>Notes:</span>
-                                    <span th:text="${entry.notes}">Notes</span>
+                                <div class="target-item">
+                                    <span class="target-label">Carbohydrates:</span>
+                                    <span class="target-value" th:text="${carbNeeds != null ? #numbers.formatDecimal(carbNeeds, 0, 0) + ' g/day' : '--'}">--</span>
+                                </div>
+                                <div class="target-item">
+                                    <span class="target-label">Fats:</span>
+                                    <span class="target-value" th:text="${fatNeeds != null ? #numbers.formatDecimal(fatNeeds, 0, 0) + ' g/day' : '--'}">--</span>
+                                </div>
+                                <div class="target-item">
+                                    <span class="target-label">Water:</span>
+                                    <span class="target-value" th:text="${waterNeeds != null ? #numbers.formatDecimal(waterNeeds, 1, 1) + ' L/day' : '--'}">--</span>
                                 </div>
                             </div>
-                        </div> 
+                            <div class="recommendation-text" th:text="${nutritionRecommendation}">--</div>
+                        </div>
+
+                        <div class="recommendation-section">
+                            <h3>Exercise & Recovery</h3>
+                            <div class="recommendation-text" th:text="${exerciseRecommendation}">--</div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -262,7 +262,6 @@ public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Mo
         if (daysAgo >= 0 && daysAgo < 7) {
             int index = 6 - (int)daysAgo; // Map daysAgo (0-6) to index (6-0)
             workoutCounts[index]++;
-            // burnedCalories is a primitive double, cannot be null. Direct addition is fine.
             caloriesBurned[index] += log.getBurnedCalories(); 
         }
     }
@@ -284,45 +283,139 @@ public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Mo
     List<Map<String, Object>> projectionData = new ArrayList<>();
     final int PROJECTION_DAYS = 14; // Project for 2 weeks
     final double KCAL_PER_KG = 7700.0; // Approx kcal deficit/surplus for 1kg change
-    final double DEFAULT_ACTIVITY_FACTOR = 1.725; // Very active
     final int AVG_PERIOD_DAYS = 7; // Use last 7 days for averages
 
+    // Calculate averages and TDEE for recommendations
+    double avgDailyCalories = mealService.getAverageDailyCalories(user, AVG_PERIOD_DAYS);
+    double avgDailyExercise = workoutService.getAverageDailyExerciseCalories(user, AVG_PERIOD_DAYS);
+    double dynamicActivityFactor = userService.calculateDynamicActivityFactor(user, AVG_PERIOD_DAYS);
+    double tdee = userService.calculateTDEE(user, dynamicActivityFactor);
+    double dailyBalance = avgDailyCalories - (tdee + avgDailyExercise);
+    double weeklyWeightChange = (dailyBalance * 7) / KCAL_PER_KG;
+
+    // Generate recommendations
+    StringBuilder weightRecommendation = new StringBuilder();
+    if (weeklyWeightChange < -0.5) {
+        weightRecommendation.append("Rapid weight loss detected (>0.5 kg/week). Consider increasing calories by ")
+                          .append(Math.abs(Math.round(dailyBalance)))
+                          .append(" kcal for a safer rate.");
+    } else if (weeklyWeightChange < -0.1) {
+        weightRecommendation.append("Moderate weight loss detected. Current rate is sustainable.");
+    } else if (weeklyWeightChange > 0.5) {
+        weightRecommendation.append("Rapid weight gain detected (>0.5 kg/week). Consider reducing calories by ")
+                          .append(Math.round(dailyBalance))
+                          .append(" kcal for a slower gain.");
+    } else if (weeklyWeightChange > 0.1) {
+        weightRecommendation.append("Moderate weight gain detected. Current rate is sustainable.");
+    } else {
+        weightRecommendation.append("Weight appears stable.");
+    }
+
+    // Calculate protein needs
+    double proteinNeeds = latestMeasurement != null ? latestMeasurement.getWeight() * 1.6 : 0;
+    double carbNeeds = tdee * 0.4 / 4; // 40% of calories from carbs
+    double fatNeeds = tdee * 0.3 / 9; // 30% of calories from fat
+
+    // Enhanced nutrition recommendations
+    StringBuilder nutritionRecommendation = new StringBuilder();
+    if (avgDailyCalories < tdee * 0.8) {
+        nutritionRecommendation.append("Calorie intake is very low. Consider increasing by ")
+                             .append(Math.round(tdee * 0.2))
+                             .append(" kcal.\n");
+        nutritionRecommendation.append("• Add nutrient-dense foods like nuts, avocados, and whole grains\n");
+        nutritionRecommendation.append("• Include protein-rich snacks between meals\n");
+    } else if (avgDailyCalories > tdee * 1.2) {
+        nutritionRecommendation.append("Calorie intake is high. Consider reducing by ")
+                             .append(Math.round(avgDailyCalories - tdee * 1.2))
+                             .append(" kcal.\n");
+        nutritionRecommendation.append("• Focus on portion control and mindful eating\n");
+        nutritionRecommendation.append("• Choose high-volume, low-calorie foods like vegetables\n");
+    } else {
+        nutritionRecommendation.append("Current calorie intake is appropriate for your goals.\n");
+    }
+
+    // Add macronutrient targets
+    nutritionRecommendation.append("\nDaily Macronutrient Targets:\n");
+    nutritionRecommendation.append(String.format("• Protein: %.0f g (%.0f kcal)\n", proteinNeeds, proteinNeeds * 4));
+    nutritionRecommendation.append(String.format("• Carbohydrates: %.0f g (%.0f kcal)\n", carbNeeds, carbNeeds * 4));
+    nutritionRecommendation.append(String.format("• Fats: %.0f g (%.0f kcal)\n", fatNeeds, fatNeeds * 9));
+
+    // Add meal timing recommendations
+    nutritionRecommendation.append("\nMeal Timing Recommendations:\n");
+    if (avgDailyExercise > 300) {
+        nutritionRecommendation.append("• Consider pre-workout snack 1-2 hours before exercise\n");
+        nutritionRecommendation.append("• Post-workout meal within 30-60 minutes of exercise\n");
+    }
+    nutritionRecommendation.append("• Space meals 3-4 hours apart\n");
+    nutritionRecommendation.append("• Include protein in each meal\n");
+
+    // Add hydration recommendation
+    double waterNeeds = latestMeasurement != null ? latestMeasurement.getWeight() * 0.033 : 0;
+    nutritionRecommendation.append(String.format("\nHydration: Aim for %.1f L of water daily", waterNeeds));
+
+    // Enhanced exercise recommendations
+    StringBuilder exerciseRecommendation = new StringBuilder();
+    if (avgDailyExercise < 100) {
+        exerciseRecommendation.append("Consider increasing workout frequency:\n");
+        exerciseRecommendation.append("• Aim for 3-4 sessions per week\n");
+        exerciseRecommendation.append("• Start with 30-minute sessions\n");
+        exerciseRecommendation.append("• Include both cardio and strength training\n");
+    } else if (avgDailyExercise > 500) {
+        exerciseRecommendation.append("High exercise volume detected:\n");
+        exerciseRecommendation.append("• Ensure adequate rest and recovery\n");
+        exerciseRecommendation.append("• Consider active recovery days\n");
+        exerciseRecommendation.append("• Listen to your body's signals\n");
+    } else {
+        exerciseRecommendation.append("Current exercise level is appropriate:\n");
+        exerciseRecommendation.append("• Maintain consistency\n");
+        exerciseRecommendation.append("• Gradually increase intensity\n");
+        exerciseRecommendation.append("• Include variety in your workouts\n");
+    }
+
+    // Add recovery recommendations
+    exerciseRecommendation.append("\nRecovery Tips:\n");
+    exerciseRecommendation.append("• Get 7-9 hours of sleep\n");
+    exerciseRecommendation.append("• Include stretching and mobility work\n");
+    exerciseRecommendation.append("• Consider foam rolling or massage\n");
+
+    // Add recommendation data to model
+    model.addAttribute("avgDailyCalories", avgDailyCalories);
+    model.addAttribute("avgDailyExercise", avgDailyExercise);
+    model.addAttribute("tdee", tdee);
+    model.addAttribute("weeklyWeightChange", weeklyWeightChange);
+    model.addAttribute("weightRecommendation", weightRecommendation.toString());
+    model.addAttribute("exerciseRecommendation", exerciseRecommendation.toString());
+    model.addAttribute("nutritionRecommendation", nutritionRecommendation.toString());
+    model.addAttribute("proteinNeeds", proteinNeeds);
+    model.addAttribute("carbNeeds", carbNeeds);
+    model.addAttribute("fatNeeds", fatNeeds);
+    model.addAttribute("waterNeeds", waterNeeds);
+
+    // --- Start Projection Calculation ---
     if (latestMeasurement != null) { // Need a starting point for projection
-        double tdee = userService.calculateTDEE(user, DEFAULT_ACTIVITY_FACTOR);
-        double avgIntake = mealService.getAverageDailyCalories(user, AVG_PERIOD_DAYS);
-        double avgExerciseBurn = workoutService.getAverageDailyExerciseCalories(user, AVG_PERIOD_DAYS);
+        double dailyWeightChangeKg = dailyBalance / KCAL_PER_KG;
         
-        logger.info("[showAnalytics] TDEE: {}, Avg Intake: {}, Avg Exercise Burn: {}", tdee, avgIntake, avgExerciseBurn);
+        logger.info("[showAnalytics] Daily Balance: {} kcal, Daily Weight Change: {} kg", dailyBalance, dailyWeightChangeKg);
 
-        if (tdee > 0) { // Avoid division by zero or projecting if TDEE is unknown
-            double dailyBalance = avgIntake - (tdee + avgExerciseBurn);
-            double dailyWeightChangeKg = dailyBalance / KCAL_PER_KG;
+        double currentWeight = latestMeasurement.getWeight();
+        LocalDateTime currentDate = latestMeasurement.getDateTime();
+
+        // Add the latest actual point to projection series start
+        Map<String, Object> startPoint = new HashMap<>();
+        startPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        startPoint.put("weight", currentWeight);
+        projectionData.add(startPoint);
+
+        for (int i = 1; i <= PROJECTION_DAYS; i++) {
+            currentDate = currentDate.plusDays(1);
+            currentWeight += dailyWeightChangeKg;
             
-            logger.info("[showAnalytics] Daily Balance: {} kcal, Daily Weight Change: {} kg", dailyBalance, dailyWeightChangeKg);
-
-            double currentWeight = latestMeasurement.getWeight();
-            LocalDateTime currentDate = latestMeasurement.getDateTime();
-
-            // Add the latest actual point to projection series start
-            Map<String, Object> startPoint = new HashMap<>();
-            startPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-            startPoint.put("weight", currentWeight);
-            projectionData.add(startPoint);
-
-            for (int i = 1; i <= PROJECTION_DAYS; i++) {
-                currentDate = currentDate.plusDays(1);
-                currentWeight += dailyWeightChangeKg;
-                
-                Map<String, Object> projectedPoint = new HashMap<>();
-                projectedPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-                 // Format weight to 1 decimal place for consistency
-                projectedPoint.put("weight", Math.round(currentWeight * 10.0) / 10.0); 
-                projectionData.add(projectedPoint);
-            }
-             logger.info("[showAnalytics] Generated {} projection points.", projectionData.size());
-        } else {
-            logger.warn("[showAnalytics] Cannot calculate projection because TDEE is zero or invalid.");
+            Map<String, Object> projectedPoint = new HashMap<>();
+            projectedPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+            projectedPoint.put("weight", Math.round(currentWeight * 10.0) / 10.0); 
+            projectionData.add(projectedPoint);
         }
+        logger.info("[showAnalytics] Generated {} projection points.", projectionData.size());
     } else {
         logger.warn("[showAnalytics] Cannot calculate projection because there are no measurements.");
     }

@@ -1,5 +1,6 @@
 package com.app.fitrack.service;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import com.app.fitrack.model.VerificationToken;
 import com.app.fitrack.repository.UserRepository;
 import com.app.fitrack.repository.VerificationTokenRepository;
 import org.springframework.security.core.Authentication;
+import com.app.fitrack.model.WorkoutLog;
+import com.app.fitrack.repository.WorkoutLogRepository;
 
 @Service
 @Transactional 
@@ -29,6 +32,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private WorkoutLogRepository workoutLogRepository;
 
     @Value("${app.base-url}") 
     private String baseUrl;
@@ -190,9 +196,99 @@ public class UserService {
 
     public double calculateTDEE(User user, double activityFactor) {
         double bmr = calculateBMR(user);
-        if (bmr <= 0) {
-            return 0.0; // Cannot calculate TDEE without a valid BMR
-        }
         return bmr * activityFactor;
+    }
+
+    public double calculateDynamicActivityFactor(User user, int days) {
+        if (user == null) {
+            return 1.2; // Default sedentary factor
+        }
+
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(days);
+        
+        // Get workout logs for the period
+        List<WorkoutLog> recentWorkouts = workoutLogRepository.findByUserAndCompletedAtBetween(user, startDate, endDate);
+        
+        if (recentWorkouts.isEmpty()) {
+            return 1.2; // Default sedentary factor
+        }
+
+        // Calculate average daily exercise minutes
+        double totalExerciseMinutes = recentWorkouts.stream()
+            .mapToDouble(WorkoutLog::getDuration)
+            .sum();
+        double avgDailyExerciseMinutes = totalExerciseMinutes / days;
+
+        // Calculate average daily calories burned
+        double totalCaloriesBurned = recentWorkouts.stream()
+            .mapToDouble(WorkoutLog::getBurnedCalories)
+            .sum();
+        double avgDailyCaloriesBurned = totalCaloriesBurned / days;
+
+        // Calculate workout frequency (days with workouts)
+        long daysWithWorkouts = recentWorkouts.stream()
+            .map(w -> w.getCompletedAt().toLocalDate())
+            .distinct()
+            .count();
+        double workoutFrequency = (double) daysWithWorkouts / days;
+
+        // Calculate intensity based on calories burned per minute
+        double avgCaloriesPerMinute = avgDailyCaloriesBurned / avgDailyExerciseMinutes;
+
+        // Base activity factor calculation
+        double baseActivityFactor = 1.2; // Start with sedentary
+
+        // Adjust based on workout frequency (scientifically validated ranges)
+        if (workoutFrequency >= 0.7) { // 5+ days per week
+            baseActivityFactor += 0.3; // Very active
+        } else if (workoutFrequency >= 0.4) { // 3-4 days per week
+            baseActivityFactor += 0.2; // Moderately active
+        } else if (workoutFrequency >= 0.1) { // 1-2 days per week
+            baseActivityFactor += 0.1; // Lightly active
+        }
+
+        // Adjust based on intensity (calories per minute)
+        if (avgCaloriesPerMinute > 8) { // High intensity (>8 kcal/min)
+            baseActivityFactor += 0.2;
+        } else if (avgCaloriesPerMinute > 5) { // Moderate intensity (>5 kcal/min)
+            baseActivityFactor += 0.1;
+        }
+
+        // Adjust based on duration (exercise physiology research)
+        if (avgDailyExerciseMinutes > 60) {
+            baseActivityFactor += 0.1; // Extended duration impact
+        } else if (avgDailyExerciseMinutes > 30) {
+            baseActivityFactor += 0.05; // Moderate duration impact
+        }
+
+        // Recovery day adjustment
+        // Reduce activity factor if consecutive high-intensity days
+        boolean hasConsecutiveIntenseDays = false;
+        java.time.LocalDate previousDate = null;
+        int consecutiveIntenseDays = 0;
+        
+        for (WorkoutLog workout : recentWorkouts) {
+            java.time.LocalDate currentDate = workout.getCompletedAt().toLocalDate();
+            if (previousDate != null && currentDate.equals(previousDate.plusDays(1))) {
+                consecutiveIntenseDays++;
+            } else {
+                consecutiveIntenseDays = 1;
+            }
+            
+            if (consecutiveIntenseDays >= 3) {
+                hasConsecutiveIntenseDays = true;
+                break;
+            }
+            
+            previousDate = currentDate;
+        }
+        
+        if (hasConsecutiveIntenseDays) {
+            baseActivityFactor -= 0.05; // Account for potential overtraining
+        }
+
+        // Cap the activity factor between 1.2 and 1.9 (scientifically validated range)
+        return Math.min(Math.max(baseActivityFactor, 1.2), 1.9);
     }
 }
