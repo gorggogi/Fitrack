@@ -75,10 +75,10 @@ public class BodyMeasurementService {
             case "bmi":
                 double latestBmi = calculateBMI(latest);
                 double previousBmi = calculateBMI(previous);
-                if (latestBmi == 0.0 || previousBmi == 0.0) { // BMI calculation returns 0.0 on error/null
+                if (latestBmi == 0.0 || previousBmi == 0.0) {
                     logger.warn("Cannot calculate BMI progress due to invalid BMI values.");
                 } else {
-                     progress = latestBmi - previousBmi;
+                    progress = latestBmi - previousBmi;
                 }
                 break;
             default:
@@ -94,7 +94,6 @@ public class BodyMeasurementService {
             logger.warn("Cannot calculate BMI due to null values in measurement or user data.");
             return 0.0;
         }
-        // Convert height from cm to m
         double heightInMeters = measurement.getUser().getHeight() / 100.0;
         if (heightInMeters == 0) {
             logger.warn("Cannot calculate BMI because height is zero.");
@@ -110,7 +109,6 @@ public class BodyMeasurementService {
             logger.warn("Cannot calculate current BMI due to null values in user data.");
             return 0.0;
         }
-        // Convert height from cm to m
         double heightInMeters = user.getHeight() / 100.0;
         if (heightInMeters == 0) {
             logger.warn("Cannot calculate current BMI because height is zero.");
@@ -122,7 +120,7 @@ public class BodyMeasurementService {
     }
 
     public String getBMICategory(double bmi) {
-        if (bmi <= 0) return "N/A"; // Handle invalid BMI
+        if (bmi <= 0) return "N/A";
         if (bmi < 18.5) return "Underweight";
         if (bmi < 25) return "Normal weight";
         if (bmi < 30) return "Overweight";

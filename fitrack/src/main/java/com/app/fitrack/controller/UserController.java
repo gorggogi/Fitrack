@@ -359,7 +359,7 @@ public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Mo
     // --- Add attributes to the model --- 
     // Data for non-script parts (only primitives or safe objects)
     model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
-    model.addAttribute("currentUserWeight", user.getWeight()); // Pass user's weight explicitly
+    model.addAttribute("currentUserWeight", latestMeasurement != null ? latestMeasurement.getWeight() : user.getWeight()); // Use latest measurement weight if available
     model.addAttribute("currentUserHeight", user.getHeight()); // Pass user's height explicitly
     model.addAttribute("latestMeasurementWeight", (latestMeasurement != null) ? latestMeasurement.getWeight() : null);
     model.addAttribute("latestMeasurementDateTime", (latestMeasurement != null) ? latestMeasurement.getDateTime() : null);

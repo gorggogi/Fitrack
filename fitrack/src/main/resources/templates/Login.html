@@ -25,6 +25,7 @@
             <p th:if="${message != null and !showProfilePrompt}" th:text="${message}" style="color: green;">Message</p>
             <p th:if="${param.error != null}" style="color: red;">Invalid email or password.</p>
             <form th:action="@{/user/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <label>Email:</label>
                 <input type="email" name="username" required> 
                 <br>

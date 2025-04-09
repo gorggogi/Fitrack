@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const dates = measurements.map(m => new Date(m.date).toLocaleDateString());
     const weights = measurements.map(m => m.weight);
-    const bodyFatPercentages = measurements.map(m => m.bodyFatPercentage);
     const bmi = measurements.map(m => {
         const heightInMeters = m.user.height / 100;
         return m.weight / (heightInMeters * heightInMeters);
@@ -20,12 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: weights,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     yAxisID: 'y'
-                },
-                {
-                    label: 'Body Fat %',
-                    data: bodyFatPercentages,
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    yAxisID: 'y1'
                 },
                 {
                     label: 'BMI',
@@ -49,18 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: {
                         display: true,
                         text: 'Weight (kg)'
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: {
-                        display: true,
-                        text: 'Body Fat %'
-                    },
-                    grid: {
-                        drawOnChartArea: false
                     }
                 },
                 y2: {
