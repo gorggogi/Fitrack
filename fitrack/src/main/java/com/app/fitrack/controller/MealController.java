@@ -10,10 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.model.MealFoodItem;
 import com.app.fitrack.service.MealService;
 import com.app.fitrack.service.NutritionixService;
+import com.app.fitrack.service.GoalService;
+import com.app.fitrack.model.User;
+import com.app.fitrack.service.UserService;
 
 @Controller
 public class MealController {
@@ -23,6 +29,12 @@ public class MealController {
 
     @Autowired
     private NutritionixService nutritionixService; 
+
+    @Autowired
+    private GoalService goalService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/user/addmeal")
     public String addMeal(Model model) {
@@ -71,5 +83,23 @@ public class MealController {
 
         mealService.saveMeal(meal);
         return "redirect:/user/dashboard";
+    }
+
+    @PostMapping("/user/meals/save")
+    public String saveMeal(@AuthenticationPrincipal UserDetails userDetails,
+                          @ModelAttribute Meal meal,
+                          RedirectAttributes redi) {
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
+        meal.setUser(user);
+        meal.setDateTime(LocalDateTime.now());
+        
+        mealService.saveMeal(meal);
+        
+        // Update goals based on the new meal
+        goalService.updateGoalsBasedOnActivity(user);
+        
+        redi.addFlashAttribute("successMessage", "Meal saved successfully!");
+        return "redirect:/user/meals";
     }
 }

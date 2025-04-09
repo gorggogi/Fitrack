@@ -76,3 +76,195 @@ function openModal(workoutElement) {
     modal.style.display = "block";
 }
 
+// Modal functions
+function openGoalModal() {
+    document.getElementById('goalModal').style.display = 'flex';
+}
+
+function closeGoalModal() {
+    document.getElementById('goalModal').style.display = 'none';
+}
+
+function openWorkoutModal() {
+    document.getElementById('workoutModal').style.display = 'flex';
+}
+
+function closeWorkoutModal() {
+    document.getElementById('workoutModal').style.display = 'none';
+}
+
+function openMealModal() {
+    document.getElementById('mealModal').style.display = 'flex';
+    
+    // Set current date and time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    document.querySelector('#mealModal input[name="dateTime"]').value = formattedDateTime;
+}
+
+function closeMealModal() {
+    document.getElementById('mealModal').style.display = 'none';
+}
+
+// Initialize modals when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const goalModal = document.getElementById('goalModal');
+        const workoutModal = document.getElementById('workoutModal');
+        const mealModal = document.getElementById('mealModal');
+        
+        if (event.target == goalModal) {
+            closeGoalModal();
+        }
+        if (event.target == workoutModal) {
+            closeWorkoutModal();
+        }
+        if (event.target == mealModal) {
+            closeMealModal();
+        }
+    }
+
+    // Handle goal form submission
+    const goalForm = document.getElementById('goalForm');
+    if (goalForm) {
+        goalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/user/goals/add', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    closeGoalModal();
+                    // Clear the form
+                    this.reset();
+                    // Reload the page to show the new goal
+                    window.location.reload();
+                } else {
+                    response.text().then(text => {
+                        console.error('Error response:', text);
+                        alert('Error adding goal. Please try again.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding goal. Please try again.');
+            });
+        });
+    }
+});
+
+// Meal-related functions
+function estimateCalories() {
+    const foodItems = document.querySelectorAll('.food-item');
+    foodItems.forEach((item, index) => {
+        const foodName = item.querySelector('input[name="foodItems[' + index + '].foodItem"]').value;
+        const quantity = item.querySelector('input[name="foodItems[' + index + '].quantity"]').value;
+        const unit = item.querySelector('select[name="foodItems[' + index + '].unit"]').value;
+        
+        if (foodName && quantity) {
+            // This is a simple estimation - in a real app, you'd want to use a food database API
+            const estimatedCalories = Math.round(quantity * 2); // Simple estimation: 2 calories per unit
+            item.querySelector('input[name="foodItems[' + index + '].calories"]').value = estimatedCalories;
+        }
+    });
+}
+
+function addFoodItem() {
+    const container = document.getElementById('food-items-container');
+    const foodItemCount = container.children.length;
+    
+    const newFoodItem = document.createElement('div');
+    newFoodItem.className = 'food-item';
+    newFoodItem.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label>Food Item</label>
+                <input type="text" name="foodItems[${foodItemCount}].foodItem" placeholder="Enter food" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" name="foodItems[${foodItemCount}].quantity" placeholder="Quantity" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Unit</label>
+                <select name="foodItems[${foodItemCount}].unit" class="form-control" required>
+                    <option value=" ">None</option>
+                    <option value="g">Grams</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="ml">Milliliters</option>
+                    <option value="l">Liters</option>
+                    <option value="cup">Cups</option>
+                    <option value="tbsp">Tablespoons</option>
+                    <option value="tsp">Teaspoons</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Calories</label>
+                <input type="number" name="foodItems[${foodItemCount}].calories" placeholder="Estimate" class="form-control" required>
+            </div>
+            <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
+        </div>
+    `;
+    
+    container.appendChild(newFoodItem);
+}
+
+function removeFoodItem(button) {
+    const foodItem = button.closest('.food-item');
+    foodItem.remove();
+    
+    // Update the indices of remaining food items
+    const container = document.getElementById('food-items-container');
+    const foodItems = container.querySelectorAll('.food-item');
+    foodItems.forEach((item, index) => {
+        const inputs = item.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            const name = input.getAttribute('name');
+            if (name) {
+                input.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+            }
+        });
+    });
+}
+
+// Workout-related functions
+function estimateBurnedCalories() {
+    const duration = document.getElementById('duration').value;
+    const workoutName = document.getElementById('workoutName').value.toLowerCase();
+    
+    if (!duration) {
+        alert('Please enter the duration first');
+        return;
+    }
+
+    // Base calorie burn rate (calories per minute)
+    let baseRate = 5; // Default moderate intensity
+    
+    // Adjust base rate based on workout type
+    if (workoutName.includes('run') || workoutName.includes('sprint')) {
+        baseRate = 10; // High intensity
+    } else if (workoutName.includes('walk') || workoutName.includes('yoga')) {
+        baseRate = 3; // Low intensity
+    } else if (workoutName.includes('swim') || workoutName.includes('cycle')) {
+        baseRate = 8; // Medium-high intensity
+    } else if (workoutName.includes('weight') || workoutName.includes('strength')) {
+        baseRate = 7; // Medium intensity
+    }
+
+    // Calculate estimated calories
+    const estimatedCalories = Math.round(duration * baseRate);
+    document.getElementById('burnedCalories').value = estimatedCalories;
+}
+

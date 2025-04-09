@@ -3,6 +3,9 @@ package com.app.fitrack.controller;
 import com.app.fitrack.model.Workout;
 import com.app.fitrack.service.WorkoutService;
 import com.app.fitrack.service.ExerciseService;
+import com.app.fitrack.service.GoalService;
+import com.app.fitrack.model.User;
+import com.app.fitrack.service.UserService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +24,12 @@ public class WorkoutController {
 
     @Autowired
     private ExerciseService exerciseService;
+
+    @Autowired
+    private GoalService goalService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/user/addworkout")
     public String addWorkout(Model model) {
@@ -42,6 +51,12 @@ public class WorkoutController {
     @PostMapping("/user/workouts/{id}/mark-done")
     public ResponseEntity<Map<String, Object>> markWorkoutAsDone(@PathVariable Long id) {
         workoutService.logWorkout(id);
+        
+        // Get the current user and update their goals
+        User currentUser = userService.getAuthenticatedUser();
+        if (currentUser != null) {
+            goalService.updateGoalsBasedOnActivity(currentUser);
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Workout logged successfully!");

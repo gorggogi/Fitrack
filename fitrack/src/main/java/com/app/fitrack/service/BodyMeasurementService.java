@@ -41,12 +41,13 @@ public class BodyMeasurementService {
     public BodyMeasurement getLatestMeasurement(User user) {
         logger.info("Fetching latest measurement for UserID={}", user.getId());
         List<BodyMeasurement> measurements = getMeasurementsForUser(user);
-        BodyMeasurement latest = measurements.isEmpty() ? null : measurements.get(0);
-        if (latest != null) {
-            logger.info("Latest measurement: Weight={}, DateTime={}", latest.getWeight(), latest.getDateTime());
-        } else {
+        if (measurements.isEmpty()) {
             logger.info("No measurements found for UserID={}", user.getId());
+            return null;
         }
+        
+        BodyMeasurement latest = measurements.get(0);
+        logger.info("Latest measurement: Weight={}, DateTime={}", latest.getWeight(), latest.getDateTime());
         return latest;
     }
 

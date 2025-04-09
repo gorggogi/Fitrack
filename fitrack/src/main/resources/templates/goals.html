@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Goals - Fitrack</title>
+    <link rel="stylesheet" href="/styles/Fitrack.css">
+</head>
+<body>
+    <div class="container">
+        <div class="goals-container">
+            <h1>My Goals</h1>
+            
+            <!-- Add Goal Form -->
+            <div class="add-goal-form">
+                <h2>Add New Goal</h2>
+                <form th:action="@{/user/goals/add}" method="post">
+                    <div class="form-group">
+                        <label for="goalType">Goal Type</label>
+                        <select id="goalType" name="goalType" required>
+                            <option value="WEIGHT_LOSS">Weight Loss</option>
+                            <option value="WEIGHT_GAIN">Weight Gain</option>
+                            <option value="EXERCISE">Exercise</option>
+                            <option value="NUTRITION">Nutrition</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" name="description" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="targetValue">Target Value</label>
+                        <input type="number" id="targetValue" name="targetValue" step="0.1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="targetDate">Target Date</label>
+                        <input type="datetime-local" id="targetDate" name="targetDate" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Add Goal</button>
+                </form>
+            </div>
+            
+            <!-- Goals List -->
+            <div class="goals-list">
+                <h2>Current Goals</h2>
+                <div class="goals-grid">
+                    <div class="goal-card" th:each="goal : ${goals}">
+                        <h3 th:text="${goal.description}">Goal Description</h3>
+                        <div class="goal-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" 
+                                     th:style="'width: ' + ${goalService.calculateProgress(goal)} + '%;'">
+                                </div>
+                            </div>
+                            <div class="progress-labels">
+                                <span th:text="${goal.currentValue} + ' / ' + ${goal.targetValue}">Current / Target</span>
+                            </div>
+                        </div>
+                        <div class="goal-details">
+                            <p>Type: <span th:text="${goal.goalType}">Type</span></p>
+                            <p>Status: <span th:text="${goal.status}">Status</span></p>
+                            <p>Target Date: <span th:text="${#temporals.format(goal.targetDate, 'MMM dd, yyyy')}">Date</span></p>
+                        </div>
+                        <div class="goal-actions">
+                            <form th:action="@{/user/goals/update/{id}(id=${goal.id})}" method="post" class="update-form">
+                                <input type="number" name="currentValue" th:value="${goal.currentValue}" step="0.1">
+                                <button type="submit" class="btn btn-secondary">Update Progress</button>
+                            </form>
+                            <form th:action="@{/user/goals/delete/{id}(id=${goal.id})}" method="post" class="delete-form">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

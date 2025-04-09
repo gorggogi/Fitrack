@@ -290,41 +290,95 @@ body {
 }
 
 .goals-section {
-    margin-top: auto;
-}
-
-.goals-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    margin-top: 1rem;
-}
-
-.goal-card {
+    margin-top: 2rem;
     background: white;
     padding: 1.5rem;
     border-radius: 15px;
     border: 1px solid #eee;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.goals-section .section-header {
+    margin-bottom: 1.5rem;
+}
+
+.goals-section .section-title {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 0;
+}
+
+.goals-section .add-button {
+    width: 24px;
+    height: 24px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    text-decoration: none;
+    border: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.goals-section .add-button:hover {
+    background-color: #49b9fa5d;
+}
+
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.goal-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.goal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .goal-title {
-    font-size: 1em;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
     margin-bottom: 1rem;
 }
 
 .progress-bar {
     width: 100%;
-    height: 4px;
-    background: #eee;
-    border-radius: 2px;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
     margin: 1rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #007AFF;
+    transition: width 0.3s ease;
 }
 
 .progress-labels {
     display: flex;
     justify-content: space-between;
-    font-size: 0.8em;
+    font-size: 0.9rem;
     color: #666;
+    margin-top: 0.5rem;
 }
 
 .profile-prompt {
@@ -558,25 +612,108 @@ button.primary {
 }
 
 .modal {
-    display: none; 
+    display: none;
     position: fixed;
-    z-index: 1000;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
     align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius:8px
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
 }
 
+.modal-content h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-size: 1.5rem;
+}
 
+.modal-content .close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-content .form-group {
+    margin-bottom: 1rem;
+}
+
+.modal-content .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.modal-content .form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.modal-content input,
+.modal-content select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.modal-content .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+/* Food items container in meal modal */
+#food-items-container {
+    margin: 1rem 0;
+}
+
+.food-item {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.food-item .remove-item {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+/* Repeat days in workout modal */
 .repeat-days {
     display: flex;
     flex-wrap: wrap;
@@ -598,11 +735,9 @@ button.primary {
     border: 2px solid transparent;
 }
 
-
 .repeat-days label:hover {
     background: #e0e0e0;
 }
-
 
 .repeat-days input:checked + label {
     background: #007bff;
@@ -1095,5 +1230,178 @@ button.primary {
 
 .timeline-container::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/* Goals Page Styles */
+.goals-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.add-goal-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.goals-list {
+    margin-top: 2rem;
+}
+
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.goal-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.goal-progress {
+    margin: 1rem 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #007AFF;
+    transition: width 0.3s ease;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.goal-details {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.goal-details p {
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.goal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.update-form, .delete-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.update-form input {
+    width: 80px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Goal Form Styles */
+.goal-form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007AFF;
+    box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background: #007AFF;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
 }
 
