@@ -54,14 +54,14 @@
                     <div class="body-stats">
                         <div class="stat-item">
                             <span class="stat-label">Current Weight</span>
-                            <span class="stat-value" th:text="${user.weight != null ? user.weight + ' kg' : '--'}">--</span>
+                            <span class="stat-value" th:text="${currentUserWeight != null ? currentUserWeight + ' kg' : '--'}">--</span>
                             <span class="stat-change" th:classappend="${weightProgress > 0 ? 'positive' : 'negative'}"
-                                  th:text="${weightProgress != 0 ? (weightProgress > 0 ? '+' : '') + weightProgress + ' kg' : ''}"></span>
+                                  th:text="${weightProgress != 0 ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : ''}"></span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">BMI</span>
-                            <span class="stat-value" th:text="${user.weight != null && user.height != null ? #numbers.formatDecimal(bodyMeasurementService.calculateCurrentBMI(user), 1, 1) : '--'}">--</span>
-                            <span class="stat-category" th:text="${user.weight != null && user.height != null ? '(' + bodyMeasurementService.getBMICategory(bodyMeasurementService.calculateCurrentBMI(user)) + ')' : ''}"></span>
+                            <span class="stat-value" th:text="${currentBmiValue > 0 ? #numbers.formatDecimal(currentBmiValue, 1, 1) : '--'}">--</span>
+                            <span class="stat-category" th:text="${currentBmiValue > 0 ? '(' + currentBmiCategory + ')' : ''}"></span>
                             <span class="stat-change" th:classappend="${bmiProgress > 0 ? 'positive' : 'negative'}"
                                   th:text="${bmiProgress != 0 ? (bmiProgress > 0 ? '+' : '') + #numbers.formatDecimal(bmiProgress, 1, 1) : ''}"></span>
                         </div>
@@ -70,23 +70,34 @@
                         <a href="/user/measurements" class="primary">Add New Measurement</a>
                     </div>
                     <canvas id="bodyCompositionChart"></canvas>
+                    <!-- Add Toggle Switch -->
+                    <div class="form-check form-switch" style="text-align: center; margin-top: 1rem;">
+                        <input class="form-check-input" type="checkbox" id="toggleProjection"
+                               th:checked="${showProjectionDefault}">
+                        <label class="form-check-label" for="toggleProjection">Show Weight Projection</label>
+                    </div>
+                     <p class="chart-note" style="margin-top: 0.5rem;">Weight projection is an estimate based on recent activity and TDEE. Accuracy varies.</p>
                 </div>
 
                 <div class="analytics-card">
                     <h2>Progress Timeline</h2>
                     <div class="timeline">
-                        <div th:each="measurement : ${measurements}" class="timeline-item">
-                            <div class="timeline-date" th:text="${#temporals.format(measurement.dateTime, 'MMM dd')}"></div>
+                         <div th:if="${#lists.isEmpty(timelineData)}" class="placeholder-message">
+                            <p>No measurements recorded yet.</p>
+                         </div>
+                         <div th:each="entry : ${timelineData}" class="timeline-item">
+                            <div class="timeline-date" th:text="${entry.date}">Date</div>
                             <div class="timeline-content">
                                 <div class="timeline-metric">
                                     <span>Weight:</span>
-                                    <span th:text="${measurement.weight} + ' kg'"></span>
+                                    <span th:text="${entry.weight != null ? #numbers.formatDecimal(entry.weight, 1, 1) + ' kg' : '--'}">Weight</span>
                                 </div>
-                                <div th:if="${measurement.notes != null and not measurement.notes.isEmpty()}" class="timeline-notes">
-                                    <span th:text="${measurement.notes}"></span>
+                                <div th:if="${entry.notes != null and not #strings.isEmpty(entry.notes)}" class="timeline-notes">
+                                    <span>Notes:</span>
+                                    <span th:text="${entry.notes}">Notes</span>
                                 </div>
                             </div>
-                        </div>
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -96,8 +107,9 @@
     <script th:inline="javascript">
         const workoutData = /*[[${workoutData}]]*/ [];
         const caloriesData = /*[[${caloriesData}]]*/ [];
-        const bodyMeasurements = /*[[${measurements}]]*/ [];
+        const chartMeasurementData = /*[[${chartMeasurementData}]]*/ [];
         const projectionDataRaw = /*[[${projectionData}]]*/ [];
+        const showProjectionDefault = /*[[${showProjectionDefault}]]*/ false;
         
         // Workout Frequency Chart
         const workoutCtx = document.getElementById('workoutFrequencyChart').getContext('2d');
@@ -157,16 +169,16 @@
         const dateOptions = { month: 'short', day: 'numeric' }; // Format for labels
 
         // Actual measurements data
-        const actualLabels = bodyMeasurements.map(m => new Date(m.dateTime).toLocaleDateString('en-US', dateOptions));
-        const actualWeights = bodyMeasurements.map(m => m.weight);
-        const actualBmi = bodyMeasurements.map(m => {
+        const actualLabels = chartMeasurementData.map(m => new Date(m.dateTime).toLocaleDateString('en-US', dateOptions));
+        const actualWeights = chartMeasurementData.map(m => m.weight);
+        const actualBmi = chartMeasurementData.map(m => {
             if (!m.user || !m.user.height || m.user.height <= 0 || m.weight == null) return null; 
             const heightInMeters = m.user.height / 100;
             return m.weight / (heightInMeters * heightInMeters);
         }); // Keep nulls here so data arrays align
 
         // Projection data
-        let lastActualDate = bodyMeasurements.length > 0 ? new Date(bodyMeasurements[bodyMeasurements.length - 1].dateTime) : new Date();
+        let lastActualDate = chartMeasurementData.length > 0 ? new Date(chartMeasurementData[chartMeasurementData.length - 1].dateTime) : new Date();
         const projectionLabels = [];
         const projectionWeights = [];
 
@@ -198,7 +210,8 @@
 
         
         // --- Create Chart --- 
-        new Chart(bodyCtx, {
+        // Store the chart instance in a variable
+        const bodyCompChart = new Chart(bodyCtx, {
             type: 'line',
             data: {
                 labels: combinedLabels, // Use the combined labels array
@@ -228,7 +241,8 @@
                         yAxisID: 'y',
                         fill: false,
                         pointRadius: 2,
-                        spanGaps: true // Connect projected points
+                        spanGaps: true, // Connect projected points
+                        hidden: !showProjectionDefault // Set initial visibility
                     }
                 ]
             },
@@ -282,6 +296,17 @@
                 }
             }
         });
+
+        // --- Add Event Listener for Toggle --- 
+        const toggleCheckbox = document.getElementById('toggleProjection');
+        if (toggleCheckbox) {
+            toggleCheckbox.addEventListener('change', function() {
+                // Dataset index 2 is the projection
+                const isVisible = bodyCompChart.isDatasetVisible(2);
+                bodyCompChart.setDatasetVisibility(2, !isVisible);
+                bodyCompChart.update();
+            });
+        }
     </script>
 </body>
 </html> 

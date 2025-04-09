@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/Fitrack.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Diet Overview</title>
+    <style>
+        /* Add some basic styling for layout */
+        .diet-container { padding: 2rem 0; }
+        .diet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .diet-card { background: white; padding: 1.5rem; border-radius: 15px; border: 1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .diet-card h2 { font-size: 1.5rem; margin-bottom: 1rem; color: #333; }
+        .meal-list .meal-item { border-bottom: 1px solid #eee; padding: 1rem 0; }
+        .meal-list .meal-item:last-child { border-bottom: none; }
+        .calories-summary { font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem; }
+        .chart-container { position: relative; height: 300px; width: 100%; margin-top: 1rem; }
+        .chart-note { font-size: 0.8em; color: #666; text-align: center; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Assuming you have a standard header fragment or include it here -->
+        <!-- Example Placeholder Header -->
+        <header class="navbar">
+             <div class="logo-container">
+                 <div class="logo"></div>
+                 <span class="site-name">Fitrack</span>
+             </div>
+             <ul class="nav-links">
+                 <li><a href="/user/dashboard">Dashboard</a></li>
+                 <li><a href="/user/analytics">Analytics</a></li>
+                 <li><a href="/user/diet" class="active">Diet</a></li> <!-- Added Diet Link -->
+                 <li><a href="#">Workouts</a></li> <!-- Placeholder -->
+                 <li><a href="#">Meals</a></li> <!-- Placeholder -->
+             </ul>
+             <div class="user-info">
+                 <span th:text="${fullName}" class="user-name"></span>
+                 <div class="user-icon" onclick="toggleDropdown()"></div>
+                 <!-- Dropdown menu -->
+             </div>
+        </header>
+
+        <div class="diet-container">
+            <h1>Today's Nutrition Overview</h1>
+
+            <div class="diet-grid">
+                <div class="diet-card">
+                    <h2>Today's Intake</h2>
+                    <div class="calories-summary">
+                        Total Calories: <span th:text="${todaysTotalCalories}">0</span> kcal
+                    </div>
+                    <div class="meal-list">
+                        <h3>Logged Meals:</h3>
+                        <div th:if="${#lists.isEmpty(todaysMeals)}" class="placeholder-message">
+                            <p>No meals logged for today yet.</p>
+                        </div>
+                        <div th:each="meal : ${todaysMeals}" class="meal-item">
+                             <div>
+                                 <div class="meal-header">
+                                     <span th:text="${meal.mealName}">Meal Name</span>
+                                     <span class="meal-calories" style="float: right;">(<span th:text="${meal.totalCalories}">0</span> cal)</span>
+                                 </div>
+                                 <!-- You could add meal items here if needed -->
+                             </div>
+                             <span class="meal-time" style="font-size: 0.8em; color: #666;" th:text="${#temporals.format(meal.dateTime, 'h:mm a')}">Time</span>
+                        </div>
+                    </div>
+                     <button type="button" onclick="window.location.href='/user/addmeal'" class="primary" style="margin-top: 1rem;">Log New Meal</button> <!-- Add Meal Button -->
+                </div>
+
+                <div class="diet-card">
+                    <h2>Reference Macronutrient Goals</h2>
+                     <div class="chart-container">
+                        <canvas id="macroPieChart"></canvas>
+                    </div>
+                    <p class="chart-note">This chart shows a general reference breakdown (40% Carbs, 30% Protein, 30% Fat). Set your personalized goals in your profile.</p>
+                    <!-- We will add JS for the chart below -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const referenceMacros = /*[[${referenceMacroPercents}]]*/ {};
+
+        // --- Reference Macro Pie Chart ---
+        const pieCtx = document.getElementById('macroPieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(referenceMacros), // ['Protein', 'Carbohydrates', 'Fat']
+                datasets: [{
+                    label: 'Reference Macros %',
+                    data: Object.values(referenceMacros), // [30, 40, 30]
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',  // Blue for Protein
+                        'rgba(255, 206, 86, 0.7)',  // Yellow for Carbs
+                        'rgba(255, 99, 132, 0.7)'   // Red for Fat
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Placeholder for dropdown JS if needed
+        function toggleDropdown() {
+            // Implement dropdown logic if using the placeholder header
+             console.log("Toggle dropdown clicked");
+        }
+    </script>
+
+</body>
+</html>

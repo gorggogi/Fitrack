@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.time.format.DateTimeFormatter;
+import com.app.fitrack.repository.WorkoutLogRepository;
+import com.app.fitrack.model.WorkoutLog;
 
 
 @Controller
@@ -46,6 +48,9 @@ public class UserController {
 
     @Autowired
     private BodyMeasurementService bodyMeasurementService;
+
+    @Autowired
+    private WorkoutLogRepository workoutLogRepository;
 
     @GetMapping("/user/success")
     public String showSuccessPage() {
@@ -239,26 +244,30 @@ public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Mo
     }
     logger.info("[showAnalytics] User fetched. Weight from User object: {}", user.getWeight());
     
-    // Get workout data for the last 7 days
-    List<Workout> workouts = workoutService.getWorkoutsForLast7Days(email);
+    // --- Calculate Workout Frequency & Calories from LOGS for the last 7 days ---
+    LocalDateTime endDateTime = LocalDateTime.now();
+    LocalDateTime startDateTime = endDateTime.minusDays(7);
+    List<WorkoutLog> recentWorkoutLogs = workoutLogRepository.findByUserAndCompletedAtBetween(user, startDateTime, endDateTime);
     
     // Initialize arrays for chart data
-    int[] workoutCounts = new int[7];
+    int[] workoutCounts = new int[7]; // Index 0 = 6 days ago, ..., Index 6 = today
     int[] caloriesBurned = new int[7];
-    
-    // Calculate workout frequency and calories burned for each day
-    for (Workout workout : workouts) {
-        LocalDate workoutDate = workout.getDateTime().toLocalDate();
-        LocalDate today = LocalDate.now();
-        int daysAgo = (int) ChronoUnit.DAYS.between(workoutDate, today);
+    LocalDate today = LocalDate.now();
+
+    // Calculate workout frequency and calories burned for each day from logs
+    for (WorkoutLog log : recentWorkoutLogs) {
+        LocalDate logDate = log.getCompletedAt().toLocalDate();
+        long daysAgo = ChronoUnit.DAYS.between(logDate, today);
         
-        if (daysAgo < 7) {
-            int index = 6 - daysAgo; // 0 = today, 6 = 6 days ago
+        if (daysAgo >= 0 && daysAgo < 7) {
+            int index = 6 - (int)daysAgo; // Map daysAgo (0-6) to index (6-0)
             workoutCounts[index]++;
-            caloriesBurned[index] += workout.getBurnedCalories();
+            // burnedCalories is a primitive double, cannot be null. Direct addition is fine.
+            caloriesBurned[index] += log.getBurnedCalories(); 
         }
     }
-    
+    // --- End Workout Log Processing ---
+
     // Get body measurements (descending order initially)
     List<BodyMeasurement> measurementsDesc = bodyMeasurementService.getMeasurementsForUser(user);
     BodyMeasurement latestMeasurement = measurementsDesc.isEmpty() ? null : measurementsDesc.get(0);
@@ -319,18 +328,67 @@ public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Mo
     }
     // --- End Projection Calculation ---
 
-    // Add all attributes to the model
+    // --- Prepare data specifically for the JavaScript Chart --- 
+    List<Map<String, Object>> chartMeasurementData = measurementsChronological.stream()
+        .map(m -> {
+            Map<String, Object> point = new HashMap<>();
+            point.put("dateTime", m.getDateTime().toString()); // Pass as ISO String
+            point.put("weight", m.getWeight());
+            // Include user height directly in this map for JS BMI calculation
+            point.put("userHeight", (m.getUser() != null) ? m.getUser().getHeight() : null); 
+            return point;
+        })
+        .collect(java.util.stream.Collectors.toList());
+    
+    // Note: projectionData is already a List<Map<String, Object>> with simple types
+
+    // --- Prepare data specifically for the Timeline Display --- 
+    DateTimeFormatter timelineDateFormatter = DateTimeFormatter.ofPattern("MMM dd");
+    List<Map<String, Object>> timelineData = measurementsDesc.stream() // Use descending list for timeline (newest first)
+        .map(m -> {
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("date", m.getDateTime().format(timelineDateFormatter));
+            entry.put("weight", m.getWeight());
+            entry.put("notes", m.getNotes());
+            return entry;
+        })
+        .collect(java.util.stream.Collectors.toList());
+
+    // --- End Data Prep ---
+
+    // --- Add attributes to the model --- 
+    // Data for non-script parts (only primitives or safe objects)
     model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
-    model.addAttribute("workoutData", workoutCounts);
-    model.addAttribute("caloriesData", caloriesBurned);
-    model.addAttribute("measurements", measurementsChronological); // Pass the chronological list for chart
-    model.addAttribute("latestMeasurement", latestMeasurement); // Keep latest for display
+    model.addAttribute("currentUserWeight", user.getWeight()); // Pass user's weight explicitly
+    model.addAttribute("currentUserHeight", user.getHeight()); // Pass user's height explicitly
+    model.addAttribute("latestMeasurementWeight", (latestMeasurement != null) ? latestMeasurement.getWeight() : null);
+    model.addAttribute("latestMeasurementDateTime", (latestMeasurement != null) ? latestMeasurement.getDateTime() : null);
     model.addAttribute("weightProgress", weightProgress);
     model.addAttribute("bmiProgress", bmiProgress);
-    model.addAttribute("user", user); 
-    model.addAttribute("bodyMeasurementService", bodyMeasurementService);
-    model.addAttribute("projectionData", projectionData); // Add projection data
+    // Pass calculated BMI and category instead of the service/full user
+    double currentBmiValue = bodyMeasurementService.calculateCurrentBMI(user);
+    model.addAttribute("currentBmiValue", currentBmiValue);
+    model.addAttribute("currentBmiCategory", bodyMeasurementService.getBMICategory(currentBmiValue));
+
+    // Data for JavaScript inlining (already simplified)
+    model.addAttribute("workoutData", workoutCounts); 
+    model.addAttribute("caloriesData", caloriesBurned); 
+    model.addAttribute("chartMeasurementData", chartMeasurementData); 
+    model.addAttribute("projectionData", projectionData); // Pass projection data regardless
+    model.addAttribute("showProjectionDefault", false); // Control default visibility
+
+    // Data for Timeline Display (simplified)
+    model.addAttribute("timelineData", timelineData);
+
+    // --- Remove complex objects from model that aren't strictly needed by template display --- 
+    // model.addAttribute("user", user); // REMOVED - Pass primitives instead
+    // model.addAttribute("latestMeasurement", latestMeasurement); // REMOVED - Pass primitives instead
+    // model.addAttribute("measurements", measurementsChronological); // Already removed
+    // model.addAttribute("bodyMeasurementService", bodyMeasurementService); // Already removed
     
+    logger.info("[showAnalytics] Passing data to template. chartMeasurementData size: {}, projectionData size: {}, timelineData size: {}", 
+                chartMeasurementData.size(), projectionData.size(), timelineData.size());
+                
     return "analytics";
 }
 

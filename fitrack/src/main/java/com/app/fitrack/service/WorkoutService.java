@@ -53,9 +53,12 @@ public class WorkoutService {
 
         List<Workout> allUserWorkouts = workoutRepository.findByUser(currentUser);
 
-        // Filter workouts scheduled for today
+        // Filter workouts scheduled for today AND NOT already logged today
         return allUserWorkouts.stream()
             .filter(workout -> workout.getRepeatDays().contains(dayOfWeek) || workout.getRepeatDays().contains("Daily"))
+            .filter(workout -> !workoutLogRepository.existsByUserAndWorkoutNameAndDate(
+                                    currentUser, workout.getWorkoutName(), today
+                                 ))
             .collect(Collectors.toList());
     }
 
