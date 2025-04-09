@@ -110,6 +110,11 @@
                         </div>
 
                         <div class="recommendation-section">
+                            <h3>Goal-Specific Recommendations</h3>
+                            <div class="recommendation-text" th:text="${goalRecommendations}">--</div>
+                        </div>
+
+                        <div class="recommendation-section">
                             <h3>Weight Change Projection</h3>
                             <div class="projection-item" th:if="${weeklyWeightChange != null}">
                                 <span class="projection-label">Weekly Change:</span>

@@ -111,4 +111,8 @@ public class WorkoutService {
         
         return totalCaloriesBurned / daysSpanned;
     }
+
+    public List<WorkoutLog> getWorkoutLogsForUser(User user, LocalDateTime startDate, LocalDateTime endDate) {
+        return workoutLogRepository.findByUserAndCompletedAtBetween(user, startDate, endDate);
+    }
 }
