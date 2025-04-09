@@ -13,7 +13,7 @@ document.addEventListener("click", function(event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("workoutModal");
+    const modal = document.getElementById("workoutDoneModal");
     const markAsDoneButton = document.getElementById("markAsDoneButton");
 
     if (!modal || !markAsDoneButton) {
@@ -21,12 +21,12 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-
+    // Attach click listener to each workout item
     document.querySelectorAll(".workout-item").forEach(item => {
         item.addEventListener("click", () => openModal(item));
     });
 
-
+    // Mark as Done logic
     markAsDoneButton.addEventListener("click", function () {
         const workoutId = this.getAttribute("data-id");
         if (!workoutId) return console.error("⚠️ Workout ID not found!");
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.log("🚀 Reloading page...");
                     location.reload();
                 }
-            }); 
+            });
 
             modal.style.display = "none";
         })
@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-
     window.addEventListener("click", event => {
         if (event.target === modal) modal.style.display = "none";
     });
@@ -65,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function openModal(workoutElement) {
-    const modal = document.getElementById("workoutModal");
+    const modal = document.getElementById("workoutDoneModal");
     if (!modal) return console.error("⚠️ Workout modal not found.");
 
     document.getElementById("modalWorkoutName").innerText = workoutElement.getAttribute("data-name");

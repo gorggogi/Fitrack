@@ -118,11 +118,6 @@
                     <div class="progress-labels">
                         <span th:text="${goal.currentValue} + ' / ' + ${goal.targetValue}">Current / Target</span>
                     </div>
-                    <div class="goal-details">
-                        <p>Type: <span th:text="${goal.goalType}">Type</span></p>
-                        <p>Status: <span th:text="${goal.status}">Status</span></p>
-                        <p>Target Date: <span th:text="${#temporals.format(goal.targetDate, 'MMM dd, yyyy')}">Date</span></p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -275,8 +270,17 @@
     </div>
 </div>
 
+<div id="workoutDoneModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h3 id="modalWorkoutName">Workout Name</h3>
+        <p><strong>Duration:</strong> <span id="modalWorkoutDuration"></span></p>
+        <p><strong>Calories:</strong> <span id="modalWorkoutCalories"></span></p>
+        <button id="markAsDoneButton">Mark as Done</button>
+    </div>
+</div>
+
+
 <script>
-    // Remove all the modal-related JavaScript since it's now in dashboard.js
 </script>
 </body>
 </html>
