@@ -1,8 +1,15 @@
 package com.app.fitrack.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Exercise {
+    @JsonProperty("name")
     private String name;
+    
+    @JsonProperty("duration_min")
     private double duration_min;
+    
+    @JsonProperty("nf_calories")
     private double nf_calories;
 
     public String getName() {

@@ -16,6 +16,8 @@ import com.app.fitrack.repository.VerificationTokenRepository;
 import org.springframework.security.core.Authentication;
 import com.app.fitrack.model.WorkoutLog;
 import com.app.fitrack.repository.WorkoutLogRepository;
+import com.app.fitrack.model.BodyMeasurement;
+import com.app.fitrack.service.BodyMeasurementService;
 
 @Service
 @Transactional 
@@ -35,6 +37,9 @@ public class UserService {
 
     @Autowired
     private WorkoutLogRepository workoutLogRepository;
+
+    @Autowired
+    private BodyMeasurementService bodyMeasurementService;
 
     @Value("${app.base-url}") 
     private String baseUrl;
@@ -159,6 +164,17 @@ public class UserService {
         if (weight != null) user.setWeight(weight);
 
         userRepository.save(user);
+
+        // Create initial body measurement record
+        if (weight != null) {
+            BodyMeasurement initialMeasurement = new BodyMeasurement();
+            initialMeasurement.setUser(user);
+            initialMeasurement.setWeight(weight);
+            initialMeasurement.setDateTime(LocalDateTime.now());
+            initialMeasurement.setNotes("Initial measurement from profile creation");
+            bodyMeasurementService.saveMeasurement(initialMeasurement);
+        }
+
         return "Profile created successfully.";
     }
 
@@ -222,7 +238,7 @@ public class UserService {
 
         // Calculate average daily calories burned
         double totalCaloriesBurned = recentWorkouts.stream()
-            .mapToDouble(WorkoutLog::getBurnedCalories)
+            .mapToDouble(WorkoutLog::getCaloriesBurned)
             .sum();
         double avgDailyCaloriesBurned = totalCaloriesBurned / days;
 

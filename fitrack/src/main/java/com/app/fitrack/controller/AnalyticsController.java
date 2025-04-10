@@ -60,11 +60,13 @@ public class AnalyticsController {
         // Calculate TDEE
         double tdee = userService.calculateTDEE(user, userService.calculateDynamicActivityFactor(user, 7));
 
-        // Get recommendations
-        String recommendations = recommendationService.generateRecommendations(user.getId());
+        // Force refresh recommendations by clearing any cached data
+        Map<String, Object> recommendations = recommendationService.generateRecommendations(user.getId());
+        String recommendationsText = (String) recommendations.get("recommendations");
+        double actualWeeklyTrend = (Double) recommendations.get("actualWeeklyTrend");
         
         // Split recommendations into sections
-        String[] sections = recommendations.split("\n\n");
+        String[] sections = recommendationsText.split("\n\n");
         String goalRecommendations = "";
         String weightRecommendation = "";
         String nutritionRecommendation = "";
@@ -95,7 +97,7 @@ public class AnalyticsController {
             if (daysAgo >= 0 && daysAgo < 7) {
                 int index = 6 - (int)daysAgo;
                 workoutCounts[index]++;
-                caloriesBurned[index] += log.getBurnedCalories();
+                caloriesBurned[index] += log.getCaloriesBurned();
             }
         }
 
@@ -127,6 +129,13 @@ public class AnalyticsController {
         // Calculate BMI and category
         double currentBmiValue = bodyMeasurementService.calculateCurrentBMI(user);
         String currentBmiCategory = bodyMeasurementService.getBMICategory(currentBmiValue);
+
+        // Calculate weight progress
+        Double weightProgress = null;
+        if (measurements.size() >= 2) {
+            BodyMeasurement previousMeasurement = measurements.get(1);
+            weightProgress = latestMeasurement.getWeight() - previousMeasurement.getWeight();
+        }
 
         // Calculate weekly weight change
         double dailyBalance = avgDailyCalories - (tdee + avgDailyExercise);
@@ -166,6 +175,7 @@ public class AnalyticsController {
         // Add data to model
         model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
         model.addAttribute("currentUserWeight", latestMeasurement != null ? latestMeasurement.getWeight() : null);
+        model.addAttribute("weightProgress", weightProgress);
         model.addAttribute("avgDailyCalories", avgDailyCalories);
         model.addAttribute("avgDailyExercise", avgDailyExercise);
         model.addAttribute("tdee", tdee);
@@ -178,6 +188,7 @@ public class AnalyticsController {
         model.addAttribute("currentBmiValue", currentBmiValue);
         model.addAttribute("currentBmiCategory", currentBmiCategory);
         model.addAttribute("weeklyWeightChange", weeklyWeightChange);
+        model.addAttribute("actualWeeklyTrend", actualWeeklyTrend);
         model.addAttribute("proteinNeeds", proteinNeeds);
         model.addAttribute("carbNeeds", carbNeeds);
         model.addAttribute("fatNeeds", fatNeeds);

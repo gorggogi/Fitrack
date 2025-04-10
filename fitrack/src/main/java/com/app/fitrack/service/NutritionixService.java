@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.app.fitrack.model.MealFoodItem;
 
 import java.util.Map;
@@ -28,7 +27,6 @@ public class NutritionixService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    @Autowired
     public NutritionixService(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;

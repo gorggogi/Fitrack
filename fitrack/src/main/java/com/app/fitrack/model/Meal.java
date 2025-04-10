@@ -53,6 +53,23 @@ public class Meal {
         return foodItems.stream().mapToInt(MealFoodItem::getCalories).sum();
     }
 
+    public Double getTotalProtein() {
+        return foodItems.stream()
+            .mapToDouble(item -> item.getProtein() != null ? item.getProtein() : 0)
+            .sum();
+    }
+
+    public Double getTotalCarbs() {
+        return foodItems.stream()
+            .mapToDouble(item -> item.getCarbs() != null ? item.getCarbs() : 0)
+            .sum();
+    }
+
+    public Double getTotalFat() {
+        return foodItems.stream()
+            .mapToDouble(item -> item.getFat() != null ? item.getFat() : 0)
+            .sum();
+    }
 
     public LocalDateTime getDateTime() {
         return dateTime;

@@ -44,7 +44,7 @@
                 </div>
                 <div class="form-group">
                     <label>Burned Calories</label>
-                    <input type="number" name="burnedCalories" id="burnedCalories" placeholder="Burned Calories" required>
+                    <input type="number" name="caloriesBurned" id="caloriesBurned" placeholder="Burned Calories" required>
                 </div>
                 <div class="form-group">
                     <label>Repeat Days</label>
@@ -99,20 +99,20 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token  // Add CSRF token to headers
+                    'X-CSRF-TOKEN': token
                 },
                 body: JSON.stringify({
                     workoutName: workoutName,
-                    duration: parseFloat(duration)
+                    duration: duration
                 })
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('burnedCalories').value = data.calories;
+                document.getElementById('caloriesBurned').value = data.calories;
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error estimating calories. Please try again.');
+                alert('Failed to estimate calories. Please try again.');
             });
         }
 

@@ -56,8 +56,10 @@
                             <div class="stat-item">
                                 <span class="stat-label">Current Weight:</span>
                                 <span class="stat-value" th:text="${currentUserWeight != null ? #numbers.formatDecimal(currentUserWeight, 1, 1) + ' kg' : '--'}">--</span>
-                                <span class="stat-change" th:classappend="${weightProgress > 0 ? 'positive' : 'negative'}"
-                                      th:text="${weightProgress != 0 ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : ''}">--</span>
+                                <span class="stat-change" 
+                                      th:classappend="${weightProgress != null ? (weightProgress > 0 ? 'positive' : 'negative') : ''}"
+                                      th:text="${weightProgress != null ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : 'No change'}">
+                                </span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">BMI:</span>
@@ -117,9 +119,14 @@
                         <div class="recommendation-section">
                             <h3>Weight Change Projection</h3>
                             <div class="projection-item" th:if="${weeklyWeightChange != null}">
-                                <span class="projection-label">Weekly Change:</span>
+                                <span class="projection-label">Projected Change:</span>
                                 <span class="projection-value" th:classappend="${weeklyWeightChange > 0 ? 'positive' : 'negative'}"
-                                      th:text="${weeklyWeightChange != 0 ? (weeklyWeightChange > 0 ? '+' : '') + #numbers.formatDecimal(weeklyWeightChange, 1, 1) + ' kg/week' : 'Stable'}">--</span>
+                                      th:text="${weeklyWeightChange != 0 ? (weeklyWeightChange > 0 ? '+' : '') + #numbers.formatDecimal(weeklyWeightChange, 1, 1) + ' kg/week (from calories)' : 'Stable'}">--</span>
+                            </div>
+                            <div class="projection-item" th:if="${actualWeeklyTrend != null}">
+                                <span class="projection-label">Actual Trend:</span>
+                                <span class="projection-value" th:classappend="${actualWeeklyTrend > 0 ? 'positive' : 'negative'}"
+                                      th:text="${actualWeeklyTrend != 0 ? (actualWeeklyTrend > 0 ? '+' : '') + #numbers.formatDecimal(actualWeeklyTrend, 1, 1) + ' kg/week (4-week avg)' : 'Stable'}">--</span>
                             </div>
                             <div class="recommendation-text" th:text="${weightRecommendation}">--</div>
                         </div>

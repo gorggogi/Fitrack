@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/Fitrack.css">
     <script src="/styles/scripts/dashboard.js"></script>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 </head>
 <body>
     <div class="container">
@@ -67,7 +68,7 @@
      th:attr="data-id=${workout.id}, 
               data-name=${workout.workoutName}, 
               data-duration=${workout.duration}, 
-              data-calories=${workout.burnedCalories}"
+              data-calories=${workout.caloriesBurned}"
      onclick="openModal(this)">
     <span th:text="${workout.workoutName}"></span>
     <span th:text="${workout.duration} + ' mins'"></span>
@@ -123,13 +124,19 @@
         </div>
     </div>
 
-    <!-- Workout Details Modal -->
-   <!-- ✅ Workout Details Modal -->
-<!-- ✅ Workout Details Modal -->
 <div id="workoutModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeWorkoutModal()">&times;</span>
-        <h2>Add New Workout</h2>
+        <h2 id="modalTitle">Add New Workout</h2>
+        <div id="workoutDetails" style="display: none;">
+            <h3 id="modalWorkoutName"></h3>
+            <p>Duration: <span id="modalWorkoutDuration"></span></p>
+            <p>Calories: <span id="modalWorkoutCalories"></span></p>
+            <div class="form-actions">
+                <button type="button" id="markAsDoneButton" class="btn btn-success">Mark as Done</button>
+                <button type="button" class="btn btn-secondary" onclick="closeWorkoutModal()">Close</button>
+            </div>
+        </div>
         <form id="workoutForm" action="/user/saveworkout" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <div class="form-group">
@@ -142,7 +149,7 @@
             </div>
             <div class="form-group">
                 <label>Burned Calories</label>
-                <input type="number" name="burnedCalories" id="burnedCalories" placeholder="Burned Calories" required>
+                <input type="number" name="caloriesBurned" id="caloriesBurned" placeholder="Burned Calories" required>
             </div>
             <div class="form-group">
                 <label>Repeat Days</label>
@@ -270,17 +277,8 @@
     </div>
 </div>
 
-<div id="workoutDoneModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <h3 id="modalWorkoutName">Workout Name</h3>
-        <p><strong>Duration:</strong> <span id="modalWorkoutDuration"></span></p>
-        <p><strong>Calories:</strong> <span id="modalWorkoutCalories"></span></p>
-        <button id="markAsDoneButton">Mark as Done</button>
-    </div>
-</div>
-
-
 <script>
+    // Remove all the modal-related JavaScript since it's now in dashboard.js
 </script>
 </body>
 </html>

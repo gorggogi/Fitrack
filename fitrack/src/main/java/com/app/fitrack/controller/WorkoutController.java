@@ -44,6 +44,12 @@ public class WorkoutController {
             repeatDays = List.of("Daily"); 
         }
         workout.setRepeatDays(repeatDays);
+        
+        // Ensure caloriesBurned is set
+        if (workout.getCaloriesBurned() == null) {
+            workout.setCaloriesBurned(0.0);
+        }
+        
         workoutService.saveWorkout(workout);  
         return "redirect:/user/dashboard";
     }

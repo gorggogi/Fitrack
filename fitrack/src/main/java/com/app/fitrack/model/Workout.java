@@ -23,8 +23,8 @@ public class Workout {
     @Column(nullable = false)
     private Integer duration; 
 
-    @Column(nullable = false)
-    private double burnedCalories;
+    @Column(name = "burned_calories", nullable = false)
+    private Double caloriesBurned;
 
     @ElementCollection(fetch = FetchType.EAGER)  
     @CollectionTable(name = "workout_repeat_days", joinColumns = @JoinColumn(name = "workout_id"))
@@ -35,9 +35,10 @@ public class Workout {
     private LocalDateTime dateTime;
 
     public Workout() {
-    this.dateTime = LocalDateTime.now();
-    this.repeatDays = new ArrayList<>(List.of("Daily")); 
-}
+        this.dateTime = LocalDateTime.now();
+        this.repeatDays = new ArrayList<>(List.of("Daily")); 
+        this.caloriesBurned = 0.0;
+    }
   
     public Long getId() {
         return id;
@@ -71,12 +72,12 @@ public class Workout {
         this.duration = duration;
     }
 
-    public double getBurnedCalories() {
-        return burnedCalories;
+    public Double getCaloriesBurned() {
+        return caloriesBurned;
     }
 
-    public void setBurnedCalories(double burnedCalories) {
-        this.burnedCalories = burnedCalories;
+    public void setCaloriesBurned(Double caloriesBurned) {
+        this.caloriesBurned = caloriesBurned;
     }
 
     public List<String> getRepeatDays() {

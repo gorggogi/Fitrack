@@ -24,24 +24,29 @@ public class WorkoutLog {
     @Column(nullable = false)
     private String workoutName;
 
+    @Column
+    private String workoutType;
+
     @Column(nullable = false)
     private Integer duration;
 
-    @Column(nullable = false)
-    private double burnedCalories;
+    @Column(name = "burned_calories", nullable = false)
+    private Double caloriesBurned;
 
     @Column(nullable = false)
     private LocalDateTime completedAt;
 
     public WorkoutLog() {
         this.completedAt = LocalDateTime.now();
+        this.caloriesBurned = 0.0;
     }
 
-    public WorkoutLog(User user, String workoutName, Integer duration, double burnedCalories) {
+    public WorkoutLog(User user, String workoutName, int duration, Double caloriesBurned) {
         this.user = user;
         this.workoutName = workoutName;
         this.duration = duration;
-        this.burnedCalories = burnedCalories;
+        this.caloriesBurned = caloriesBurned != null ? caloriesBurned : 0.0;
+        this.workoutType = "GENERAL";
         this.completedAt = LocalDateTime.now();
     }
 
@@ -77,12 +82,20 @@ public class WorkoutLog {
         this.duration = duration;
     }
 
-    public double getBurnedCalories() {
-        return burnedCalories;
+    public Double getCaloriesBurned() {
+        return caloriesBurned;
     }
 
-    public void setBurnedCalories(double burnedCalories) {
-        this.burnedCalories = burnedCalories;
+    public void setCaloriesBurned(Double caloriesBurned) {
+        this.caloriesBurned = caloriesBurned != null ? caloriesBurned : 0.0;
+    }
+
+    public String getWorkoutType() {
+        return workoutType;
+    }
+
+    public void setWorkoutType(String workoutType) {
+        this.workoutType = workoutType;
     }
 
     public LocalDateTime getCompletedAt() {

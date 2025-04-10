@@ -23,9 +23,6 @@ public class GoalService {
     private WorkoutLogRepository workoutLogRepository;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private BodyMeasurementService bodyMeasurementService;
 
     @Autowired

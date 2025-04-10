@@ -60,9 +60,7 @@
                             </div>
                         </div>
                         <div class="goal-details">
-                            <p>Type: <span th:text="${goal.goalType}">Type</span></p>
-                            <p>Status: <span th:text="${goal.status}">Status</span></p>
-                            <p>Target Date: <span th:text="${#temporals.format(goal.targetDate, 'MMM dd, yyyy')}">Date</span></p>
+                            <!-- All goal details removed for cleaner UI -->
                         </div>
                         <div class="goal-actions">
                             <form th:action="@{/user/goals/update/{id}(id=${goal.id})}" method="post" class="update-form">

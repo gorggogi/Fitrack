@@ -1263,6 +1263,18 @@ button.primary {
     padding: 1.5rem;
     border-radius: 15px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-height: 180px;
+}
+
+.goal-details {
+    margin: 1rem 0;
+    padding: 0.5rem 0;
+}
+
+.goal-details p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #555;
 }
 
 .goal-progress {

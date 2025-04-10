@@ -13,50 +13,63 @@ document.addEventListener("click", function(event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("workoutDoneModal");
+    const modal = document.getElementById("workoutModal");
     const markAsDoneButton = document.getElementById("markAsDoneButton");
 
-    if (!modal || !markAsDoneButton) {
-        console.error("⚠️ Modal or Mark as Done button not found.");
+    if (!modal) {
+        console.error("⚠️ Workout modal not found.");
         return;
     }
 
-    // Attach click listener to each workout item
     document.querySelectorAll(".workout-item").forEach(item => {
         item.addEventListener("click", () => openModal(item));
     });
 
-    // Mark as Done logic
-    markAsDoneButton.addEventListener("click", function () {
-        const workoutId = this.getAttribute("data-id");
-        if (!workoutId) return console.error("⚠️ Workout ID not found!");
+    if (markAsDoneButton) {
+        markAsDoneButton.addEventListener("click", function () {
+            const workoutId = this.getAttribute("data-id");
+            if (!workoutId) return console.error("⚠️ Workout ID not found!");
 
-        fetch(`/user/workouts/${workoutId}/mark-done`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector("input[name=_csrf]")?.value || ""
+            const csrfToken = document.querySelector('input[name="_csrf"]').value;
+            if (!csrfToken) {
+                console.error("⚠️ CSRF token not found!");
+                return;
             }
-        })
-        .then(response => response.ok ? response.text() : Promise.reject(`HTTP error: ${response.status}`))
-        .then(() => {
-            document.querySelector(`.workout-item[data-id="${workoutId}"]`)?.remove();
 
-            setTimeout(() => {
+            fetch(`/user/workouts/${workoutId}/mark-done`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || `HTTP error: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Remove the workout from the list
+                document.querySelector(`.workout-item[data-id="${workoutId}"]`)?.remove();
+
+                // If no more workouts, reload the page
                 if (document.querySelectorAll(".workout-item").length === 0) {
-                    console.log("🚀 Reloading page...");
                     location.reload();
                 }
+
+                closeWorkoutModal();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to mark workout as done. Please try again.");
             });
-
-            modal.style.display = "none";
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("Something went wrong. Please try again.");
         });
-    });
-
+    }
+    
     window.addEventListener("click", event => {
         if (event.target === modal) modal.style.display = "none";
     });
@@ -64,15 +77,91 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function openModal(workoutElement) {
-    const modal = document.getElementById("workoutDoneModal");
+    const modal = document.getElementById("workoutModal");
+    const workoutForm = document.getElementById("workoutForm");
+    const workoutDetails = document.getElementById("workoutDetails");
+    const modalTitle = document.getElementById("modalTitle");
+    
     if (!modal) return console.error("⚠️ Workout modal not found.");
 
-    document.getElementById("modalWorkoutName").innerText = workoutElement.getAttribute("data-name");
-    document.getElementById("modalWorkoutDuration").innerText = workoutElement.getAttribute("data-duration") + " mins";
-    document.getElementById("modalWorkoutCalories").innerText = workoutElement.getAttribute("data-calories") + " cal";
+    if (workoutElement) {
+        // Viewing existing workout
+        modalTitle.textContent = "Workout Details";
+        workoutForm.style.display = "none";
+        workoutDetails.style.display = "block";
+        
+        document.getElementById("modalWorkoutName").textContent = workoutElement.getAttribute("data-name");
+        document.getElementById("modalWorkoutDuration").textContent = workoutElement.getAttribute("data-duration") + " mins";
+        document.getElementById("modalWorkoutCalories").textContent = workoutElement.getAttribute("data-calories") + " cal";
 
-    document.getElementById("markAsDoneButton").setAttribute("data-id", workoutElement.getAttribute("data-id"));
-    modal.style.display = "block";
+        const markAsDoneButton = document.getElementById("markAsDoneButton");
+        markAsDoneButton.setAttribute("data-id", workoutElement.getAttribute("data-id"));
+        
+        // Add click event listener for the Mark as Done button
+        markAsDoneButton.onclick = function() {
+            const workoutId = this.getAttribute("data-id");
+            if (!workoutId) return console.error("⚠️ Workout ID not found!");
+
+            const csrfToken = document.querySelector('input[name="_csrf"]').value;
+            if (!csrfToken) {
+                console.error("⚠️ CSRF token not found!");
+                return;
+            }
+
+            fetch(`/user/workouts/${workoutId}/mark-done`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || `HTTP error: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Remove the workout from the list
+                document.querySelector(`.workout-item[data-id="${workoutId}"]`)?.remove();
+
+                // If no more workouts, reload the page
+                if (document.querySelectorAll(".workout-item").length === 0) {
+                    location.reload();
+                }
+
+                closeWorkoutModal();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to mark workout as done. Please try again.");
+            });
+        };
+    } else {
+        // Adding new workout
+        modalTitle.textContent = "Add New Workout";
+        workoutForm.style.display = "block";
+        workoutDetails.style.display = "none";
+    }
+
+    modal.style.display = "flex";
+}
+
+function closeWorkoutModal() {
+    const modal = document.getElementById("workoutModal");
+    const workoutForm = document.getElementById("workoutForm");
+    const workoutDetails = document.getElementById("workoutDetails");
+    
+    if (modal) {
+        modal.style.display = "none";
+        // Reset form if it exists
+        if (workoutForm) workoutForm.reset();
+        // Hide workout details if they exist
+        if (workoutDetails) workoutDetails.style.display = "none";
+    }
 }
 
 // Modal functions
@@ -86,10 +175,6 @@ function closeGoalModal() {
 
 function openWorkoutModal() {
     document.getElementById('workoutModal').style.display = 'flex';
-}
-
-function closeWorkoutModal() {
-    document.getElementById('workoutModal').style.display = 'none';
 }
 
 function openMealModal() {
@@ -240,30 +325,41 @@ function removeFoodItem(button) {
 
 // Workout-related functions
 function estimateBurnedCalories() {
-    const duration = document.getElementById('duration').value;
-    const workoutName = document.getElementById('workoutName').value.toLowerCase();
+    const duration = parseFloat(document.getElementById('duration').value);
+    const workoutName = document.getElementById('workoutName').value;
     
-    if (!duration) {
-        alert('Please enter the duration first');
+    if (!duration || !workoutName || isNaN(duration)) {
+        alert('Please enter both workout name and a valid duration');
         return;
     }
 
-    // Base calorie burn rate (calories per minute)
-    let baseRate = 5; // Default moderate intensity
-    
-    // Adjust base rate based on workout type
-    if (workoutName.includes('run') || workoutName.includes('sprint')) {
-        baseRate = 10; // High intensity
-    } else if (workoutName.includes('walk') || workoutName.includes('yoga')) {
-        baseRate = 3; // Low intensity
-    } else if (workoutName.includes('swim') || workoutName.includes('cycle')) {
-        baseRate = 8; // Medium-high intensity
-    } else if (workoutName.includes('weight') || workoutName.includes('strength')) {
-        baseRate = 7; // Medium intensity
-    }
-
-    // Calculate estimated calories
-    const estimatedCalories = Math.round(duration * baseRate);
-    document.getElementById('burnedCalories').value = estimatedCalories;
+    fetch('/workouts/estimate-calories', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+        },
+        body: JSON.stringify({
+            workoutName: workoutName,
+            duration: duration
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && typeof data.calories === 'number') {
+            document.getElementById('caloriesBurned').value = data.calories;
+        } else {
+            throw new Error('Invalid response format');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to estimate calories. Please try again.');
+    });
 }
 

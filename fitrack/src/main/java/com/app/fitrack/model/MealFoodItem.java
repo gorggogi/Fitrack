@@ -15,6 +15,9 @@ public class MealFoodItem {
     private int calories;
     private double quantity;  
     private String unit; 
+    private Double protein;
+    private Double carbs;
+    private Double fat;
 
     @ManyToOne
     private Meal meal;
@@ -65,6 +68,30 @@ public class MealFoodItem {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public Double getProtein() {
+        return protein;
+    }
+
+    public void setProtein(Double protein) {
+        this.protein = protein;
+    }
+
+    public Double getCarbs() {
+        return carbs;
+    }
+
+    public void setCarbs(Double carbs) {
+        this.carbs = carbs;
+    }
+
+    public Double getFat() {
+        return fat;
+    }
+
+    public void setFat(Double fat) {
+        this.fat = fat;
     }
 
 }

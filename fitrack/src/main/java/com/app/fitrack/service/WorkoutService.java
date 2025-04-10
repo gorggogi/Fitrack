@@ -40,6 +40,11 @@ public class WorkoutService {
             workout.setDateTime(LocalDateTime.now());
         }
 
+        // Ensure caloriesBurned is set
+        if (workout.getCaloriesBurned() == null) {
+            workout.setCaloriesBurned(0.0);
+        }
+
         return workoutRepository.save(workout);
     }
 
@@ -66,6 +71,9 @@ public class WorkoutService {
         Workout workout = workoutRepository.findById(workoutId)
             .orElseThrow(() -> new IllegalArgumentException("Workout not found with ID: " + workoutId));
         User currentUser = userService.getAuthenticatedUser();
+        if (currentUser == null) {
+            throw new IllegalStateException("No authenticated user found.");
+        }
 
         // Check if already logged today
         if (workoutLogRepository.existsByUserAndWorkoutNameAndDate(currentUser, workout.getWorkoutName(), LocalDate.now())) {
@@ -77,11 +85,17 @@ public class WorkoutService {
         log.setUser(currentUser);
         log.setWorkoutName(workout.getWorkoutName());
         log.setDuration(workout.getDuration());
-        log.setBurnedCalories(workout.getBurnedCalories());
+        log.setCaloriesBurned(workout.getCaloriesBurned() != null ? workout.getCaloriesBurned() : 0.0);
+        log.setWorkoutType("GENERAL");
         log.setCompletedAt(LocalDateTime.now());
 
-        workoutLogRepository.save(log);
-        System.out.println("Workout logged: " + workout.getWorkoutName());
+        try {
+            workoutLogRepository.save(log);
+            System.out.println("Workout logged: " + workout.getWorkoutName());
+        } catch (Exception e) {
+            System.err.println("Error saving workout log: " + e.getMessage());
+            throw e;
+        }
     }
     
     public List<Workout> getWorkoutsForLast7Days(String email) {
@@ -105,7 +119,9 @@ public class WorkoutService {
         // Sort for calculating days spanned
         recentLogs.sort(Comparator.comparing(WorkoutLog::getCompletedAt));
         
-        double totalCaloriesBurned = recentLogs.stream().mapToDouble(WorkoutLog::getBurnedCalories).sum();
+        double totalCaloriesBurned = recentLogs.stream()
+            .mapToDouble(WorkoutLog::getCaloriesBurned)
+            .sum();
         // Calculate the actual number of days spanned by the logs, minimum 1
         long daysSpanned = java.time.temporal.ChronoUnit.DAYS.between(recentLogs.get(0).getCompletedAt().toLocalDate(), endDate.toLocalDate()) + 1;
         

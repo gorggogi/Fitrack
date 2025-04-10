@@ -18,19 +18,11 @@ import com.app.fitrack.service.WorkoutService;
 import com.app.fitrack.service.DuplicateEmailException;
 import com.app.fitrack.service.MealService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import com.app.fitrack.model.BodyMeasurement;
 import com.app.fitrack.service.BodyMeasurementService;
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.time.format.DateTimeFormatter;
-import com.app.fitrack.repository.WorkoutLogRepository;
-import com.app.fitrack.model.WorkoutLog;
 import com.app.fitrack.service.GoalService;
 import com.app.fitrack.model.Goal;
 
@@ -50,9 +42,6 @@ public class UserController {
 
     @Autowired
     private BodyMeasurementService bodyMeasurementService;
-
-    @Autowired
-    private WorkoutLogRepository workoutLogRepository;
 
     @Autowired
     private GoalService goalService;
@@ -212,7 +201,7 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                               @RequestParam(required = false) Double weight,
                               RedirectAttributes redi) {
         String email = userDetails.getUsername();
-        String result = userService.createUserProfile(email, age, gender, height, weight);
+        userService.createUserProfile(email, age, gender, height, weight);
         redi.addFlashAttribute("successMessage", "Profile created successfully!");
         return "redirect:/user/dashboard";
     }

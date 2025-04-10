@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,9 +31,6 @@ public class RecommendationService {
     private WorkoutLogRepository workoutLogRepository;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -41,18 +39,24 @@ public class RecommendationService {
     @Autowired
     private NutritionixService nutritionixService;
 
-    public String generateRecommendations(Long userId) {
+    public Map<String, Object> generateRecommendations(Long userId) {
         // Get user
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            return "User not found.";
+            Map<String, Object> error = new HashMap<>();
+            error.put("recommendations", "User not found.");
+            error.put("actualWeeklyTrend", 0.0);
+            return error;
         }
 
         // Get user's latest measurement
         List<BodyMeasurement> measurements = bodyMeasurementRepository.findByUserOrderByDateTimeDesc(user);
         BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0);
         if (latestMeasurement == null) {
-            return "No body measurements found. Please add your initial measurements.";
+            Map<String, Object> error = new HashMap<>();
+            error.put("recommendations", "No body measurements found. Please add your initial measurements.");
+            error.put("actualWeeklyTrend", 0.0);
+            return error;
         }
 
         // Get last 7 days of data
@@ -98,36 +102,103 @@ public class RecommendationService {
         double carbNeeds = (double) nutritionRecs.get("carbs_g");
         double fatNeeds = (double) nutritionRecs.get("fats_g");
 
-        // Calculate daily balance and weight change
+        // Calculate daily balance and weight changes
         double calorieBalance = avgDailyCalories - tdee;
         double projectedWeeklyChange = calculateWeeklyWeightChange(calorieBalance);
-
-        // Generate recommendations
-        StringBuilder recommendations = new StringBuilder();
-        recommendations.append("Current Status:\n");
-        recommendations.append(String.format("- Weight: %.1f kg\n", latestMeasurement.getWeight()));
-        recommendations.append(String.format("- Average Daily Calories: %.0f kcal\n", avgDailyCalories));
-        recommendations.append(String.format("- Average Daily Exercise: %.0f kcal\n", avgDailyExercise));
-        recommendations.append(String.format("- Estimated TDEE: %.0f kcal\n", tdee));
-        recommendations.append(String.format("- Current Calorie Surplus/Deficit: %+.0f kcal\n", calorieBalance));
-        recommendations.append(String.format("- Projected Weekly Change: %+.1f kg/week\n", projectedWeeklyChange));
-
-        // Get user's goal type (if any)
-        String primaryGoalType = null;
-        Double targetValue = null;
+        
+        // Calculate actual weight trend (4-week average)
+        double actualWeeklyTrend = calculateActualWeightTrend(user);
+        
+        // Calculate weight loss progress if goal exists
+        double weightLossProgress = 0;
         if (!activeGoals.isEmpty()) {
-            // Find weight-related goal if it exists
             for (Goal goal : activeGoals) {
-                if (goal.getGoalType().equalsIgnoreCase("WEIGHT_LOSS") || 
-                    goal.getGoalType().equalsIgnoreCase("WEIGHT_GAIN")) {
-                    primaryGoalType = goal.getGoalType().toUpperCase();
-                    targetValue = goal.getTargetValue();
+                if (goal.getGoalType().equalsIgnoreCase("WEIGHT_LOSS")) {
+                    double currentWeight = latestMeasurement.getWeight();
+                    double targetWeight = goal.getTargetValue();
+                    double initialWeight = getInitialWeight(user); // Need to implement this
+                    if (initialWeight > targetWeight) {
+                        weightLossProgress = (initialWeight - currentWeight) / (initialWeight - targetWeight);
+                        weightLossProgress = Math.max(0, Math.min(1, weightLossProgress)); // Clamp between 0-1
+                    }
                     break;
                 }
             }
         }
-
-        // Generate goal-specific recommendations
+        
+        // Generate recommendations
+        StringBuilder recommendations = new StringBuilder();
+        recommendations.append("Current Status:\n");
+        recommendations.append(String.format("- Current Weight: %.1f kg\n", latestMeasurement.getWeight()));
+        recommendations.append(String.format("- Average Daily Calories: %.0f kcal\n", avgDailyCalories));
+        recommendations.append(String.format("- Average Daily Exercise: %.0f kcal\n", avgDailyExercise));
+        recommendations.append(String.format("- Estimated TDEE: %.0f kcal\n", tdee));
+        recommendations.append(String.format("- Calorie Balance: %+.0f kcal/day\n", calorieBalance));
+        recommendations.append(String.format("- Projected Change: %+.1f kg/week (from calories)\n", projectedWeeklyChange));
+        recommendations.append(String.format("- Actual Trend: %+.1f kg/week (4-week average)\n", actualWeeklyTrend));
+        
+        // Add detailed nutrition recommendations
+        recommendations.append("\nNutrition Analysis:\n");
+        recommendations.append(String.format("- Current Protein Intake: %.1f g (%.1f%% of calories)\n", 
+            calculateProteinIntake(recentMeals), calculateProteinPercentage(recentMeals)));
+        recommendations.append(String.format("- Current Carb Intake: %.1f g (%.1f%% of calories)\n", 
+            calculateCarbIntake(recentMeals), calculateCarbPercentage(recentMeals)));
+        recommendations.append(String.format("- Current Fat Intake: %.1f g (%.1f%% of calories)\n", 
+            calculateFatIntake(recentMeals), calculateFatPercentage(recentMeals)));
+        
+        // Compare with recommended macros
+        if (proteinNeeds > 0) {
+            double currentProtein = calculateProteinIntake(recentMeals);
+            if (currentProtein < proteinNeeds * 0.9) {
+                recommendations.append(String.format("- Consider increasing protein intake to %.1f g/day for better muscle maintenance\n", proteinNeeds));
+            }
+        }
+        
+        // Add meal timing recommendations
+        recommendations.append("\nMeal Timing Analysis:\n");
+        Map<String, Double> mealDistribution = analyzeMealDistribution(recentMeals);
+        if (mealDistribution.get("breakfast") < 0.2) {
+            recommendations.append("- Consider adding a protein-rich breakfast to support metabolism\n");
+        }
+        if (mealDistribution.get("dinner") > 0.4) {
+            recommendations.append("- Try to distribute calories more evenly throughout the day\n");
+        }
+        
+        // Add exercise-specific recommendations
+        recommendations.append("\nExercise Analysis:\n");
+        Map<String, Double> exerciseDistribution = analyzeExerciseDistribution(recentWorkouts);
+        if (exerciseDistribution.get("strength") < 0.3 && goalType.equals("gain")) {
+            recommendations.append("- Increase strength training frequency for better muscle development\n");
+        }
+        if (exerciseDistribution.get("cardio") < 0.2 && goalType.equals("loss")) {
+            recommendations.append("- Add more cardio sessions to support fat loss\n");
+        }
+        
+        // Add progress tracking and milestones
+        if (weightLossProgress > 0) {
+            recommendations.append("\nProgress Tracking:\n");
+            recommendations.append(String.format("- You've completed %.1f%% of your weight loss journey\n", weightLossProgress * 100));
+            if (weightLossProgress < 0.25) {
+                recommendations.append("- Focus on establishing consistent habits in the early phase\n");
+            } else if (weightLossProgress < 0.75) {
+                recommendations.append("- You're in the middle phase - stay consistent with your routine\n");
+            } else {
+                recommendations.append("- You're in the final phase - focus on sustainable habits\n");
+            }
+        }
+        
+        // Add more context about weight fluctuations
+        if (Math.abs(projectedWeeklyChange - actualWeeklyTrend) > 0.2) {
+            recommendations.append("\nWeight Fluctuation Context:\n");
+            recommendations.append("- Daily weight can fluctuate by 1-2 kg due to:\n");
+            recommendations.append("  * Water retention\n");
+            recommendations.append("  * Glycogen storage\n");
+            recommendations.append("  * Food in digestive system\n");
+            recommendations.append("  * Sodium intake\n");
+            recommendations.append("- Focus on weekly trends rather than daily changes\n");
+        }
+        
+        // Enhanced goal-specific recommendations
         recommendations.append("\nGoal-Specific Recommendations:\n");
         if (!activeGoals.isEmpty()) {
             for (Goal goal : activeGoals) {
@@ -135,39 +206,46 @@ public class RecommendationService {
                     case "WEIGHT_LOSS":
                         recommendations.append(String.format("- Weight Loss Goal: %.1f kg by %s\n", 
                             goal.getTargetValue(), goal.getTargetDate().toLocalDate()));
+                        
+                        // Calculate time remaining and required rate
+                        long daysRemaining = java.time.temporal.ChronoUnit.DAYS.between(
+                            LocalDateTime.now(), goal.getTargetDate());
+                        double requiredWeeklyRate = (latestMeasurement.getWeight() - goal.getTargetValue()) / 
+                            (daysRemaining / 7.0);
+                        
                         if (projectedWeeklyChange > -0.5) {
                             recommendations.append("- Consider increasing your calorie deficit slightly\n");
-                            recommendations.append("- Aim for a 300-500 kcal daily deficit\n");
+                            recommendations.append(String.format("- Target a %.1f kg/week loss for your timeline\n", 
+                                Math.min(-0.5, requiredWeeklyRate)));
+                            recommendations.append("- Focus on high-protein meals to preserve muscle\n");
+                            recommendations.append("- Include strength training 2-3 times per week\n");
+                        } else if (projectedWeeklyChange < -1.0) {
+                            recommendations.append("- Current rate is too aggressive\n");
+                            recommendations.append("- Consider a more moderate approach for sustainability\n");
+                            recommendations.append("- Ensure adequate protein intake to prevent muscle loss\n");
                         }
                         break;
                     case "WEIGHT_GAIN":
                         recommendations.append(String.format("- Weight Gain Goal: %.1f kg by %s\n", 
                             goal.getTargetValue(), goal.getTargetDate().toLocalDate()));
                         
-                        // Calculate surplus and weekly rate
                         double currentSurplus = avgDailyCalories - tdee;
-                        double weeklyGainRate = projectedWeeklyChange;
+                        long gainDaysRemaining = java.time.temporal.ChronoUnit.DAYS.between(
+                            LocalDateTime.now(), goal.getTargetDate());
+                        double requiredWeeklyGain = (goal.getTargetValue() - latestMeasurement.getWeight()) / 
+                            (gainDaysRemaining / 7.0);
                         
                         if (currentSurplus < 200) {
                             recommendations.append("- Current surplus is too low for optimal gains\n");
-                            recommendations.append("- Consider increasing your calorie surplus\n");
-                            recommendations.append(String.format("- Start with %.0f-%.0f kcal above maintenance\n", 300.0, 500.0));
-                            recommendations.append("- Adjust based on weekly weight changes\n");
-                        } else if (currentSurplus > 750 && weeklyGainRate > 0.7) {
-                            // Only suggest reducing if gaining more than 0.7kg/week
-                            recommendations.append("- Current rate of gain might lead to excess fat\n");
-                            recommendations.append("- Consider a slightly smaller surplus for better results\n");
+                            recommendations.append(String.format("- Target a %.1f kg/week gain for your timeline\n", 
+                                Math.min(0.5, requiredWeeklyGain)));
+                            recommendations.append("- Focus on calorie-dense foods and protein shakes\n");
+                            recommendations.append("- Consider pre/post-workout nutrition timing\n");
+                        } else if (currentSurplus > 750 && projectedWeeklyChange > 0.7) {
+                            recommendations.append("- Current rate might lead to excess fat gain\n");
+                            recommendations.append("- Consider a more moderate surplus\n");
                             recommendations.append("- Focus on progressive overload in training\n");
-                            recommendations.append("- Monitor body composition changes\n");
-                        } else if (currentSurplus >= 300 && weeklyGainRate >= 0.2 && weeklyGainRate <= 0.7) {
-                            recommendations.append("- Current progress is good for muscle gain\n");
-                            recommendations.append("- Maintain current intake while monitoring progress\n");
-                            recommendations.append("- Focus on progressive overload in training\n");
-                            recommendations.append("- Ensure adequate rest between sessions\n");
-                        } else {
-                            recommendations.append("- Current intake is supporting your goal\n");
-                            recommendations.append("- Monitor weekly weight changes\n");
-                            recommendations.append("- Adjust calories if progress stalls\n");
+                            recommendations.append("- Monitor body composition changes weekly\n");
                         }
                         break;
                     case "EXERCISE":
@@ -175,12 +253,16 @@ public class RecommendationService {
                         if (avgDailyExercise < goal.getTargetValue()) {
                             recommendations.append("- Increase workout frequency or intensity\n");
                             recommendations.append("- Consider adding 1-2 more sessions per week\n");
+                            recommendations.append("- Focus on progressive overload\n");
+                            recommendations.append("- Ensure proper rest between sessions\n");
                         }
                         break;
                     case "NUTRITION":
                         recommendations.append(String.format("- Nutrition Goal: %s\n", goal.getDescription()));
                         if (Math.abs(avgDailyCalories - goal.getTargetValue()) > 100) {
                             recommendations.append(String.format("- Adjust daily calories to %.0f kcal\n", goal.getTargetValue()));
+                            recommendations.append("- Focus on meal timing and distribution\n");
+                            recommendations.append("- Consider meal prepping for consistency\n");
                         }
                         break;
                 }
@@ -193,7 +275,7 @@ public class RecommendationService {
         recommendations.append("\nWeight Change Projection:\n");
         if (projectedWeeklyChange < -0.5) {
             recommendations.append("- Rapid weight loss detected (>0.5 kg/week)\n");
-            if (primaryGoalType != null && primaryGoalType.equals("WEIGHT_LOSS")) {
+            if (goalType != null && goalType.equals("WEIGHT_LOSS")) {
                 recommendations.append("- Current weight loss rate is faster than recommended\n");
                 recommendations.append("- Consider increasing calories by " + Math.abs(Math.round(calorieBalance - 500)) + " kcal for a safer rate\n");
             } else {
@@ -201,14 +283,14 @@ public class RecommendationService {
             }
         } else if (projectedWeeklyChange < -0.1) {
             recommendations.append("- Moderate weight loss detected\n");
-            if (primaryGoalType != null && primaryGoalType.equals("WEIGHT_LOSS")) {
+            if (goalType != null && goalType.equals("WEIGHT_LOSS")) {
                 recommendations.append("- Current rate is sustainable\n");
             } else {
                 recommendations.append("- Consider increasing calories if weight loss is not intended\n");
             }
         } else if (projectedWeeklyChange > 0.5) {
             recommendations.append("- Rapid weight gain detected (>0.5 kg/week)\n");
-            if (primaryGoalType != null && primaryGoalType.equals("WEIGHT_GAIN")) {
+            if (goalType != null && goalType.equals("WEIGHT_GAIN")) {
                 recommendations.append("- Current rate exceeds optimal range for lean gains\n");
                 recommendations.append(String.format("- Consider reducing to %.0f-%.0f kcal above maintenance\n", 300.0, 500.0));
             } else {
@@ -216,7 +298,7 @@ public class RecommendationService {
             }
         } else if (projectedWeeklyChange > 0.1) {
             recommendations.append("- Moderate weight gain detected\n");
-            if (primaryGoalType != null && primaryGoalType.equals("WEIGHT_GAIN")) {
+            if (goalType != null && goalType.equals("WEIGHT_GAIN")) {
                 recommendations.append("- Current rate is within optimal range\n");
                 recommendations.append("- Focus on progressive overload in training\n");
             } else {
@@ -224,10 +306,10 @@ public class RecommendationService {
             }
         } else {
             recommendations.append("- Weight appears stable (±0.1 kg/week)\n");
-            if (primaryGoalType != null) {
-                if (primaryGoalType.equals("WEIGHT_GAIN")) {
+            if (goalType != null) {
+                if (goalType.equals("WEIGHT_GAIN")) {
                     recommendations.append("- Consider increasing calories to support your goal\n");
-                } else if (primaryGoalType.equals("WEIGHT_LOSS")) {
+                } else if (goalType.equals("WEIGHT_LOSS")) {
                     recommendations.append("- Consider decreasing calories to support your goal\n");
                 }
             } else {
@@ -253,8 +335,8 @@ public class RecommendationService {
 
         // Nutrition recommendations
         recommendations.append("\nNutrition Recommendations:\n");
-        if (primaryGoalType != null) {
-            if (primaryGoalType.equals("WEIGHT_LOSS")) {
+        if (goalType != null) {
+            if (goalType.equals("WEIGHT_LOSS")) {
                 if (avgDailyCalories > tdee - 200) {
                     recommendations.append("- To support your weight loss goal:\n");
                     recommendations.append(String.format("- Aim for %.0f-%.0f kcal per day\n", tdee - 500, tdee - 300));
@@ -268,13 +350,11 @@ public class RecommendationService {
                     recommendations.append("- Current calorie level supports your goal\n");
                     recommendations.append("- Focus on food quality and meal timing\n");
                 }
-            } else if (primaryGoalType.equals("WEIGHT_GAIN")) {
+            } else if (goalType.equals("WEIGHT_GAIN")) {
                 double surplus = avgDailyCalories - tdee;
-                double weeklyGainRate = projectedWeeklyChange;
-                double optimalProtein = latestMeasurement.getWeight() * 2.2; // Increased to 2.2g/kg for optimal gains
                 
                 recommendations.append("Nutrition Strategy for Muscle Gain:\n");
-                if (weeklyGainRate < 0.2) {
+                if (projectedWeeklyChange < 0.2) {
                     recommendations.append("- Weight gain rate is below optimal\n");
                     recommendations.append(String.format("- Consider increasing to %.0f-%.0f kcal per day\n", tdee + 300, tdee + 500));
                     recommendations.append("Key focus areas:\n");
@@ -282,7 +362,7 @@ public class RecommendationService {
                     recommendations.append("   • Nuts, nut butters, olive oil\n");
                     recommendations.append("   • Whole grains, oats, rice\n");
                     recommendations.append("   • Lean proteins, dairy\n");
-                } else if (weeklyGainRate > 0.7 && surplus > 750) {
+                } else if (projectedWeeklyChange > 0.7 && surplus > 750) {
                     recommendations.append("- Current progress indicates rapid gains\n");
                     recommendations.append("- This can work if you're:\n");
                     recommendations.append("   • New to training\n");
@@ -303,7 +383,7 @@ public class RecommendationService {
                 }
                 
                 recommendations.append("\nProtein Requirements:\n");
-                recommendations.append(String.format("- Aim for %.0f g protein daily\n", optimalProtein));
+                recommendations.append(String.format("- Aim for %.0f g protein daily\n", latestMeasurement.getWeight() * 2.2));
                 recommendations.append("- Split across 4-6 meals\n");
                 recommendations.append("- Include complete protein sources\n");
             }
@@ -325,7 +405,7 @@ public class RecommendationService {
 
         // Macronutrient recommendations
         recommendations.append("\nMacronutrient Targets:\n");
-        if (primaryGoalType != null && primaryGoalType.equals("WEIGHT_GAIN")) {
+        if (goalType != null && goalType.equals("WEIGHT_GAIN")) {
             double optimalProtein = latestMeasurement.getWeight() * 2.0;
             double optimalFat = (targetCalories * 0.25) / 9; // 25% from fats
             double optimalCarbs = (targetCalories - (optimalProtein * 4) - (optimalFat * 9)) / 4;
@@ -339,7 +419,10 @@ public class RecommendationService {
             recommendations.append(String.format("- Fats: %.0f g per day\n", fatNeeds));
         }
 
-        return recommendations.toString();
+        Map<String, Object> result = new HashMap<>();
+        result.put("recommendations", recommendations.toString());
+        result.put("actualWeeklyTrend", actualWeeklyTrend);
+        return result;
     }
 
     private double calculateAverageDailyCalories(List<Meal> meals) {
@@ -366,7 +449,7 @@ public class RecommendationService {
         Map<LocalDateTime, Double> dailyExercise = workouts.stream()
             .collect(Collectors.groupingBy(
                 workout -> workout.getCompletedAt().toLocalDate().atStartOfDay(),
-                Collectors.summingDouble(WorkoutLog::getBurnedCalories)
+                Collectors.summingDouble(WorkoutLog::getCaloriesBurned)
             ));
 
         // Calculate average over the number of days with data
@@ -377,9 +460,46 @@ public class RecommendationService {
     }
 
     private double calculateWeeklyWeightChange(double dailyBalance) {
-        // Use a standard energy density since we don't have body composition data
-        double energyDensity = 7700; // Standard estimate of kcal per kg
-        return (dailyBalance * 7) / energyDensity;
+        final double ENERGY_DENSITY = 7700; // kcal per kg
+        final double MAX_WEEKLY_CHANGE = 2.0; // kg
+        
+        double weeklyChange = (dailyBalance * 7) / ENERGY_DENSITY;
+        
+        // Apply reasonable limits
+        weeklyChange = Math.max(-MAX_WEEKLY_CHANGE, Math.min(MAX_WEEKLY_CHANGE, weeklyChange));
+        
+        // Round to 1 decimal place
+        return Math.round(weeklyChange * 10) / 10.0;
+    }
+
+    private double calculateActualWeightTrend(User user) {
+        List<BodyMeasurement> measurements = bodyMeasurementRepository
+            .findByUserOrderByDateTimeDesc(user);
+            
+        if (measurements.size() < 2) return 0;
+        
+        // Get first and last measurement in last 4 weeks
+        BodyMeasurement newest = measurements.get(0);
+        BodyMeasurement oldest = measurements.stream()
+            .filter(m -> m.getDateTime().isAfter(newest.getDateTime().minusWeeks(4)))
+            .reduce((first, last) -> last)
+            .orElse(measurements.get(measurements.size()-1));
+            
+        double weightDiff = newest.getWeight() - oldest.getWeight();
+        long daysBetween = java.time.Duration.between(oldest.getDateTime(), newest.getDateTime()).toDays();
+        long weeks = daysBetween / 7;
+        weeks = weeks == 0 ? 1 : weeks; // prevent division by zero
+        
+        return weightDiff / weeks;
+    }
+
+    private double getInitialWeight(User user) {
+        List<BodyMeasurement> measurements = bodyMeasurementRepository.findByUserOrderByDateTimeDesc(user);
+        if (measurements.size() > 1) {
+            // Get the oldest measurement by taking the last one in the descending list
+            return measurements.get(measurements.size()-1).getWeight();
+        }
+        return measurements.isEmpty() ? 0 : measurements.get(0).getWeight();
     }
 
     private String calculateActivityLevel(double avgDailyExercise) {
@@ -394,5 +514,104 @@ public class RecommendationService {
         } else {
             return "extra";
         }
+    }
+
+    private double calculateProteinIntake(List<Meal> meals) {
+        return meals.stream()
+            .mapToDouble(meal -> meal.getTotalProtein() != null ? meal.getTotalProtein() : 0)
+            .sum() / 7.0;
+    }
+
+    private double calculateProteinPercentage(List<Meal> meals) {
+        double totalCalories = calculateAverageDailyCalories(meals);
+        double proteinCalories = calculateProteinIntake(meals) * 4;
+        return totalCalories > 0 ? (proteinCalories / totalCalories) * 100 : 0;
+    }
+
+    private double calculateCarbIntake(List<Meal> meals) {
+        return meals.stream()
+            .mapToDouble(meal -> meal.getTotalCarbs() != null ? meal.getTotalCarbs() : 0)
+            .sum() / 7.0;
+    }
+
+    private double calculateCarbPercentage(List<Meal> meals) {
+        double totalCalories = calculateAverageDailyCalories(meals);
+        double carbCalories = calculateCarbIntake(meals) * 4;
+        return totalCalories > 0 ? (carbCalories / totalCalories) * 100 : 0;
+    }
+
+    private double calculateFatIntake(List<Meal> meals) {
+        return meals.stream()
+            .mapToDouble(meal -> meal.getTotalFat() != null ? meal.getTotalFat() : 0)
+            .sum() / 7.0;
+    }
+
+    private double calculateFatPercentage(List<Meal> meals) {
+        double totalCalories = calculateAverageDailyCalories(meals);
+        double fatCalories = calculateFatIntake(meals) * 9;
+        return totalCalories > 0 ? (fatCalories / totalCalories) * 100 : 0;
+    }
+
+    private Map<String, Double> analyzeMealDistribution(List<Meal> meals) {
+        Map<String, Double> distribution = new HashMap<>();
+        distribution.put("breakfast", 0.0);
+        distribution.put("lunch", 0.0);
+        distribution.put("dinner", 0.0);
+        distribution.put("snacks", 0.0);
+
+        double totalCalories = calculateAverageDailyCalories(meals);
+        if (totalCalories > 0) {
+            for (Meal meal : meals) {
+                String mealType = determineMealType(meal.getDateTime());
+                double current = distribution.get(mealType);
+                distribution.put(mealType, current + meal.getTotalCalories());
+            }
+            
+            // Convert to percentages
+            for (String key : distribution.keySet()) {
+                distribution.put(key, distribution.get(key) / (totalCalories * 7));
+            }
+        }
+        
+        return distribution;
+    }
+
+    private String determineMealType(LocalDateTime dateTime) {
+        int hour = dateTime.getHour();
+        if (hour >= 4 && hour < 11) return "breakfast";
+        if (hour >= 11 && hour < 16) return "lunch";
+        if (hour >= 16 && hour < 22) return "dinner";
+        return "snacks";
+    }
+
+    private Map<String, Double> analyzeExerciseDistribution(List<WorkoutLog> workouts) {
+        Map<String, Double> distribution = new HashMap<>();
+        distribution.put("strength", 0.0);
+        distribution.put("cardio", 0.0);
+        distribution.put("flexibility", 0.0);
+
+        double totalExercise = calculateAverageDailyExercise(workouts);
+        if (totalExercise > 0) {
+            for (WorkoutLog workout : workouts) {
+                String workoutType = workout.getWorkoutType();
+                double calories = workout.getCaloriesBurned();
+                
+                if (workoutType.contains("strength") || workoutType.contains("weight")) {
+                    distribution.put("strength", distribution.get("strength") + calories);
+                } else if (workoutType.contains("cardio") || workoutType.contains("run") || 
+                          workoutType.contains("bike") || workoutType.contains("swim")) {
+                    distribution.put("cardio", distribution.get("cardio") + calories);
+                } else {
+                    distribution.put("flexibility", distribution.get("flexibility") + calories);
+                }
+            }
+            
+            // Convert to percentages
+            for (String key : distribution.keySet()) {
+                distribution.put(key, distribution.get(key) / (totalExercise * 7));
+            }
+        }
+        
+        return distribution;
     }
 } 
