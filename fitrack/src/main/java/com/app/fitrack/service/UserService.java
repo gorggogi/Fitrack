@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import com.app.fitrack.model.WorkoutLog;
 import com.app.fitrack.repository.WorkoutLogRepository;
 import com.app.fitrack.model.BodyMeasurement;
-import com.app.fitrack.service.BodyMeasurementService;
 
 @Service
 @Transactional 

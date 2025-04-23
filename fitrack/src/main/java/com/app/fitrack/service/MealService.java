@@ -108,5 +108,9 @@ public class MealService {
         
         return recentMeals.stream().mapToDouble(Meal::getTotalFat).sum();
     }
+
+    public List<Meal> findMealsByUserAndDateRange(User user, LocalDateTime startDate, LocalDateTime endDate) {
+        return mealRepository.findByUserAndDateTimeBetweenOrderByDateTimeDesc(user, startDate, endDate);
+    }
 }
 

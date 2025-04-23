@@ -118,28 +118,40 @@
                         </div>
 
                         <div class="recommendation-section">
-                            <h3>Nutrition Intake <span class="period-indicator">(last 7 days)</span></h3>
+                            <h3>Macronutrient Consumption <span class="period-indicator">(last 7 days)</span></h3>
                             <div class="nutrition-chart-container">
                                 <canvas id="nutritionPieChart"></canvas>
                             </div>
                             <div class="nutrition-stats">
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Protein:</span>
-                                    <span class="stat-value" th:text="${totalProtein != null ? #numbers.formatDecimal(totalProtein, 0, 0) + ' g' : '--'}">--</span>
+                                <div class="nutrition-stat-item">
+                                    <div class="nutrition-stat-label">Protein</div>
+                                    <div class="nutrition-stat-value" th:text="${totalProtein != null ? #numbers.formatDecimal(totalProtein, 0, 0) + ' g' : '--'}">--</div>
                                 </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Carbs:</span>
-                                    <span class="stat-value" th:text="${totalCarbs != null ? #numbers.formatDecimal(totalCarbs, 0, 0) + ' g' : '--'}">--</span>
+                                <div class="nutrition-stat-item">
+                                    <div class="nutrition-stat-label">Carbs</div>
+                                    <div class="nutrition-stat-value" th:text="${totalCarbs != null ? #numbers.formatDecimal(totalCarbs, 0, 0) + ' g' : '--'}">--</div>
                                 </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Fats:</span>
-                                    <span class="stat-value" th:text="${totalFats != null ? #numbers.formatDecimal(totalFats, 0, 0) + ' g' : '--'}">--</span>
+                                <div class="nutrition-stat-item">
+                                    <div class="nutrition-stat-label">Fats</div>
+                                    <div class="nutrition-stat-value" th:text="${totalFats != null ? #numbers.formatDecimal(totalFats, 0, 0) + ' g' : '--'}">--</div>
                                 </div>
+                            </div>
+                            <div class="view-meals-button">
+                                <button class="primary" onclick="showLoggedMeals()">View Logged Meals</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Logged Meals Modal -->
+    <div id="loggedMealsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoggedMeals()">&times;</span>
+            <h2>Logged Meals (Last 7 Days)</h2>
+            <div id="loggedMealsList"></div>
         </div>
     </div>
 
@@ -338,6 +350,56 @@
                 }
             }
         });
+
+        function showLoggedMeals() {
+            const modal = document.getElementById('loggedMealsModal');
+            const mealsList = document.getElementById('loggedMealsList');
+            mealsList.innerHTML = ''; // Clear previous content
+
+            // Get the meals data from the server
+            fetch('/api/meals/last-7-days')
+                .then(response => response.json())
+                .then(meals => {
+                    meals.forEach(meal => {
+                        const mealElement = document.createElement('div');
+                        mealElement.className = 'logged-meal-item';
+                        mealElement.innerHTML = `
+                            <div class="meal-date">${new Date(meal.dateTime).toLocaleDateString()}</div>
+                            <div class="meal-name">${meal.mealName}</div>
+                            <div class="meal-foods">
+                                ${meal.foodItems.map(food => `
+                                    <div class="food-item">
+                                        <span class="food-name">${food.foodItem}</span>
+                                        <span class="food-macros">
+                                            P: ${food.protein}g | C: ${food.carbs}g | F: ${food.fat}g
+                                        </span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        mealsList.appendChild(mealElement);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching meals:', error);
+                    mealsList.innerHTML = '<p class="error-message">Error loading meals. Please try again.</p>';
+                });
+
+            modal.style.display = 'flex';
+        }
+
+        function closeLoggedMeals() {
+            const modal = document.getElementById('loggedMealsModal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('loggedMealsModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html> 

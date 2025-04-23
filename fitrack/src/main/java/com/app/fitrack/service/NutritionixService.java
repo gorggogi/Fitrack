@@ -20,19 +20,16 @@ import java.util.HashMap;
 public class NutritionixService {
     private static final Logger logger = LoggerFactory.getLogger(NutritionixService.class);
 
-    @Value("${nutritionix.app.id}")
+    @Value("${nutritionix.app-id}")
     private String appId;
 
-    @Value("${nutritionix.app.key}")
+    @Value("${nutritionix.app-key}")
     private String appKey;
 
     private final String BASE_URL = "https://trackapi.nutritionix.com/v2";
     private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
-
     public NutritionixService(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
     }
 
     private HttpHeaders createHeaders() {
@@ -98,6 +95,10 @@ public class NutritionixService {
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("query", query);
 
+            logger.info("Sending request to Nutritionix:");
+            logger.info("URL: {}", url);
+            logger.info("Query: {}", query);
+
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, createHeaders());
             ResponseEntity<JsonNode> response = restTemplate.exchange(
                 url,
@@ -106,13 +107,23 @@ public class NutritionixService {
                 JsonNode.class
             );
 
+            logger.info("Nutritionix Response: {}", response.getBody().toString());
+
             if (response.getBody() != null && response.getBody().has("foods")) {
                 JsonNode foods = response.getBody().get("foods");
                 if (foods.isArray() && foods.size() > 0) {
                     JsonNode food = foods.get(0);
                     // Set calories
-                    int calories = (int) Math.round(food.get("nf_calories").asDouble());
+                    double rawCalories = food.get("nf_calories").asDouble();
+                    int calories = (int) Math.round(rawCalories);
                     foodItem.setCalories(calories);
+                    
+                    logger.info("Food item: {}, Quantity: {}, Unit: {}, Raw calories: {}, Rounded calories: {}", 
+                        foodItem.getFoodItem(), 
+                        foodItem.getQuantity(), 
+                        foodItem.getUnit(), 
+                        rawCalories, 
+                        calories);
                     
                     // Set macronutrients
                     if (food.has("nf_protein")) {

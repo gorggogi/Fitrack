@@ -14,4 +14,6 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     List<Meal> findByUserAndDateTimeBetween(@Param("user") User user, 
                                             @Param("start") LocalDateTime start, 
                                             @Param("end") LocalDateTime end);
+
+    List<Meal> findByUserAndDateTimeBetweenOrderByDateTimeDesc(User user, LocalDateTime startDate, LocalDateTime endDate);
 }

@@ -3,6 +3,7 @@ package com.app.fitrack.controller;
 import com.app.fitrack.model.User;
 import com.app.fitrack.model.BodyMeasurement;
 import com.app.fitrack.model.WorkoutLog;
+import com.app.fitrack.model.Meal;
 import com.app.fitrack.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
@@ -17,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,9 +36,6 @@ public class AnalyticsController {
 
     @Autowired
     private MealService mealService;
-
-    @Autowired
-    private RecommendationService recommendationService;
 
     @GetMapping("/user/analytics")
     public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -64,10 +63,6 @@ public class AnalyticsController {
         double totalProtein = mealService.getAverageDailyProtein(user, 7);
         double totalCarbs = mealService.getAverageDailyCarbs(user, 7);
         double totalFats = mealService.getAverageDailyFats(user, 7);
-
-        // Get weight trend
-        Map<String, Object> recommendations = recommendationService.generateRecommendations(user.getId());
-        double actualWeeklyTrend = (double) recommendations.get("actualWeeklyTrend");
 
         // Prepare workout frequency data
         int[] workoutCounts = new int[7];
@@ -205,5 +200,41 @@ public class AnalyticsController {
         model.addAttribute("timelineData", timelineData);
 
         return "analytics";
+    }
+
+    @GetMapping("/api/meals/last-7-days")
+    @ResponseBody
+    public List<MealDTO> getLast7DaysMeals(Authentication authentication) {
+        User user = userService.findByEmail(authentication.getName());
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(7);
+        
+        List<Meal> meals = mealService.findMealsByUserAndDateRange(user, startDate, endDate);
+        return meals.stream()
+            .map(meal -> new MealDTO(
+                meal.getId(),
+                meal.getDateTime(),
+                meal.getMealName(),
+                meal.getFoodItems().stream()
+                    .map(food -> new FoodItemDTO(
+                        food.getFoodItem(),
+                        food.getProtein(),
+                        food.getCarbs(),
+                        food.getFat()
+                    ))
+                    .collect(Collectors.toList())
+            ))
+            .collect(Collectors.toList());
+    }
+
+    // DTO classes for meal and food item data
+    private static class MealDTO {
+        public MealDTO(Long id, LocalDateTime dateTime, String mealName, List<FoodItemDTO> foodItems) {
+        }
+    }
+
+    private static class FoodItemDTO {
+        public FoodItemDTO(String foodItem, Double protein, Double carbs, Double fat) {
+        }
     }
 } 
