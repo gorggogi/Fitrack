@@ -60,29 +60,9 @@ public class AnalyticsController {
         // Calculate TDEE
         double tdee = userService.calculateTDEE(user, userService.calculateDynamicActivityFactor(user, 7));
 
-        // Force refresh recommendations by clearing any cached data
+        // Get weight trend
         Map<String, Object> recommendations = recommendationService.generateRecommendations(user.getId());
-        String recommendationsText = (String) recommendations.get("recommendations");
-        double actualWeeklyTrend = (Double) recommendations.get("actualWeeklyTrend");
-        
-        // Split recommendations into sections
-        String[] sections = recommendationsText.split("\n\n");
-        String goalRecommendations = "";
-        String weightRecommendation = "";
-        String nutritionRecommendation = "";
-        String exerciseRecommendation = "";
-
-        for (String section : sections) {
-            if (section.startsWith("Goal-Specific Recommendations:")) {
-                goalRecommendations = section.replace("Goal-Specific Recommendations:\n", "");
-            } else if (section.startsWith("Weight Change Projection:")) {
-                weightRecommendation = section.replace("Weight Change Projection:\n", "");
-            } else if (section.startsWith("Nutrition Recommendations:")) {
-                nutritionRecommendation = section.replace("Nutrition Recommendations:\n", "");
-            } else if (section.startsWith("Exercise Recommendations:")) {
-                exerciseRecommendation = section.replace("Exercise Recommendations:\n", "");
-            }
-        }
+        double actualWeeklyTrend = (double) recommendations.get("actualWeeklyTrend");
 
         // Prepare workout frequency data
         int[] workoutCounts = new int[7];
@@ -132,45 +112,64 @@ public class AnalyticsController {
 
         // Calculate weight progress
         Double weightProgress = null;
+        Double weightTrend = null;
+        String weightTrendDescription = null;
+        String weightRecommendation = null;
+        
         if (measurements.size() >= 2) {
             BodyMeasurement previousMeasurement = measurements.get(1);
             weightProgress = latestMeasurement.getWeight() - previousMeasurement.getWeight();
+            
+            // Calculate weight trend over the last 4 weeks
+            if (measurements.size() >= 4) {
+                BodyMeasurement fourWeeksAgo = measurements.get(3);
+                long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(
+                    fourWeeksAgo.getDateTime().toLocalDate(),
+                    latestMeasurement.getDateTime().toLocalDate()
+                );
+                
+                if (daysBetween > 0) {
+                    double totalWeightChange = latestMeasurement.getWeight() - fourWeeksAgo.getWeight();
+                    weightTrend = (totalWeightChange / daysBetween) * 7; // Convert to weekly rate
+                    
+                    // Generate trend description and recommendations
+                    if (Math.abs(weightTrend) < 0.1) {
+                        weightTrendDescription = "Stable";
+                        weightRecommendation = "Your weight is stable. Consider setting specific goals for better progress tracking.";
+                    } else if (weightTrend > 0) {
+                        if (weightTrend > 0.5) {
+                            weightTrendDescription = "Rapid gain";
+                            weightRecommendation = "Rapid weight gain detected. Consider adjusting your calorie intake if this wasn't intended.";
+                        } else {
+                            weightTrendDescription = "Gradual gain";
+                            weightRecommendation = "Steady weight gain observed. This is a healthy rate for muscle building.";
+                        }
+                    } else {
+                        if (weightTrend < -0.5) {
+                            weightTrendDescription = "Rapid loss";
+                            weightRecommendation = "Rapid weight loss detected. Consider increasing calories if this wasn't intended.";
+                        } else {
+                            weightTrendDescription = "Gradual loss";
+                            weightRecommendation = "Steady weight loss observed. This is a healthy rate for fat loss.";
+                        }
+                    }
+                }
+            } else {
+                // Not enough measurements for trend analysis
+                weightTrendDescription = "Insufficient data";
+                weightRecommendation = "Keep tracking your measurements! We need at least 4 weeks of data to analyze your weight trend.";
+            }
+        } else {
+            // Only one or no measurements
+            weightTrendDescription = "Getting started";
+            weightRecommendation = "Welcome to Fitrack! Add more measurements to start tracking your progress.";
         }
-
-        // Calculate weekly weight change
-        double dailyBalance = avgDailyCalories - (tdee + avgDailyExercise);
-        double weeklyWeightChange = (dailyBalance * 7) / 7700.0; // 7700 kcal per kg
 
         // Calculate macronutrient needs
         double proteinNeeds = latestMeasurement != null ? latestMeasurement.getWeight() * 1.6 : 0;
         double carbNeeds = tdee * 0.4 / 4; // 40% of calories from carbs
         double fatNeeds = tdee * 0.3 / 9; // 30% of calories from fat
         double waterNeeds = latestMeasurement != null ? latestMeasurement.getWeight() * 0.033 : 0;
-
-        // Calculate weight projection
-        List<Map<String, Object>> projectionData = new ArrayList<>();
-        if (latestMeasurement != null) {
-            double dailyWeightChangeKg = dailyBalance / 7700.0;
-            double currentWeight = latestMeasurement.getWeight();
-            LocalDateTime currentDate = latestMeasurement.getDateTime();
-
-            // Add the latest actual point
-            Map<String, Object> startPoint = new HashMap<>();
-            startPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-            startPoint.put("weight", currentWeight);
-            projectionData.add(startPoint);
-
-            // Add 14 days of projection
-            for (int i = 1; i <= 14; i++) {
-                currentDate = currentDate.plusDays(1);
-                currentWeight += dailyWeightChangeKg;
-                
-                Map<String, Object> projectedPoint = new HashMap<>();
-                projectedPoint.put("date", currentDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-                projectedPoint.put("weight", Math.round(currentWeight * 10.0) / 10.0);
-                projectionData.add(projectedPoint);
-            }
-        }
 
         // Add data to model
         model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
@@ -179,28 +178,23 @@ public class AnalyticsController {
         model.addAttribute("avgDailyCalories", avgDailyCalories);
         model.addAttribute("avgDailyExercise", avgDailyExercise);
         model.addAttribute("tdee", tdee);
-        model.addAttribute("goalRecommendations", goalRecommendations);
-        model.addAttribute("weightRecommendation", weightRecommendation);
-        model.addAttribute("nutritionRecommendation", nutritionRecommendation);
-        model.addAttribute("exerciseRecommendation", exerciseRecommendation);
 
         // Add body composition data
         model.addAttribute("currentBmiValue", currentBmiValue);
         model.addAttribute("currentBmiCategory", currentBmiCategory);
-        model.addAttribute("weeklyWeightChange", weeklyWeightChange);
-        model.addAttribute("actualWeeklyTrend", actualWeeklyTrend);
+        model.addAttribute("weightTrend", weightTrend);
+        model.addAttribute("weightTrendDescription", weightTrendDescription);
+        model.addAttribute("weightRecommendation", weightRecommendation);
         model.addAttribute("proteinNeeds", proteinNeeds);
         model.addAttribute("carbNeeds", carbNeeds);
         model.addAttribute("fatNeeds", fatNeeds);
         model.addAttribute("waterNeeds", waterNeeds);
-        model.addAttribute("projectionData", projectionData);
 
         // Add chart data
         model.addAttribute("workoutData", workoutCounts);
         model.addAttribute("caloriesData", caloriesBurned);
         model.addAttribute("chartMeasurementData", chartMeasurementData);
         model.addAttribute("timelineData", timelineData);
-        model.addAttribute("showProjectionDefault", true);
 
         return "analytics";
     }

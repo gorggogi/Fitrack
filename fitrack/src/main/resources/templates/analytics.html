@@ -72,13 +72,6 @@
                         <a href="/user/measurements" class="primary">Add New Measurement</a>
                     </div>
                     <canvas id="bodyCompositionChart"></canvas>
-                    <!-- Add Toggle Switch -->
-                    <div class="form-check form-switch" style="text-align: center; margin-top: 1rem;">
-                        <input class="form-check-input" type="checkbox" id="toggleProjection"
-                               th:checked="${showProjectionDefault}">
-                        <label class="form-check-label" for="toggleProjection">Show Weight Projection</label>
-                    </div>
-                    <p class="chart-note" style="margin-top: 0.5rem;">Weight projection is an estimate based on recent activity and TDEE. Accuracy varies.</p>
                     
                     <div class="progress-timeline">
                         <h3>Progress Timeline</h3>
@@ -93,7 +86,6 @@
                 </div>
 
                 <div class="analytics-card">
-                    <h2>Personalized Recommendations</h2>
                     <div class="recommendations-container">
                         <div class="recommendation-section">
                             <h3>Current Status</h3>
@@ -112,51 +104,17 @@
                         </div>
 
                         <div class="recommendation-section">
-                            <h3>Goal-Specific Recommendations</h3>
-                            <div class="recommendation-text" th:text="${goalRecommendations}">--</div>
-                        </div>
-
-                        <div class="recommendation-section">
-                            <h3>Weight Change Projection</h3>
-                            <div class="projection-item" th:if="${weeklyWeightChange != null}">
-                                <span class="projection-label">Projected Change:</span>
-                                <span class="projection-value" th:classappend="${weeklyWeightChange > 0 ? 'positive' : 'negative'}"
-                                      th:text="${weeklyWeightChange != 0 ? (weeklyWeightChange > 0 ? '+' : '') + #numbers.formatDecimal(weeklyWeightChange, 1, 1) + ' kg/week (from calories)' : 'Stable'}">--</span>
+                            <h3>Weight Trend Analysis</h3>
+                            <div class="projection-item" th:if="${weightTrend != null}">
+                                <span class="projection-label">Weekly Trend:</span>
+                                <span class="projection-value" th:classappend="${weightTrend > 0 ? 'positive' : 'negative'}"
+                                      th:text="${weightTrend != 0 ? (weightTrend > 0 ? '+' : '') + #numbers.formatDecimal(weightTrend, 1, 1) + ' kg/week' : 'Stable'}">--</span>
                             </div>
-                            <div class="projection-item" th:if="${actualWeeklyTrend != null}">
-                                <span class="projection-label">Actual Trend:</span>
-                                <span class="projection-value" th:classappend="${actualWeeklyTrend > 0 ? 'positive' : 'negative'}"
-                                      th:text="${actualWeeklyTrend != 0 ? (actualWeeklyTrend > 0 ? '+' : '') + #numbers.formatDecimal(actualWeeklyTrend, 1, 1) + ' kg/week (4-week avg)' : 'Stable'}">--</span>
+                            <div class="projection-item">
+                                <span class="projection-label">Trend Status:</span>
+                                <span class="projection-value" th:text="${weightTrendDescription}">--</span>
                             </div>
                             <div class="recommendation-text" th:text="${weightRecommendation}">--</div>
-                        </div>
-
-                        <div class="recommendation-section">
-                            <h3>Nutrition Plan</h3>
-                            <div class="macronutrient-targets">
-                                <div class="target-item">
-                                    <span class="target-label">Protein:</span>
-                                    <span class="target-value" th:text="${proteinNeeds != null ? #numbers.formatDecimal(proteinNeeds, 0, 0) + ' g/day' : '--'}">--</span>
-                                </div>
-                                <div class="target-item">
-                                    <span class="target-label">Carbohydrates:</span>
-                                    <span class="target-value" th:text="${carbNeeds != null ? #numbers.formatDecimal(carbNeeds, 0, 0) + ' g/day' : '--'}">--</span>
-                                </div>
-                                <div class="target-item">
-                                    <span class="target-label">Fats:</span>
-                                    <span class="target-value" th:text="${fatNeeds != null ? #numbers.formatDecimal(fatNeeds, 0, 0) + ' g/day' : '--'}">--</span>
-                                </div>
-                                <div class="target-item">
-                                    <span class="target-label">Water:</span>
-                                    <span class="target-value" th:text="${waterNeeds != null ? #numbers.formatDecimal(waterNeeds, 1, 1) + ' L/day' : '--'}">--</span>
-                                </div>
-                            </div>
-                            <div class="recommendation-text" th:text="${nutritionRecommendation}">--</div>
-                        </div>
-
-                        <div class="recommendation-section">
-                            <h3>Exercise & Recovery</h3>
-                            <div class="recommendation-text" th:text="${exerciseRecommendation}">--</div>
                         </div>
                     </div>
                 </div>
@@ -168,8 +126,6 @@
         const workoutData = /*[[${workoutData}]]*/ [];
         const caloriesData = /*[[${caloriesData}]]*/ [];
         const chartMeasurementData = /*[[${chartMeasurementData}]]*/ [];
-        const projectionDataRaw = /*[[${projectionData}]]*/ [];
-        const showProjectionDefault = /*[[${showProjectionDefault}]]*/ false;
         
         // Workout Frequency Chart
         const workoutCtx = document.getElementById('workoutFrequencyChart').getContext('2d');
@@ -237,44 +193,12 @@
             return m.weight / (heightInMeters * heightInMeters);
         }); // Keep nulls here so data arrays align
 
-        // Projection data
-        let lastActualDate = chartMeasurementData.length > 0 ? new Date(chartMeasurementData[chartMeasurementData.length - 1].dateTime) : new Date();
-        const projectionLabels = [];
-        const projectionWeights = [];
-
-        if (projectionDataRaw.length > 0) {
-            const rawProjectionWeights = projectionDataRaw.map(p => p.weight);
-
-            // Create projection labels, starting from the day after the last measurement
-            // Note: Date object manipulation modifies the object in place
-            let currentDateForLabel = new Date(lastActualDate.getTime()); // Clone date for label generation
-            for(let i = 0; i < projectionDataRaw.length; i++) {
-                 // We need labels for the *projected* days, including the first projection day which aligns with the last actual day visually
-                 // Let's generate labels based on the raw projection dates from backend
-                 // projectionLabels.push(new Date(projectionDataRaw[i].date + 'T00:00:00').toLocaleDateString('en-US', dateOptions));
-                 // Correction: Generate labels sequentially starting *after* last actual date for the axis
-                 if (i > 0) { // Start adding labels from the day *after* the last actual measurement
-                     currentDateForLabel.setDate(currentDateForLabel.getDate() + 1);
-                     projectionLabels.push(currentDateForLabel.toLocaleDateString('en-US', dateOptions));
-                 }
-            }
-
-            // Pad actual data with nulls to align graph points
-            const paddingLength = actualLabels.length -1 ; 
-            const paddedProjectionWeights = Array(paddingLength).fill(null).concat(rawProjectionWeights);
-             projectionWeights.push(...paddedProjectionWeights);
-        }
-        
-        // Combine labels - projectionLabels now contains labels for days *after* the last measurement
-        const combinedLabels = actualLabels.concat(projectionLabels); 
-
-        
         // --- Create Chart --- 
         // Store the chart instance in a variable
         const bodyCompChart = new Chart(bodyCtx, {
             type: 'line',
             data: {
-                labels: combinedLabels, // Use the combined labels array
+                labels: actualLabels,
                 datasets: [
                     {
                         label: 'Weight (kg)',
@@ -291,18 +215,6 @@
                         backgroundColor: 'rgba(255, 159, 64, 0.2)',
                         yAxisID: 'y2',
                         spanGaps: false
-                    },
-                    {
-                        label: 'Projected Weight (kg)',
-                        data: projectionWeights, // Use padded data
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderDash: [5, 5], 
-                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                        yAxisID: 'y',
-                        fill: false,
-                        pointRadius: 2,
-                        spanGaps: true, // Connect projected points
-                        hidden: !showProjectionDefault // Set initial visibility
                     }
                 ]
             },
@@ -315,7 +227,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Body Composition Trends & Projection'
+                        text: 'Body Composition Trends'
                     },
                     legend: {
                         position: 'top',
@@ -329,7 +241,7 @@
                     x: { // Default category/linear axis
                        title: {
                            display: true,
-                           text: 'Measurement Sequence / Projection'
+                           text: 'Measurement Sequence'
                        }
                     },
                     y: {
