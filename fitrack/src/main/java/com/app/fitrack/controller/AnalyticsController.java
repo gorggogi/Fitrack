@@ -60,11 +60,10 @@ public class AnalyticsController {
         // Calculate TDEE
         double tdee = userService.calculateTDEE(user, userService.calculateDynamicActivityFactor(user, 7));
 
-        // Get recommendations
+        // Force refresh recommendations by clearing any cached data
         Map<String, Object> recommendations = recommendationService.generateRecommendations(user.getId());
         String recommendationsText = (String) recommendations.get("recommendations");
         double actualWeeklyTrend = (Double) recommendations.get("actualWeeklyTrend");
-        Map<String, Object> projection = (Map<String, Object>) recommendations.get("projection");
         
         // Split recommendations into sections
         String[] sections = recommendationsText.split("\n\n");
@@ -177,9 +176,6 @@ public class AnalyticsController {
         model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
         model.addAttribute("currentUserWeight", latestMeasurement != null ? latestMeasurement.getWeight() : null);
         model.addAttribute("weightProgress", weightProgress);
-        model.addAttribute("currentBmiValue", currentBmiValue);
-        model.addAttribute("currentBmiCategory", currentBmiCategory);
-        model.addAttribute("weeklyWeightChange", weeklyWeightChange);
         model.addAttribute("avgDailyCalories", avgDailyCalories);
         model.addAttribute("avgDailyExercise", avgDailyExercise);
         model.addAttribute("tdee", tdee);
@@ -187,8 +183,12 @@ public class AnalyticsController {
         model.addAttribute("weightRecommendation", weightRecommendation);
         model.addAttribute("nutritionRecommendation", nutritionRecommendation);
         model.addAttribute("exerciseRecommendation", exerciseRecommendation);
+
+        // Add body composition data
+        model.addAttribute("currentBmiValue", currentBmiValue);
+        model.addAttribute("currentBmiCategory", currentBmiCategory);
+        model.addAttribute("weeklyWeightChange", weeklyWeightChange);
         model.addAttribute("actualWeeklyTrend", actualWeeklyTrend);
-        model.addAttribute("projection", projection);
         model.addAttribute("proteinNeeds", proteinNeeds);
         model.addAttribute("carbNeeds", carbNeeds);
         model.addAttribute("fatNeeds", fatNeeds);

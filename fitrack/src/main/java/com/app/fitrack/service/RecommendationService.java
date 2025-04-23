@@ -104,10 +104,7 @@ public class RecommendationService {
 
         // Calculate daily balance and weight changes
         double calorieBalance = avgDailyCalories - tdee;
-        Map<String, Object> projection = calculateWeeklyWeightChange(calorieBalance, avgDailyExercise, goalType);
-        double projectedWeeklyChange = (double) projection.get("projection");
-        double confidence = (double) projection.get("confidence");
-        double[] range = (double[]) projection.get("range");
+        double projectedWeeklyChange = calculateWeeklyWeightChange(calorieBalance);
         
         // Calculate actual weight trend (4-week average)
         double actualWeeklyTrend = calculateActualWeightTrend(user);
@@ -137,9 +134,8 @@ public class RecommendationService {
         recommendations.append(String.format("- Average Daily Exercise: %.0f kcal\n", avgDailyExercise));
         recommendations.append(String.format("- Estimated TDEE: %.0f kcal\n", tdee));
         recommendations.append(String.format("- Calorie Balance: %+.0f kcal/day\n", calorieBalance));
-        recommendations.append(String.format("- Projected Change: %.1f to %.1f kg/week (from calories)\n", range[0], range[1]));
-        recommendations.append(String.format("- Confidence Level: %.0f%%\n", confidence * 100));
-        recommendations.append(String.format("- Actual Trend: %.1f kg/week (4-week average)\n", actualWeeklyTrend));
+        recommendations.append(String.format("- Projected Change: %+.1f kg/week (from calories)\n", projectedWeeklyChange));
+        recommendations.append(String.format("- Actual Trend: %+.1f kg/week (4-week average)\n", actualWeeklyTrend));
         
         // Add detailed nutrition recommendations
         recommendations.append("\nNutrition Analysis:\n");
@@ -191,18 +187,15 @@ public class RecommendationService {
             }
         }
         
-        // Update recommendations with more detailed projection information
-        recommendations.append("\nWeight Change Projection:\n");
-        recommendations.append(String.format("- Projected Change: %.1f to %.1f kg/week (from calories)\n", range[0], range[1]));
-        recommendations.append(String.format("- Confidence Level: %.0f%%\n", confidence * 100));
-        recommendations.append(String.format("- Actual Trend: %.1f kg/week (4-week average)\n", actualWeeklyTrend));
-        
+        // Add more context about weight fluctuations
         if (Math.abs(projectedWeeklyChange - actualWeeklyTrend) > 0.2) {
-            recommendations.append("- Note: There's a significant difference between projected and actual weight change.\n");
-            recommendations.append("  This could be due to:\n");
+            recommendations.append("\nWeight Fluctuation Context:\n");
+            recommendations.append("- Daily weight can fluctuate by 1-2 kg due to:\n");
             recommendations.append("  * Water retention\n");
-            recommendations.append("  * Muscle gain from exercise\n");
-            recommendations.append("  * Measurement timing variations\n");
+            recommendations.append("  * Glycogen storage\n");
+            recommendations.append("  * Food in digestive system\n");
+            recommendations.append("  * Sodium intake\n");
+            recommendations.append("- Focus on weekly trends rather than daily changes\n");
         }
         
         // Enhanced goal-specific recommendations
@@ -429,7 +422,6 @@ public class RecommendationService {
         Map<String, Object> result = new HashMap<>();
         result.put("recommendations", recommendations.toString());
         result.put("actualWeeklyTrend", actualWeeklyTrend);
-        result.put("projection", projection);
         return result;
     }
 
@@ -467,52 +459,17 @@ public class RecommendationService {
             .orElse(0);
     }
 
-    private Map<String, Object> calculateWeeklyWeightChange(double dailyBalance, double avgDailyExercise, String goalType) {
-        final double BASE_ENERGY_DENSITY = 7700; // kcal per kg
+    private double calculateWeeklyWeightChange(double dailyBalance) {
+        final double ENERGY_DENSITY = 7700; // kcal per kg
         final double MAX_WEEKLY_CHANGE = 2.0; // kg
         
-        // Adjust energy density based on exercise level
-        double adjustedEnergyDensity = BASE_ENERGY_DENSITY;
-        if (avgDailyExercise > 300) {
-            adjustedEnergyDensity *= 0.9; // More efficient energy use with regular exercise
-        }
-        
-        // Adjust for goal type
-        if (goalType != null) {
-            if (goalType.equals("WEIGHT_GAIN")) {
-                adjustedEnergyDensity *= 1.1; // More efficient for muscle gain
-            } else if (goalType.equals("WEIGHT_LOSS")) {
-                adjustedEnergyDensity *= 0.9; // Less efficient for fat loss
-            }
-        }
-        
-        // Calculate base weekly change
-        double weeklyChange = (dailyBalance * 7) / adjustedEnergyDensity;
+        double weeklyChange = (dailyBalance * 7) / ENERGY_DENSITY;
         
         // Apply reasonable limits
         weeklyChange = Math.max(-MAX_WEEKLY_CHANGE, Math.min(MAX_WEEKLY_CHANGE, weeklyChange));
         
-        // Calculate confidence level
-        double confidence = 0.7; // Base confidence
-        
-        // Adjust confidence based on data quality
-        if (avgDailyExercise > 300) {
-            confidence *= 0.9; // Less confident with high exercise
-        }
-        if (Math.abs(dailyBalance) > 500) {
-            confidence *= 0.8; // Less confident with large calorie differences
-        }
-        
-        // Calculate range
-        double lowerBound = weeklyChange * 0.8;
-        double upperBound = weeklyChange * 1.2;
-        
-        Map<String, Object> result = new HashMap<>();
-        result.put("projection", Math.round(weeklyChange * 10) / 10.0);
-        result.put("confidence", Math.round(confidence * 100) / 100.0);
-        result.put("range", new double[]{Math.round(lowerBound * 10) / 10.0, Math.round(upperBound * 10) / 10.0});
-        
-        return result;
+        // Round to 1 decimal place
+        return Math.round(weeklyChange * 10) / 10.0;
     }
 
     private double calculateActualWeightTrend(User user) {
