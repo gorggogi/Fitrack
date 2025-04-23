@@ -116,6 +116,27 @@
                             </div>
                             <div class="recommendation-text" th:text="${weightRecommendation}">--</div>
                         </div>
+
+                        <div class="recommendation-section">
+                            <h3>Nutrition Intake <span class="period-indicator">(last 7 days)</span></h3>
+                            <div class="nutrition-chart-container">
+                                <canvas id="nutritionPieChart"></canvas>
+                            </div>
+                            <div class="nutrition-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Protein:</span>
+                                    <span class="stat-value" th:text="${totalProtein != null ? #numbers.formatDecimal(totalProtein, 0, 0) + ' g' : '--'}">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Carbs:</span>
+                                    <span class="stat-value" th:text="${totalCarbs != null ? #numbers.formatDecimal(totalCarbs, 0, 0) + ' g' : '--'}">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Fats:</span>
+                                    <span class="stat-value" th:text="${totalFats != null ? #numbers.formatDecimal(totalFats, 0, 0) + ' g' : '--'}">--</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,6 +147,9 @@
         const workoutData = /*[[${workoutData}]]*/ [];
         const caloriesData = /*[[${caloriesData}]]*/ [];
         const chartMeasurementData = /*[[${chartMeasurementData}]]*/ [];
+        const totalProtein = /*[[${totalProtein}]]*/ 0;
+        const totalCarbs = /*[[${totalCarbs}]]*/ 0;
+        const totalFats = /*[[${totalFats}]]*/ 0;
         
         // Workout Frequency Chart
         const workoutCtx = document.getElementById('workoutFrequencyChart').getContext('2d');
@@ -279,6 +303,41 @@
                 bodyCompChart.update();
             });
         }
+
+        // Nutrition Pie Chart
+        const nutritionCtx = document.getElementById('nutritionPieChart').getContext('2d');
+        new Chart(nutritionCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Protein', 'Carbohydrates', 'Fats'],
+                datasets: [{
+                    data: [totalProtein, totalCarbs, totalFats],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',   // Protein - Red
+                        'rgba(54, 162, 235, 0.8)',   // Carbs - Blue
+                        'rgba(255, 206, 86, 0.8)'    // Fats - Yellow
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Daily Macronutrient Distribution'
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html> 

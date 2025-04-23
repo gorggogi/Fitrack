@@ -72,5 +72,41 @@ public class MealService {
         
         return totalCalories / daysSpanned;
     }
+
+    public double getAverageDailyProtein(User user, int days) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(days);
+        List<Meal> recentMeals = mealRepository.findByUserAndDateTimeBetween(user, startDate, endDate);
+        
+        if (recentMeals.isEmpty()) {
+            return 0.0;
+        }
+        
+        return recentMeals.stream().mapToDouble(Meal::getTotalProtein).sum();
+    }
+
+    public double getAverageDailyCarbs(User user, int days) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(days);
+        List<Meal> recentMeals = mealRepository.findByUserAndDateTimeBetween(user, startDate, endDate);
+        
+        if (recentMeals.isEmpty()) {
+            return 0.0;
+        }
+        
+        return recentMeals.stream().mapToDouble(Meal::getTotalCarbs).sum();
+    }
+
+    public double getAverageDailyFats(User user, int days) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(days);
+        List<Meal> recentMeals = mealRepository.findByUserAndDateTimeBetween(user, startDate, endDate);
+        
+        if (recentMeals.isEmpty()) {
+            return 0.0;
+        }
+        
+        return recentMeals.stream().mapToDouble(Meal::getTotalFat).sum();
+    }
 }
 

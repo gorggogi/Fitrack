@@ -60,6 +60,11 @@ public class AnalyticsController {
         // Calculate TDEE
         double tdee = userService.calculateTDEE(user, userService.calculateDynamicActivityFactor(user, 7));
 
+        // Calculate macronutrient totals for the last 7 days
+        double totalProtein = mealService.getAverageDailyProtein(user, 7);
+        double totalCarbs = mealService.getAverageDailyCarbs(user, 7);
+        double totalFats = mealService.getAverageDailyFats(user, 7);
+
         // Get weight trend
         Map<String, Object> recommendations = recommendationService.generateRecommendations(user.getId());
         double actualWeeklyTrend = (double) recommendations.get("actualWeeklyTrend");
@@ -178,6 +183,9 @@ public class AnalyticsController {
         model.addAttribute("avgDailyCalories", avgDailyCalories);
         model.addAttribute("avgDailyExercise", avgDailyExercise);
         model.addAttribute("tdee", tdee);
+        model.addAttribute("totalProtein", totalProtein);
+        model.addAttribute("totalCarbs", totalCarbs);
+        model.addAttribute("totalFats", totalFats);
 
         // Add body composition data
         model.addAttribute("currentBmiValue", currentBmiValue);

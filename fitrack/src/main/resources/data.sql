@@ -1,0 +1,491 @@
+-- Clear existing data
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE body_measurement;
+TRUNCATE TABLE workout;
+TRUNCATE TABLE workout_repeat_days;
+TRUNCATE TABLE workout_log;
+TRUNCATE TABLE meal;
+TRUNCATE TABLE meal_food_item;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Update user's current weight to match latest measurement
+UPDATE users SET weight = 70.9 WHERE id = 1;
+
+-- Insert body measurements for user 1 (weekly measurements showing weight loss)
+INSERT INTO body_measurement (id, user_id, date_time, weight, notes)
+VALUES 
+(1, 1, '2025-03-10 08:00:00', 75.0, 'Starting weight - Beginning weight loss journey'),
+(2, 1, '2025-03-17 08:00:00', 74.2, 'Week 1 progress - Good start with diet changes'),
+(3, 1, '2025-03-24 08:00:00', 73.5, 'Week 2 progress - Increased water intake'),
+(4, 1, '2025-03-31 08:00:00', 72.8, 'Week 3 progress - Consistent with workouts'),
+(5, 1, '2025-04-07 08:00:00', 72.1, 'Week 4 progress - Feeling more energetic'),
+(6, 1, '2025-04-14 08:00:00', 71.5, 'Week 5 progress - Clothes fitting better'),
+(7, 1, '2025-04-21 08:00:00', 70.9, 'Week 6 progress - Maintaining good habits');
+
+-- Insert workouts for user 1 (extending to April 23)
+INSERT INTO workout (id, user_id, date_time, workout_name, duration, burned_calories)
+VALUES
+-- Week 1 (March 10-16)
+(1, 1, '2025-03-10 07:00:00', 'Morning Walk', 30, 150),
+(2, 1, '2025-03-10 10:00:00', 'Full Body Workout', 45, 250),
+(3, 1, '2025-03-10 18:00:00', 'Yoga', 30, 120),
+(4, 1, '2025-03-11 10:00:00', 'Cardio', 30, 200),
+(5, 1, '2025-03-11 18:00:00', 'Core Workout', 30, 150),
+(6, 1, '2025-03-12 10:00:00', 'HIIT', 30, 300),
+(7, 1, '2025-03-13 07:00:00', 'Morning Walk', 30, 150),
+(9, 1, '2025-03-14 10:00:00', 'Full Body Workout', 45, 250),
+(10, 1, '2025-03-15 10:00:00', 'Cardio', 30, 200),
+(11, 1, '2025-03-15 18:00:00', 'Yoga', 30, 120),
+(12, 1, '2025-03-16 10:00:00', 'Rest Day', 0, 0),
+
+-- Week 2 (March 17-23)
+(13, 1, '2025-03-17 07:00:00', 'Morning Walk', 30, 150),
+(14, 1, '2025-03-17 10:00:00', 'Full Body Workout', 45, 250),
+(15, 1, '2025-03-17 18:00:00', 'Core Workout', 30, 150),
+(16, 1, '2025-03-18 10:00:00', 'HIIT', 30, 300),
+(17, 1, '2025-03-19 07:00:00', 'Morning Walk', 30, 150),
+(18, 1, '2025-03-19 10:00:00', 'Full Body Workout', 45, 250),
+(19, 1, '2025-03-20 10:00:00', 'Cardio', 30, 200),
+(20, 1, '2025-03-21 07:00:00', 'Morning Walk', 30, 150),
+(21, 1, '2025-03-21 10:00:00', 'Full Body Workout', 45, 250),
+(22, 1, '2025-03-22 10:00:00', 'Yoga', 30, 120),
+(23, 1, '2025-03-23 10:00:00', 'Rest Day', 0, 0),
+
+-- Week 3 (March 24-30)
+(24, 1, '2025-03-24 10:00:00', 'Full Body Workout', 45, 250),
+(25, 1, '2025-03-24 18:00:00', 'Yoga', 30, 120),
+(26, 1, '2025-03-25 10:00:00', 'Cardio', 30, 200),
+(27, 1, '2025-03-25 18:00:00', 'Core Workout', 30, 150),
+(28, 1, '2025-03-26 10:00:00', 'HIIT', 30, 300),
+(29, 1, '2025-03-27 07:00:00', 'Morning Walk', 30, 150),
+(30, 1, '2025-03-27 10:00:00', 'Full Body Workout', 45, 250),
+(31, 1, '2025-03-28 10:00:00', 'Yoga', 30, 120),
+(32, 1, '2025-03-29 10:00:00', 'Cardio', 30, 200),
+(33, 1, '2025-03-30 10:00:00', 'Rest Day', 0, 0),
+
+-- Week 4 (March 31-April 6)
+(34, 1, '2025-03-31 07:00:00', 'Morning Walk', 30, 150),
+(35, 1, '2025-03-31 10:00:00', 'Full Body Workout', 45, 250),
+(36, 1, '2025-03-31 18:00:00', 'Core Workout', 30, 150),
+(37, 1, '2025-04-01 10:00:00', 'HIIT', 30, 300),
+(38, 1, '2025-04-02 07:00:00', 'Morning Walk', 30, 150),
+(39, 1, '2025-04-02 10:00:00', 'Full Body Workout', 45, 250),
+(40, 1, '2025-04-03 10:00:00', 'Cardio', 30, 200),
+(41, 1, '2025-04-04 07:00:00', 'Morning Walk', 30, 150),
+(42, 1, '2025-04-04 10:00:00', 'Full Body Workout', 45, 250),
+(43, 1, '2025-04-05 10:00:00', 'Yoga', 30, 120),
+(44, 1, '2025-04-06 10:00:00', 'Rest Day', 0, 0),
+
+-- Week 5 (April 7-13)
+(45, 1, '2025-04-07 07:00:00', 'Morning Walk', 30, 150),
+(46, 1, '2025-04-07 10:00:00', 'Full Body Workout', 45, 250),
+(47, 1, '2025-04-07 18:00:00', 'Yoga', 30, 120),
+(48, 1, '2025-04-08 10:00:00', 'Cardio', 30, 200),
+(49, 1, '2025-04-08 18:00:00', 'Core Workout', 30, 150),
+(50, 1, '2025-04-09 10:00:00', 'HIIT', 30, 300),
+(51, 1, '2025-04-10 10:00:00', 'Full Body Workout', 45, 250),
+(52, 1, '2025-04-11 07:00:00', 'Morning Walk', 30, 150),
+(53, 1, '2025-04-11 10:00:00', 'Cardio', 30, 200),
+(54, 1, '2025-04-12 10:00:00', 'Yoga', 30, 120),
+(55, 1, '2025-04-13 10:00:00', 'Rest Day', 0, 0),
+
+-- Week 6 (April 14-20)
+(56, 1, '2025-04-14 07:00:00', 'Morning Walk', 30, 150),
+(57, 1, '2025-04-14 10:00:00', 'Full Body Workout', 45, 250),
+(58, 1, '2025-04-15 10:00:00', 'HIIT', 30, 300),
+(59, 1, '2025-04-16 07:00:00', 'Morning Walk', 30, 150),
+(60, 1, '2025-04-16 10:00:00', 'Cardio', 30, 200),
+(61, 1, '2025-04-17 10:00:00', 'Full Body Workout', 45, 250),
+(62, 1, '2025-04-18 10:00:00', 'Yoga', 30, 120),
+(63, 1, '2025-04-19 07:00:00', 'Morning Walk', 30, 150),
+(64, 1, '2025-04-19 10:00:00', 'Full Body Workout', 45, 250),
+(65, 1, '2025-04-20 10:00:00', 'Rest Day', 0, 0),
+
+-- Week 7 (April 21-23)
+(66, 1, '2025-04-21 07:00:00', 'Morning Walk', 30, 150),
+(67, 1, '2025-04-21 10:00:00', 'Full Body Workout', 45, 250),
+(68, 1, '2025-04-22 10:00:00', 'HIIT', 30, 300),
+(69, 1, '2025-04-23 10:00:00', 'Cardio', 30, 200);
+
+-- Insert workout logs (matching the extended workouts)
+INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at)
+VALUES
+-- Week 1
+(1, 1, 'Morning Walk', 30, 150, '2025-03-10 07:00:00'),
+(2, 1, 'Full Body Workout', 45, 250, '2025-03-10 10:00:00'),
+(3, 1, 'Yoga', 30, 120, '2025-03-10 18:00:00'),
+(4, 1, 'Cardio', 30, 200, '2025-03-11 10:00:00'),
+(5, 1, 'Core Workout', 30, 150, '2025-03-11 18:00:00'),
+(6, 1, 'HIIT', 30, 300, '2025-03-12 10:00:00'),
+(7, 1, 'Morning Walk', 30, 150, '2025-03-13 07:00:00'),
+(8, 1, 'Full Body Workout', 45, 250, '2025-03-13 10:00:00'),
+(9, 1, 'Full Body Workout', 45, 250, '2025-03-14 10:00:00'),
+(10, 1, 'Cardio', 30, 200, '2025-03-15 10:00:00'),
+(11, 1, 'Yoga', 30, 120, '2025-03-15 18:00:00'),
+
+-- Week 2
+(12, 1, 'Morning Walk', 30, 150, '2025-03-17 07:00:00'),
+(13, 1, 'Full Body Workout', 45, 250, '2025-03-17 10:00:00'),
+(14, 1, 'Core Workout', 30, 150, '2025-03-17 18:00:00'),
+(15, 1, 'HIIT', 30, 300, '2025-03-18 10:00:00'),
+(16, 1, 'Morning Walk', 30, 150, '2025-03-19 07:00:00'),
+(17, 1, 'Full Body Workout', 45, 250, '2025-03-19 10:00:00'),
+(18, 1, 'Cardio', 30, 200, '2025-03-20 10:00:00'),
+(19, 1, 'Morning Walk', 30, 150, '2025-03-21 07:00:00'),
+(20, 1, 'Full Body Workout', 45, 250, '2025-03-21 10:00:00'),
+(21, 1, 'Yoga', 30, 120, '2025-03-22 10:00:00'),
+
+-- Week 3
+(22, 1, 'Full Body Workout', 45, 250, '2025-03-24 10:00:00'),
+(23, 1, 'Yoga', 30, 120, '2025-03-24 18:00:00'),
+(24, 1, 'Cardio', 30, 200, '2025-03-25 10:00:00'),
+(25, 1, 'Core Workout', 30, 150, '2025-03-25 18:00:00'),
+(26, 1, 'HIIT', 30, 300, '2025-03-26 10:00:00'),
+(27, 1, 'Morning Walk', 30, 150, '2025-03-27 07:00:00'),
+(28, 1, 'Full Body Workout', 45, 250, '2025-03-27 10:00:00'),
+(29, 1, 'Yoga', 30, 120, '2025-03-28 10:00:00'),
+(30, 1, 'Cardio', 30, 200, '2025-03-29 10:00:00'),
+
+-- Week 4
+(31, 1, 'Morning Walk', 30, 150, '2025-03-31 07:00:00'),
+(32, 1, 'Full Body Workout', 45, 250, '2025-03-31 10:00:00'),
+(33, 1, 'Core Workout', 30, 150, '2025-03-31 18:00:00'),
+(34, 1, 'HIIT', 30, 300, '2025-04-01 10:00:00'),
+(35, 1, 'Morning Walk', 30, 150, '2025-04-02 07:00:00'),
+(36, 1, 'Full Body Workout', 45, 250, '2025-04-02 10:00:00'),
+(37, 1, 'Cardio', 30, 200, '2025-04-03 10:00:00'),
+(38, 1, 'Morning Walk', 30, 150, '2025-04-04 07:00:00'),
+(39, 1, 'Full Body Workout', 45, 250, '2025-04-04 10:00:00'),
+(40, 1, 'Yoga', 30, 120, '2025-04-05 10:00:00'),
+
+-- Week 5
+(41, 1, 'Morning Walk', 30, 150, '2025-04-07 07:00:00'),
+(42, 1, 'Full Body Workout', 45, 250, '2025-04-07 10:00:00'),
+(43, 1, 'Yoga', 30, 120, '2025-04-07 18:00:00'),
+(44, 1, 'Cardio', 30, 200, '2025-04-08 10:00:00'),
+(45, 1, 'Core Workout', 30, 150, '2025-04-08 18:00:00'),
+(46, 1, 'HIIT', 30, 300, '2025-04-09 10:00:00'),
+(47, 1, 'Full Body Workout', 45, 250, '2025-04-10 10:00:00'),
+(48, 1, 'Morning Walk', 30, 150, '2025-04-11 07:00:00'),
+(49, 1, 'Cardio', 30, 200, '2025-04-11 10:00:00'),
+(50, 1, 'Yoga', 30, 120, '2025-04-12 10:00:00'),
+
+-- Week 6
+(51, 1, 'Morning Walk', 30, 150, '2025-04-14 07:00:00'),
+(52, 1, 'Full Body Workout', 45, 250, '2025-04-14 10:00:00'),
+(53, 1, 'HIIT', 30, 300, '2025-04-15 10:00:00'),
+(54, 1, 'Morning Walk', 30, 150, '2025-04-16 07:00:00'),
+(55, 1, 'Cardio', 30, 200, '2025-04-16 10:00:00'),
+(56, 1, 'Full Body Workout', 45, 250, '2025-04-17 10:00:00'),
+(57, 1, 'Yoga', 30, 120, '2025-04-18 10:00:00'),
+(58, 1, 'Morning Walk', 30, 150, '2025-04-19 07:00:00'),
+(59, 1, 'Full Body Workout', 45, 250, '2025-04-19 10:00:00'),
+
+-- Week 7
+(60, 1, 'Morning Walk', 30, 150, '2025-04-21 07:00:00'),
+(61, 1, 'Full Body Workout', 45, 250, '2025-04-21 10:00:00'),
+(62, 1, 'HIIT', 30, 300, '2025-04-22 10:00:00'),
+(63, 1, 'Cardio', 30, 200, '2025-04-23 10:00:00');
+
+-- Insert meals for the extended period (sample days)
+INSERT INTO meal (id, user_id, date_time, meal_name)
+VALUES
+-- Sample day 1 (April 9)
+(1, 1, '2025-04-09 08:00:00', 'Breakfast'),
+(2, 1, '2025-04-09 12:00:00', 'Lunch'),
+(3, 1, '2025-04-09 18:00:00', 'Dinner'),
+(4, 1, '2025-04-09 21:00:00', 'Snack'),
+
+-- Sample day 2 (April 8)
+(5, 1, '2025-04-08 08:00:00', 'Breakfast'),
+(6, 1, '2025-04-08 12:00:00', 'Lunch'),
+(7, 1, '2025-04-08 18:00:00', 'Dinner'),
+(8, 1, '2025-04-08 21:00:00', 'Snack'),
+
+-- Sample day 3 (April 7)
+(9, 1, '2025-04-07 08:00:00', 'Breakfast'),
+(10, 1, '2025-04-07 12:00:00', 'Lunch'),
+(11, 1, '2025-04-07 18:00:00', 'Dinner'),
+(12, 1, '2025-04-07 21:00:00', 'Snack'),
+
+-- Sample day 4 (April 23)
+(13, 1, '2025-04-23 08:00:00', 'Breakfast'),
+(14, 1, '2025-04-23 12:00:00', 'Lunch'),
+(15, 1, '2025-04-23 18:00:00', 'Dinner'),
+(16, 1, '2025-04-23 21:00:00', 'Snack'),
+
+-- Sample day 5 (April 22)
+(17, 1, '2025-04-22 08:00:00', 'Breakfast'),
+(18, 1, '2025-04-22 12:00:00', 'Lunch'),
+(19, 1, '2025-04-22 18:00:00', 'Dinner'),
+(20, 1, '2025-04-22 21:00:00', 'Snack'),
+
+-- Sample day 6 (April 21)
+(21, 1, '2025-04-21 08:00:00', 'Breakfast'),
+(22, 1, '2025-04-21 12:00:00', 'Lunch'),
+(23, 1, '2025-04-21 18:00:00', 'Dinner'),
+(24, 1, '2025-04-21 21:00:00', 'Snack'),
+
+-- April 10
+(25, 1, '2025-04-10 08:00:00', 'Breakfast'),
+(26, 1, '2025-04-10 12:00:00', 'Lunch'),
+(27, 1, '2025-04-10 18:00:00', 'Dinner'),
+(28, 1, '2025-04-10 21:00:00', 'Snack'),
+
+-- April 11
+(29, 1, '2025-04-11 08:00:00', 'Breakfast'),
+(30, 1, '2025-04-11 12:00:00', 'Lunch'),
+(31, 1, '2025-04-11 18:00:00', 'Dinner'),
+(32, 1, '2025-04-11 21:00:00', 'Snack'),
+
+-- April 12
+(33, 1, '2025-04-12 08:00:00', 'Breakfast'),
+(34, 1, '2025-04-12 12:00:00', 'Lunch'),
+(35, 1, '2025-04-12 18:00:00', 'Dinner'),
+(36, 1, '2025-04-12 21:00:00', 'Snack'),
+
+-- April 13
+(37, 1, '2025-04-13 08:00:00', 'Breakfast'),
+(38, 1, '2025-04-13 12:00:00', 'Lunch'),
+(39, 1, '2025-04-13 18:00:00', 'Dinner'),
+(40, 1, '2025-04-13 21:00:00', 'Snack'),
+
+-- April 14
+(41, 1, '2025-04-14 08:00:00', 'Breakfast'),
+(42, 1, '2025-04-14 12:00:00', 'Lunch'),
+(43, 1, '2025-04-14 18:00:00', 'Dinner'),
+(44, 1, '2025-04-14 21:00:00', 'Snack'),
+
+-- April 15
+(45, 1, '2025-04-15 08:00:00', 'Breakfast'),
+(46, 1, '2025-04-15 12:00:00', 'Lunch'),
+(47, 1, '2025-04-15 18:00:00', 'Dinner'),
+(48, 1, '2025-04-15 21:00:00', 'Snack'),
+
+-- April 16
+(49, 1, '2025-04-16 08:00:00', 'Breakfast'),
+(50, 1, '2025-04-16 12:00:00', 'Lunch'),
+(51, 1, '2025-04-16 18:00:00', 'Dinner'),
+(52, 1, '2025-04-16 21:00:00', 'Snack'),
+
+-- April 17
+(53, 1, '2025-04-17 08:00:00', 'Breakfast'),
+(54, 1, '2025-04-17 12:00:00', 'Lunch'),
+(55, 1, '2025-04-17 18:00:00', 'Dinner'),
+(56, 1, '2025-04-17 21:00:00', 'Snack'),
+
+-- April 18
+(57, 1, '2025-04-18 08:00:00', 'Breakfast'),
+(58, 1, '2025-04-18 12:00:00', 'Lunch'),
+(59, 1, '2025-04-18 18:00:00', 'Dinner'),
+(60, 1, '2025-04-18 21:00:00', 'Snack'),
+
+-- April 19
+(61, 1, '2025-04-19 08:00:00', 'Breakfast'),
+(62, 1, '2025-04-19 12:00:00', 'Lunch'),
+(63, 1, '2025-04-19 18:00:00', 'Dinner'),
+(64, 1, '2025-04-19 21:00:00', 'Snack'),
+
+-- April 20
+(65, 1, '2025-04-20 08:00:00', 'Breakfast'),
+(66, 1, '2025-04-20 12:00:00', 'Lunch'),
+(67, 1, '2025-04-20 18:00:00', 'Dinner'),
+(68, 1, '2025-04-20 21:00:00', 'Snack');
+
+-- Insert meal food items for the extended period
+-- Insert meal food items for the extended period
+INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
+VALUES
+-- April 9
+(1, 1, 'Oatmeal with Berries', 300, 1, 'cup', 10, 54, 5),
+(2, 1, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(3, 1, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(4, 2, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(5, 2, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(6, 3, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(7, 3, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+(8, 3, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+(9, 4, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(10, 4, 'Almonds', 160, 30, 'g', 6, 6, 14),
+
+-- April 8
+(11, 5, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(12, 5, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
+(13, 5, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
+(14, 6, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(15, 6, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
+(16, 7, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(17, 7, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(18, 8, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(19, 8, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+
+-- April 7
+(20, 9, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(21, 9, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
+(22, 9, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(23, 10, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(24, 10, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(25, 11, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(26, 11, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
+(27, 12, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(28, 12, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
+
+-- April 23
+(29, 13, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(30, 13, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(31, 13, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+(32, 14, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(33, 14, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+(34, 15, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(35, 15, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(36, 15, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+(37, 16, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(38, 16, 'Almonds', 160, 30, 'g', 6, 6, 14),
+
+-- April 22
+(39, 17, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(40, 17, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
+(41, 17, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
+(42, 18, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(43, 18, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
+(44, 19, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(45, 19, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(46, 20, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(47, 20, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+
+-- April 21
+(48, 21, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(49, 21, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
+(50, 21, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(51, 22, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(52, 22, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(53, 23, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(54, 23, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
+(55, 24, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(56, 24, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
+
+-- April 10
+(57, 25, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(58, 25, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
+(59, 25, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(60, 26, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(61, 26, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(62, 27, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(63, 27, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
+(64, 28, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(65, 28, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
+
+-- April 11
+(66, 29, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(67, 29, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(68, 29, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+(69, 30, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(70, 30, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+(71, 31, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(72, 31, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(73, 31, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+(74, 32, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(75, 32, 'Almonds', 160, 30, 'g', 6, 6, 14),
+
+-- April 12
+(76, 33, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(77, 33, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
+(78, 33, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
+(79, 34, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(80, 34, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
+(81, 35, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(82, 35, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(83, 36, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(84, 36, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+
+-- April 13
+(85, 37, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(86, 37, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
+(87, 37, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(88, 38, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(89, 38, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(90, 39, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(91, 39, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
+(92, 40, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(93, 40, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
+
+-- April 14
+(94, 41, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(95, 41, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(96, 41, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+(97, 42, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(98, 42, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+(99, 43, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(100, 43, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(101, 43, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+(102, 44, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(103, 44, 'Almonds', 160, 30, 'g', 6, 6, 14),
+
+-- April 15
+(104, 45, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(105, 45, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
+(106, 45, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
+(107, 46, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(108, 46, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
+(109, 47, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(110, 47, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(111, 48, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(112, 48, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+
+-- April 16
+(113, 49, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(114, 49, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
+(115, 49, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(116, 50, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(117, 50, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(118, 51, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(119, 51, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
+(120, 52, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(121, 52, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
+
+-- April 17
+(122, 53, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(123, 53, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(124, 53, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+(125, 54, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(126, 54, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+(127, 55, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(128, 55, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(129, 55, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+(130, 56, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(131, 56, 'Almonds', 160, 30, 'g', 6, 6, 14),
+
+-- April 18
+(132, 57, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(133, 57, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
+(134, 57, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
+(135, 58, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(136, 58, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
+(137, 59, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(138, 59, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(139, 60, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(140, 60, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+
+-- April 19
+(141, 61, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(142, 61, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
+(143, 61, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(144, 62, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(145, 62, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(146, 63, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(147, 63, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
+(148, 64, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(149, 64, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
+
+-- April 20
+(150, 65, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(151, 65, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(152, 65, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+(153, 66, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(154, 66, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+(155, 67, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(156, 67, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(157, 67, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+(158, 68, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(159, 68, 'Almonds', 160, 30, 'g', 6, 6, 14);
+
