@@ -624,16 +624,21 @@ button.primary {
     justify-content: center;
 }
 
+.modal.active {
+    display: flex;
+}
+
 .modal-content {
     background-color: #fff;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 90%;
-    max-width: 800px;
+    max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
+    margin: auto;
 }
 
 .modal-content h2 {
@@ -681,11 +686,58 @@ button.primary {
     font-size: 1rem;
 }
 
+.modal-content textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.3s ease;
+}
+
+.modal-content textarea:focus {
+    outline: none;
+    border-color: #007AFF;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
 .modal-content .form-actions {
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
     margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.modal-content .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content .btn-primary {
+    background: #007AFF;
+    color: white;
+}
+
+.modal-content .btn-primary:hover {
+    background: #0066cc;
+}
+
+.modal-content .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.modal-content .btn-secondary:hover {
+    background: #5a6268;
 }
 
 /* Food items container in meal modal */

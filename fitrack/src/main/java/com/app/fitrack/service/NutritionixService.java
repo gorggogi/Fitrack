@@ -98,6 +98,8 @@ public class NutritionixService {
             logger.info("Sending request to Nutritionix:");
             logger.info("URL: {}", url);
             logger.info("Query: {}", query);
+            logger.info("Headers: x-app-id: {}", appId);
+            logger.info("Request Body: {}", requestBody);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, createHeaders());
             ResponseEntity<JsonNode> response = restTemplate.exchange(
@@ -107,7 +109,8 @@ public class NutritionixService {
                 JsonNode.class
             );
 
-            logger.info("Nutritionix Response: {}", response.getBody().toString());
+            logger.info("Nutritionix Response Status: {}", response.getStatusCode());
+            logger.info("Nutritionix Response Body: {}", response.getBody());
 
             if (response.getBody() != null && response.getBody().has("foods")) {
                 JsonNode foods = response.getBody().get("foods");
@@ -136,11 +139,15 @@ public class NutritionixService {
                         foodItem.setFat(food.get("nf_total_fat").asDouble());
                     }
                     return calories;
+                } else {
+                    logger.warn("No foods found in response for query: {}", query);
                 }
+            } else {
+                logger.warn("Invalid response format from Nutritionix API for query: {}", query);
             }
             return 0;
         } catch (Exception e) {
-            logger.error("Error getting food calories", e);
+            logger.error("Error getting food calories for item: {}", foodItem.getFoodItem(), e);
             return 0;
         }
     }

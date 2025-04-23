@@ -20,9 +20,13 @@ import com.app.fitrack.service.NutritionixService;
 import com.app.fitrack.service.GoalService;
 import com.app.fitrack.model.User;
 import com.app.fitrack.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class MealController {
+
+    private static final Logger logger = LoggerFactory.getLogger(MealController.class);
 
     @Autowired
     private MealService mealService;
@@ -43,18 +47,37 @@ public class MealController {
     }
 
     @PostMapping("/meals/estimate-calories")
-    public ResponseEntity<List<Double>> estimateCalories(@RequestBody List<Map<String, String>> foodItems) {
-        List<Double> estimatedCalories = new ArrayList<>();
-        for (Map<String, String> item : foodItems) {
-            MealFoodItem foodItem = new MealFoodItem();
-            foodItem.setFoodItem(item.get("foodName"));
-            foodItem.setQuantity(Double.parseDouble(item.get("quantity")));
-            foodItem.setUnit(item.get("unit"));
+    public ResponseEntity<?> estimateCalories(@RequestBody List<Map<String, Object>> foodItems) {
+        try {
+            if (foodItems == null || foodItems.isEmpty()) {
+                return ResponseEntity.badRequest().body("No food items provided");
+            }
 
-            double calories = nutritionixService.getCalories(foodItem);
-            estimatedCalories.add(calories);
+            List<Double> estimatedCalories = new ArrayList<>();
+            
+            for (Map<String, Object> item : foodItems) {
+                String foodName = (String) item.get("foodName");
+                Double quantity = Double.valueOf(item.get("quantity").toString());
+                String unit = (String) item.get("unit");
+
+                if (foodName == null || quantity == null || unit == null) {
+                    return ResponseEntity.badRequest().body("Invalid food item format");
+                }
+
+                MealFoodItem foodItem = new MealFoodItem();
+                foodItem.setFoodItem(foodName);
+                foodItem.setQuantity(quantity);
+                foodItem.setUnit(unit);
+
+                double calories = nutritionixService.getCalories(foodItem);
+                estimatedCalories.add(calories);
+            }
+
+            return ResponseEntity.ok(estimatedCalories);
+        } catch (Exception e) {
+            logger.error("Error estimating calories", e);
+            return ResponseEntity.internalServerError().body("Error estimating calories: " + e.getMessage());
         }
-        return ResponseEntity.ok(estimatedCalories);  
     }
 
     @PostMapping("/meals/add")

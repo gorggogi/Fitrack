@@ -250,60 +250,128 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Meal-related functions
-function estimateCalories() {
-    const foodItems = document.querySelectorAll('.food-item');
-    foodItems.forEach((item, index) => {
-        const foodName = item.querySelector('input[name="foodItems[' + index + '].foodItem"]').value;
-        const quantity = item.querySelector('input[name="foodItems[' + index + '].quantity"]').value;
-        const unit = item.querySelector('select[name="foodItems[' + index + '].unit"]').value;
-        
-        if (foodName && quantity) {
-            // This is a simple estimation - in a real app, you'd want to use a food database API
-            const estimatedCalories = Math.round(quantity * 2); // Simple estimation: 2 calories per unit
-            item.querySelector('input[name="foodItems[' + index + '].calories"]').value = estimatedCalories;
-        }
-    });
-}
+let itemCount = 1;
 
 function addFoodItem() {
     const container = document.getElementById('food-items-container');
-    const foodItemCount = container.children.length;
-    
-    const newFoodItem = document.createElement('div');
-    newFoodItem.className = 'food-item';
-    newFoodItem.innerHTML = `
+    const newItem = document.createElement('div');
+    newItem.className = 'food-item';
+    newItem.innerHTML = `
         <div class="form-row">
             <div class="form-group">
                 <label>Food Item</label>
-                <input type="text" name="foodItems[${foodItemCount}].foodItem" placeholder="Enter food" class="form-control" required>
+                <input type="text" name="foodItems[${itemCount}].foodItem" placeholder="Enter food" class="form-control" required>
             </div>
             <div class="form-group">
                 <label>Quantity</label>
-                <input type="number" name="foodItems[${foodItemCount}].quantity" placeholder="Quantity" class="form-control" required>
+                <input type="number" name="foodItems[${itemCount}].quantity" placeholder="Quantity" class="form-control" required>
             </div>
             <div class="form-group">
                 <label>Unit</label>
-                <select name="foodItems[${foodItemCount}].unit" class="form-control" required>
-                    <option value=" ">None</option>
-                    <option value="g">Grams</option>
-                    <option value="kg">Kilograms</option>
-                    <option value="ml">Milliliters</option>
-                    <option value="l">Liters</option>
-                    <option value="cup">Cups</option>
-                    <option value="tbsp">Tablespoons</option>
-                    <option value="tsp">Teaspoons</option>
+                <select name="foodItems[${itemCount}].unit" class="form-control" required>
+                    <option value="">Select unit</option>
+                    <option value="g">Grams (g)</option>
+                    <option value="cup">Cup</option>
+                    <option value="oz">Ounce (oz)</option>
+                    <option value="serving">Serving</option>
+                    <option value="tbsp">Tablespoon</option>
+                    <option value="tsp">Teaspoon</option>
+                    <option value="piece">Piece</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Calories</label>
-                <input type="number" name="foodItems[${foodItemCount}].calories" placeholder="Estimate" class="form-control" required>
+                <input type="number" name="foodItems[${itemCount}].calories" placeholder="Estimate" class="form-control" required>
             </div>
             <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
         </div>
     `;
-    
-    container.appendChild(newFoodItem);
+    container.appendChild(newItem);
+    itemCount++;
 }
+
+function removeFoodItem(button) {
+    const item = button.closest('.food-item');
+    item.remove();
+    itemCount--;
+}
+
+function estimateCalories() {
+    let foodItems = [];
+    let hasEmptyFields = false;
+
+    document.querySelectorAll("#food-items-container .food-item").forEach(item => {
+        let foodName = item.querySelector('input[name$=".foodItem"]').value.trim();
+        let quantity = item.querySelector('input[name$=".quantity"]').value.trim();
+        let unit = item.querySelector('select[name$=".unit"]').value.trim();
+
+        if (!foodName || !quantity || !unit) {
+            hasEmptyFields = true;
+            return;
+        }
+
+        foodItems.push({
+            foodName: foodName,
+            quantity: parseFloat(quantity),
+            unit: unit
+        });
+    });
+
+    if (hasEmptyFields) {
+        alert("Please fill in all fields (Food Item, Quantity, and Unit) before estimating calories.");
+        return;
+    }
+
+    if (foodItems.length === 0) {
+        alert("Please add at least one food item.");
+        return;
+    }
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+    if (!csrfToken) {
+        console.error("CSRF token not found");
+        alert("Security token missing. Please refresh the page and try again.");
+        return;
+    }
+
+    console.log("Sending calorie estimation request:", JSON.stringify(foodItems));
+
+    fetch("/meals/estimate-calories", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrfToken
+        },
+        body: JSON.stringify(foodItems),
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Received calorie estimation:", data);
+        if (Array.isArray(data)) {
+            document.querySelectorAll("#food-items-container .food-item").forEach((item, index) => {
+                if (data[index] !== undefined) {
+                    const calorieField = item.querySelector('input[name$=".calories"]');
+                    if (calorieField) {
+                        calorieField.value = Math.round(data[index]);
+                    }
+                }
+            });
+        } else {
+            throw new Error("Invalid response format");
+        }
+    })
+    .catch(error => {
+        console.error("Error estimating calories:", error);
+        alert("Failed to estimate calories. Please try again or enter calories manually.");
+    });
+} 
 
 function removeFoodItem(button) {
     const foodItem = button.closest('.food-item');

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.model.User;
@@ -25,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.app.fitrack.service.GoalService;
 import com.app.fitrack.model.Goal;
+import org.springframework.http.HttpStatus;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @Controller
@@ -243,33 +246,45 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     public String saveMeasurements(@AuthenticationPrincipal UserDetails userDetails,
                                  @RequestParam Double weight,
                                  @RequestParam(required = false) String notes,
-                                 RedirectAttributes redi) {
+                                 RedirectAttributes redi,
+                                 HttpServletRequest request) {
         String email = userDetails.getUsername();
         User user = userService.findByEmail(email);
         logger.info("[saveMeasurements] User fetched. Current weight from User object: {}", user.getWeight());
         
-        // Create and save the new measurement record
-        BodyMeasurement measurement = new BodyMeasurement();
-        measurement.setUser(user);
-        measurement.setDateTime(LocalDateTime.now());
-        measurement.setWeight(weight);
-        measurement.setNotes(notes);
-        bodyMeasurementService.saveMeasurement(measurement);
-
-        // Update the main user profile weight
-        logger.info("[saveMeasurements] Updating User object weight to: {}", weight);
-        user.setWeight(weight);
         try {
+            // Create and save the new measurement record
+            BodyMeasurement measurement = new BodyMeasurement();
+            measurement.setUser(user);
+            measurement.setDateTime(LocalDateTime.now());
+            measurement.setWeight(weight);
+            measurement.setNotes(notes);
+            bodyMeasurementService.saveMeasurement(measurement);
+
+            // Update the main user profile weight
+            logger.info("[saveMeasurements] Updating User object weight to: {}", weight);
+            user.setWeight(weight);
             User savedUser = userService.saveUser(user);
             logger.info("[saveMeasurements] User saved via userService.saveUser. Weight on returned User object: {}", savedUser.getWeight());
             
             // Update goals based on the new measurement
             goalService.updateGoalsBasedOnActivity(savedUser);
+            
+            // Check if this is an AJAX request
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                return "redirect:/user/analytics";
+            }
+            
+            redi.addFlashAttribute("successMessage", "Measurement saved successfully!");
+            return "redirect:/user/measurements";
         } catch (Exception e) {
-            logger.error("[saveMeasurements] Error saving user via userService.saveUser", e);
+            logger.error("[saveMeasurements] Error saving measurement", e);
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save measurement: " + e.getMessage());
+            }
+            redi.addFlashAttribute("errorMessage", "Failed to save measurement: " + e.getMessage());
+            return "redirect:/user/measurements";
         }
-        
-        return "redirect:/user/measurements";
     }
 
 }

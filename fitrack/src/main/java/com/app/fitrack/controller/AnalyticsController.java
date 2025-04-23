@@ -89,6 +89,12 @@ public class AnalyticsController {
                 point.put("dateTime", m.getDateTime().toString());
                 point.put("weight", m.getWeight());
                 point.put("userHeight", user.getHeight());
+                // Calculate BMI for each measurement
+                if (user.getHeight() != null && user.getHeight() > 0) {
+                    double heightInMeters = user.getHeight() / 100.0;
+                    double bmi = m.getWeight() / (heightInMeters * heightInMeters);
+                    point.put("bmi", bmi);
+                }
                 return point;
             })
             .collect(Collectors.toList());
@@ -229,12 +235,40 @@ public class AnalyticsController {
 
     // DTO classes for meal and food item data
     private static class MealDTO {
+        private Long id;
+        private LocalDateTime dateTime;
+        private String mealName;
+        private List<FoodItemDTO> foodItems;
+
         public MealDTO(Long id, LocalDateTime dateTime, String mealName, List<FoodItemDTO> foodItems) {
+            this.id = id;
+            this.dateTime = dateTime;
+            this.mealName = mealName;
+            this.foodItems = foodItems;
         }
+
+        public Long getId() { return id; }
+        public LocalDateTime getDateTime() { return dateTime; }
+        public String getMealName() { return mealName; }
+        public List<FoodItemDTO> getFoodItems() { return foodItems; }
     }
 
     private static class FoodItemDTO {
+        private String foodItem;
+        private Double protein;
+        private Double carbs;
+        private Double fat;
+
         public FoodItemDTO(String foodItem, Double protein, Double carbs, Double fat) {
+            this.foodItem = foodItem;
+            this.protein = protein;
+            this.carbs = carbs;
+            this.fat = fat;
         }
+
+        public String getFoodItem() { return foodItem; }
+        public Double getProtein() { return protein; }
+        public Double getCarbs() { return carbs; }
+        public Double getFat() { return fat; }
     }
 } 
