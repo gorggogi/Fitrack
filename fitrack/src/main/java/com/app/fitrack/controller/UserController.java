@@ -253,17 +253,17 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         logger.info("[saveMeasurements] User fetched. Current weight from User object: {}", user.getWeight());
         
         try {
-            // Create and save the new measurement record
-            BodyMeasurement measurement = new BodyMeasurement();
-            measurement.setUser(user);
-            measurement.setDateTime(LocalDateTime.now());
-            measurement.setWeight(weight);
-            measurement.setNotes(notes);
-            bodyMeasurementService.saveMeasurement(measurement);
+        // Create and save the new measurement record
+        BodyMeasurement measurement = new BodyMeasurement();
+        measurement.setUser(user);
+        measurement.setDateTime(LocalDateTime.now());
+        measurement.setWeight(weight);
+        measurement.setNotes(notes);
+        bodyMeasurementService.saveMeasurement(measurement);
 
-            // Update the main user profile weight
-            logger.info("[saveMeasurements] Updating User object weight to: {}", weight);
-            user.setWeight(weight);
+        // Update the main user profile weight
+        logger.info("[saveMeasurements] Updating User object weight to: {}", weight);
+        user.setWeight(weight);
             User savedUser = userService.saveUser(user);
             logger.info("[saveMeasurements] User saved via userService.saveUser. Weight on returned User object: {}", savedUser.getWeight());
             
@@ -281,9 +281,9 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
             logger.error("[saveMeasurements] Error saving measurement", e);
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save measurement: " + e.getMessage());
-            }
+        }
             redi.addFlashAttribute("errorMessage", "Failed to save measurement: " + e.getMessage());
-            return "redirect:/user/measurements";
+        return "redirect:/user/measurements";
         }
     }
 
