@@ -128,7 +128,6 @@ public class NutritionixService {
                         rawCalories, 
                         calories);
                     
-                    // Set macronutrients
                     if (food.has("nf_protein")) {
                         foodItem.setProtein(food.get("nf_protein").asDouble());
                     }
