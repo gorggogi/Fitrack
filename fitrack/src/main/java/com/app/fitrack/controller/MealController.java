@@ -20,6 +20,8 @@ import com.app.fitrack.model.User;
 import com.app.fitrack.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import java.util.stream.Collectors;
 
 @Controller
 public class MealController {
@@ -125,21 +127,27 @@ public class MealController {
     }
 
     @GetMapping("/user/meals")
-    public String getLoggedMeals(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        String email = userDetails.getUsername();
-        User user = userService.findByEmail(email);
-        
-        LocalDate today = LocalDate.now();
-        LocalDateTime startOfDay = today.atStartOfDay();
-        LocalDateTime endOfDay = today.plusDays(1).atStartOfDay();
-        
-        List<Meal> todayMeals = mealService.findByUserAndDateTimeBetween(user, startOfDay, endOfDay);
-        List<Meal> pastMeals = mealService.findByUserAndDateTimeBefore(user, startOfDay);
-        
-        model.addAttribute("todayMeals", todayMeals);
-        model.addAttribute("pastMeals", pastMeals);
+    public String getLoggedMeals(Model model, Authentication authentication) {
+        User user = userService.findByEmail(authentication.getName());
         model.addAttribute("fullName", user.getFullName());
+
+        // Get today's meals
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime endOfDay = startOfDay.plusDays(1);
+        List<Meal> todayMeals = mealService.findByUserAndDateTimeBetween(user, startOfDay, endOfDay);
+        model.addAttribute("todayMeals", todayMeals);
+
+        // Get past meals and group them by date
+        List<Meal> pastMeals = mealService.findByUserAndDateTimeBefore(user, startOfDay);
+        Map<LocalDate, List<Meal>> pastMealsByDate = pastMeals.stream()
+            .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate()));
         
+        // Sort the map by date in descending order
+        Map<LocalDate, List<Meal>> sortedPastMealsByDate = new TreeMap<>(Collections.reverseOrder());
+        sortedPastMealsByDate.putAll(pastMealsByDate);
+        
+        model.addAttribute("pastMealsByDate", sortedPastMealsByDate);
+
         return "loggedmeals";
     }
 
