@@ -330,8 +330,18 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         try {
             workoutService.deleteWorkout(id);
             return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            logger.error("Error deleting workout: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Workout not found");
+        } catch (IllegalStateException e) {
+            logger.error("Unauthorized workout deletion attempt: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Unauthorized to delete this workout");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error deleting workout: " + e.getMessage());
+            logger.error("Error deleting workout", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error deleting workout");
         }
     }
 
@@ -340,26 +350,31 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     public ResponseEntity<?> getWorkout(@PathVariable Long id) {
         try {
             Workout workout = workoutService.getWorkoutById(id);
+            if (workout == null) {
+                return ResponseEntity.notFound().build();
+            }
             return ResponseEntity.ok(workout);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error getting workout: " + e.getMessage());
+            logger.error("Error fetching workout details", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error fetching workout details");
         }
     }
 
     @PostMapping("/user/workouts/{id}/update")
-    @ResponseBody
-    public ResponseEntity<?> updateWorkout(@PathVariable Long id, 
-                                         @RequestParam(value = "repeatDays", required = false) List<String> repeatDays,
-                                         @ModelAttribute Workout workout) {
+    public String updateWorkout(@PathVariable Long id, 
+                              @RequestParam(value = "repeatDays", required = false) List<String> repeatDays,
+                              @ModelAttribute Workout workout) {
         try {
             if (repeatDays == null || repeatDays.isEmpty()) {
                 repeatDays = List.of("Daily");
             }
             workout.setRepeatDays(repeatDays);
             workoutService.updateWorkout(id, workout);
-            return ResponseEntity.ok().build();
+            return "redirect:/user/scheduledworkouts";
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error updating workout: " + e.getMessage());
+            logger.error("Error updating workout", e);
+            return "redirect:/user/scheduledworkouts?error=" + e.getMessage();
         }
     }
 

@@ -53,15 +53,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                // Remove the workout from the list
-                document.querySelector(`.workout-item[data-id="${workoutId}"]`)?.remove();
-
-                // If no more workouts, reload the page
-                if (document.querySelectorAll(".workout-item").length === 0) {
-                    location.reload();
-                }
-
+                // Close the modal
                 closeWorkoutModal();
+                // Reload the page to update the summary board
+                window.location.reload();
             })
             .catch(error => {
                 console.error("Error:", error);
