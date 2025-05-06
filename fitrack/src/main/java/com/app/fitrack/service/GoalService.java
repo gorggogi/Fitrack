@@ -48,12 +48,15 @@ public class GoalService {
         goal.setDescription(description);
         goal.setTargetValue(targetValue);
         
-        // Set initial current value based on goal type
+        // Set initial current value and start value based on goal type
         if (goalType.equals("WEIGHT_LOSS") || goalType.equals("WEIGHT_GAIN")) {
             BodyMeasurement latestMeasurement = bodyMeasurementService.getLatestMeasurement(user);
-            goal.setCurrentValue(latestMeasurement != null ? latestMeasurement.getWeight() : 0.0);
+            double currentWeight = latestMeasurement != null ? latestMeasurement.getWeight() : 0.0;
+            goal.setCurrentValue(currentWeight);
+            goal.setStartValue(currentWeight);
         } else {
             goal.setCurrentValue(0.0);
+            goal.setStartValue(0.0);
         }
         
         goal.setStartDate(LocalDateTime.now());
@@ -86,6 +89,13 @@ public class GoalService {
     }
 
     public double calculateProgress(Goal goal) {
+        if (goal.getGoalType().equalsIgnoreCase("WEIGHT_LOSS")) {
+            double startingWeight = goal.getStartValue() != null ? goal.getStartValue() : 0.0;
+            double targetWeight = goal.getTargetValue();
+            double currentWeight = goal.getCurrentValue();
+            if (startingWeight == targetWeight) return 100;
+            return Math.max(0, Math.min(100, ((startingWeight - currentWeight) / (startingWeight - targetWeight)) * 100));
+        }
         if (goal.getTargetValue() == 0) return 0;
         return (goal.getCurrentValue() / goal.getTargetValue()) * 100;
     }

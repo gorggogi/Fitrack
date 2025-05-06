@@ -34,6 +34,9 @@ public class Goal {
     @Column(nullable = false)
     private String status; // "IN_PROGRESS", "COMPLETED", "FAILED"
 
+    @Column
+    private Double startValue;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -105,5 +108,13 @@ public class Goal {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Double getStartValue() {
+        return startValue;
+    }
+
+    public void setStartValue(Double startValue) {
+        this.startValue = startValue;
     }
 } 
