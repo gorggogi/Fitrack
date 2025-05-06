@@ -38,6 +38,55 @@
         <div class="analytics-container">
             <h1 class="analytics-title">Fitness Analytics</h1>
             
+            <!-- New Summary Section -->
+            <div class="summary-section">
+                <div class="summary-card">
+                    <h3>Current Status</h3>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span class="summary-label">Weight:</span>
+                            <span class="summary-value" th:text="${currentUserWeight != null ? #numbers.formatDecimal(currentUserWeight, 1, 1) + ' kg' : '--'}">--</span>
+                            <span class="summary-change" 
+                                  th:classappend="${weightProgress != null ? (weightProgress > 0 ? 'positive' : 'negative') : ''}"
+                                  th:text="${weightProgress != null ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : 'No change'}">
+                            </span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">BMI Category:</span>
+                            <span class="summary-value" th:text="${currentBmiCategory}">--</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">TDEE:</span>
+                            <span class="summary-value" th:text="${tdee != null ? #numbers.formatDecimal(tdee, 0, 0) + ' kcal' : '--'}">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Daily Averages</h3>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span class="summary-label">Calories Consumed:</span>
+                            <span class="summary-value" th:text="${avgDailyCalories != null ? #numbers.formatDecimal(avgDailyCalories, 0, 0) + ' kcal' : '--'}">--</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Calories Burned:</span>
+                            <span class="summary-value" th:text="${avgDailyExercise != null ? #numbers.formatDecimal(avgDailyExercise, 0, 0) + ' kcal' : '--'}">--</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Calorie Balance:</span>
+                            <span class="summary-value" 
+                                  th:classappend="${avgDailyCalories != null && avgDailyExercise != null && tdee != null ? 
+                                      ((avgDailyCalories - avgDailyExercise - tdee) > 0 ? 'positive' : 'negative') : ''}"
+                                  th:text="${avgDailyCalories != null && avgDailyExercise != null && tdee != null ? 
+                                      ((avgDailyCalories - avgDailyExercise - tdee) > 0 ? 
+                                          'Surplus: ' + #numbers.formatDecimal(avgDailyCalories - avgDailyExercise - tdee, 0, 0) + ' kcal' : 
+                                          'Deficit: ' + #numbers.formatDecimal(tdee - (avgDailyCalories - avgDailyExercise), 0, 0) + ' kcal') : '--'}">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="analytics-grid">
                 <div class="analytics-card">
                     <h2>Workout Frequency</h2>

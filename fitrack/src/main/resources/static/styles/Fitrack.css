@@ -842,9 +842,9 @@ button.primary {
 }
 
 .analytics-title {
-    font-size: 1.8rem;
-    margin-bottom: 1.8rem;
+    margin-bottom: 2rem;
     color: #333;
+    font-size: 2rem;
 }
 
 .analytics-grid {
@@ -1036,20 +1036,24 @@ button.primary {
 
 .stat-value {
     font-weight: 600;
-    margin-right: 0.5rem;
+    color: #333;
 }
 
-.stat-change {
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
+.stat-value.positive {
+    color: #28a745;
 }
 
-.stat-change.positive {
-    color: var(--success-color);
+.stat-value.negative {
+    color: #dc3545;
 }
 
-.stat-change.negative {
-    color: var(--error-color);
+/* Special case for calorie balance where negative (deficit) is good */
+.summary-item:last-child .stat-value.negative {
+    color: #28a745;
+}
+
+.summary-item:last-child .stat-value.positive {
+    color: #dc3545;
 }
 
 .recommendations-container {
@@ -2131,8 +2135,25 @@ button.primary {
 }
 
 .summary-value {
-    color: #4CAF50;
-    font-weight: 500;
+    font-weight: 600;
+    color: #333;
+}
+
+.summary-value.positive {
+    color: #28a745;
+}
+
+.summary-value.negative {
+    color: #dc3545;
+}
+
+/* Special case for calorie balance where negative (deficit) is good */
+.summary-item:last-child .summary-value.negative {
+    color: #28a745;
+}
+
+.summary-item:last-child .summary-value.positive {
+    color: #dc3545;
 }
 
 .goal-completed-icon {
@@ -2146,5 +2167,75 @@ button.primary {
     color: #FFD700; /* gold */
     font-size: 1.3rem;
     z-index: 2;
+}
+
+/* New Summary Section Styles */
+.summary-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.summary-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.summary-change {
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+
+.summary-change.positive {
+    color: #28a745;
+}
+
+.summary-change.negative {
+    color: #dc3545;
+}
+
+/* Hide redundant sections */
+.recommendation-section:first-child {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .summary-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-section {
+        grid-template-columns: 1fr;
+    }
 }
 
