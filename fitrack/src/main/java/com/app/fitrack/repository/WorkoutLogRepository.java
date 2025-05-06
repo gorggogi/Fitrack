@@ -17,4 +17,9 @@ boolean existsByUserAndWorkoutNameAndDate(@Param("user") User user,
                                           @Param("date") LocalDate date);
 
     List<WorkoutLog> findByUserAndCompletedAtBetween(User user, LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT COUNT(w) FROM WorkoutLog w WHERE w.user = :user AND w.completedAt BETWEEN :start AND :end")
+    long countByUserAndCompletedAtBetween(@Param("user") User user, 
+                                         @Param("start") LocalDateTime start, 
+                                         @Param("end") LocalDateTime end);
 }

@@ -44,11 +44,11 @@
                 <p>Total Calorie Intake</p>
             </div>
             <div class="summary-card">
-                <h2>45<span style="font-size: 0.5em">min</span></h2>
+                <h2 th:text="${totalWorkoutDuration} + ' min'"></h2>
                 <p>Total Workout Duration</p>
             </div>
             <div class="summary-card">
-                <h2>1</h2>
+                <h2 th:text="${completedWorkouts}"></h2>
                 <p>Workouts Completed</p>
             </div>
         </section>

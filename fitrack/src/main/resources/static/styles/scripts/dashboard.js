@@ -96,50 +96,6 @@ function openModal(workoutElement) {
 
         const markAsDoneButton = document.getElementById("markAsDoneButton");
         markAsDoneButton.setAttribute("data-id", workoutElement.getAttribute("data-id"));
-        
-        // Add click event listener for the Mark as Done button
-        markAsDoneButton.onclick = function() {
-            const workoutId = this.getAttribute("data-id");
-            if (!workoutId) return console.error("⚠️ Workout ID not found!");
-
-            const csrfToken = document.querySelector('input[name="_csrf"]').value;
-            if (!csrfToken) {
-                console.error("⚠️ CSRF token not found!");
-                return;
-            }
-
-            fetch(`/user/workouts/${workoutId}/mark-done`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": csrfToken
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(text || `HTTP error: ${response.status}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Remove the workout from the list
-                document.querySelector(`.workout-item[data-id="${workoutId}"]`)?.remove();
-
-                // If no more workouts, reload the page
-                if (document.querySelectorAll(".workout-item").length === 0) {
-                    location.reload();
-                }
-
-                closeWorkoutModal();
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Failed to mark workout as done. Please try again.");
-            });
-        };
     } else {
         // Adding new workout
         modalTitle.textContent = "Add New Workout";
@@ -213,6 +169,39 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target == mealModal) {
             closeMealModal();
         }
+    }
+
+    // Handle workout form submission
+    const workoutForm = document.getElementById('workoutForm');
+    if (workoutForm) {
+        workoutForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/user/saveworkout', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    closeWorkoutModal();
+                    // Clear the form
+                    this.reset();
+                    // Reload the page to show the new workout
+                    window.location.reload();
+                } else {
+                    response.text().then(text => {
+                        console.error('Error response:', text);
+                        alert('Error adding workout. Please try again.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding workout. Please try again.');
+            });
+        });
     }
 
     // Handle goal form submission

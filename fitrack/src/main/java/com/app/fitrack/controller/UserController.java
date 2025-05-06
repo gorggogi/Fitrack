@@ -183,7 +183,13 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         int totalCalories = meals.stream()
                 .mapToInt(Meal::getTotalCalories)
                 .sum();
-    model.addAttribute("totalCalories", totalCalories);
+        model.addAttribute("totalCalories", totalCalories);
+        
+        // Calculate today's workout summary
+        int totalWorkoutDuration = workoutService.getTodayTotalWorkoutDuration(user);
+        int completedWorkouts = workoutService.getTodayCompletedWorkoutCount(user);
+        model.addAttribute("totalWorkoutDuration", totalWorkoutDuration);
+        model.addAttribute("completedWorkouts", completedWorkouts);
         
         return "dashboard";
     }

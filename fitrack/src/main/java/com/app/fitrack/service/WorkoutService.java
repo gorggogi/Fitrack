@@ -60,10 +60,17 @@ public class WorkoutService {
 
         // Filter workouts scheduled for today AND NOT already logged today
         return allUserWorkouts.stream()
-            .filter(workout -> workout.getRepeatDays().contains(dayOfWeek) || workout.getRepeatDays().contains("Daily"))
-            .filter(workout -> !workoutLogRepository.existsByUserAndWorkoutNameAndDate(
-                                    currentUser, workout.getWorkoutName(), today
-                                 ))
+            .filter(workout -> {
+                // Check if workout is scheduled for today
+                boolean isScheduledForToday = workout.getRepeatDays().contains("Daily") || 
+                                           workout.getRepeatDays().contains(dayOfWeek);
+                
+                // Check if workout hasn't been logged today
+                boolean notLoggedToday = !workoutLogRepository.existsByUserAndWorkoutNameAndDate(
+                    currentUser, workout.getWorkoutName(), today);
+                
+                return isScheduledForToday && notLoggedToday;
+            })
             .collect(Collectors.toList());
     }
 
@@ -130,5 +137,23 @@ public class WorkoutService {
 
     public List<WorkoutLog> getWorkoutLogsForUser(User user, LocalDateTime startDate, LocalDateTime endDate) {
         return workoutLogRepository.findByUserAndCompletedAtBetween(user, startDate, endDate);
+    }
+
+    public int getTodayTotalWorkoutDuration(User user) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+        
+        List<WorkoutLog> todayLogs = workoutLogRepository.findByUserAndCompletedAtBetween(user, startOfDay, endOfDay);
+        
+        return todayLogs.stream()
+                .mapToInt(WorkoutLog::getDuration)
+                .sum();
+    }
+
+    public int getTodayCompletedWorkoutCount(User user) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+        
+        return (int) workoutLogRepository.countByUserAndCompletedAtBetween(user, startOfDay, endOfDay);
     }
 }
