@@ -32,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.stream.Collectors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Controller
@@ -227,15 +228,13 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                               @RequestParam(required = false) Double weight,
                               RedirectAttributes redi) {
         String email = userDetails.getUsername();
-        User user = userService.findByEmail(email);
         
-        if (user != null) {
-            user.setAge(age);
-            user.setGender(gender);
-            user.setHeight(height);
-            user.setWeight(weight);
-            userService.createUserProfile(email, age, gender, height, weight);
-            redi.addFlashAttribute("successMessage", "Profile updated successfully!");
+        String message = userService.updateUserProfile(email, age, gender, height, weight);
+        
+        if ("Profile updated successfully.".equals(message)) {
+            redi.addFlashAttribute("successMessage", message);
+        } else {
+            redi.addFlashAttribute("errorMessage", message);
         }
         
         return "redirect:/user/dashboard";
@@ -255,6 +254,7 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     @PostMapping("/user/measurements/save")
     public String saveMeasurements(@AuthenticationPrincipal UserDetails userDetails,
                                  @RequestParam Double weight,
+                                 @RequestParam(name = "measurementDateTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
                                  @RequestParam(required = false) String notes,
                                  RedirectAttributes redi,
                                  HttpServletRequest request) {
@@ -266,7 +266,11 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         // Create and save the new measurement record
         BodyMeasurement measurement = new BodyMeasurement();
         measurement.setUser(user);
-        measurement.setDateTime(LocalDateTime.now());
+        if (dateTime != null) {
+            measurement.setDateTime(dateTime);
+        } else {
+            measurement.setDateTime(LocalDateTime.now());
+        }
         measurement.setWeight(weight);
         measurement.setNotes(notes);
         bodyMeasurementService.saveMeasurement(measurement);

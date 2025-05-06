@@ -23,7 +23,7 @@
                 <li><a href="#">Meals</a></li>
             </ul>
             <div class="user-info">
-                <span th:text="${fullName}" class="user-name"></span>
+                <span th:text="${analyticsData.fullName}" class="user-name"></span>
                 <div class="user-icon" onclick="toggleDropdown()"></div>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
@@ -45,19 +45,19 @@
                     <div class="summary-content">
                         <div class="summary-item">
                             <span class="summary-label">Weight:</span>
-                            <span class="summary-value" th:text="${currentUserWeight != null ? #numbers.formatDecimal(currentUserWeight, 1, 1) + ' kg' : '--'}">--</span>
+                            <span class="summary-value" th:text="${analyticsData.currentUserWeight != null ? #numbers.formatDecimal(analyticsData.currentUserWeight, 1, 1) + ' kg' : '--'}">--</span>
                             <span class="summary-change" 
-                                  th:classappend="${weightProgress != null ? (weightProgress > 0 ? 'positive' : 'negative') : ''}"
-                                  th:text="${weightProgress != null ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : 'No change'}">
+                                  th:classappend="${analyticsData.weightProgress != null ? (analyticsData.weightProgress > 0 ? 'positive' : 'negative') : ''}"
+                                  th:text="${analyticsData.weightProgress != null ? (analyticsData.weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(analyticsData.weightProgress, 1, 1) + ' kg' : 'No change'}">
                             </span>
                         </div>
                         <div class="summary-item">
                             <span class="summary-label">BMI Category:</span>
-                            <span class="summary-value" th:text="${currentBmiCategory}">--</span>
+                            <span class="summary-value" th:text="${analyticsData.currentBmiCategory}">--</span>
                         </div>
                         <div class="summary-item">
                             <span class="summary-label">TDEE:</span>
-                            <span class="summary-value" th:text="${tdee != null ? #numbers.formatDecimal(tdee, 0, 0) + ' kcal' : '--'}">--</span>
+                            <span class="summary-value" th:text="${analyticsData.tdee != null ? #numbers.formatDecimal(analyticsData.tdee, 0, 0) + ' kcal' : '--'}">--</span>
                         </div>
                     </div>
                 </div>
@@ -67,21 +67,23 @@
                     <div class="summary-content">
                         <div class="summary-item">
                             <span class="summary-label">Calories Consumed:</span>
-                            <span class="summary-value" th:text="${avgDailyCalories != null ? #numbers.formatDecimal(avgDailyCalories, 0, 0) + ' kcal' : '--'}">--</span>
+                            <span class="summary-value" th:text="${analyticsData.avgDailyCalories != null ? #numbers.formatDecimal(analyticsData.avgDailyCalories, 0, 0) + ' kcal' : '--'}">--</span>
                         </div>
                         <div class="summary-item">
                             <span class="summary-label">Calories Burned:</span>
-                            <span class="summary-value" th:text="${avgDailyExercise != null ? #numbers.formatDecimal(avgDailyExercise, 0, 0) + ' kcal' : '--'}">--</span>
+                            <span class="summary-value" th:text="${analyticsData.avgDailyExerciseCalories != null ? #numbers.formatDecimal(analyticsData.avgDailyExerciseCalories, 0, 0) + ' kcal' : '--'}">--</span>
                         </div>
                         <div class="summary-item">
                             <span class="summary-label">Calorie Balance:</span>
                             <span class="summary-value" 
-                                  th:classappend="${avgDailyCalories != null && avgDailyExercise != null && tdee != null ? 
-                                      ((avgDailyCalories - avgDailyExercise - tdee) > 0 ? 'positive' : 'negative') : ''}"
-                                  th:text="${avgDailyCalories != null && avgDailyExercise != null && tdee != null ? 
-                                      ((avgDailyCalories - avgDailyExercise - tdee) > 0 ? 
-                                          'Surplus: ' + #numbers.formatDecimal(avgDailyCalories - avgDailyExercise - tdee, 0, 0) + ' kcal' : 
-                                          'Deficit: ' + #numbers.formatDecimal(tdee - (avgDailyCalories - avgDailyExercise), 0, 0) + ' kcal') : '--'}">--</span>
+                                  th:classappend="${analyticsData.avgDailyCalories != null && analyticsData.avgDailyExerciseCalories != null && analyticsData.tdee != null ? 
+                                      ((analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee) > 0 ? 'positive' : 'negative') : ''}"
+                                  th:text="${analyticsData.avgDailyCalories != null && analyticsData.avgDailyExerciseCalories != null && analyticsData.tdee != null ? 
+                                      ((analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee) > 0 ? 
+                                          'Surplus: ' + #numbers.formatDecimal(analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee, 0, 0) + ' kcal' : 
+                                          'Deficit: ' + #numbers.formatDecimal(analyticsData.tdee - (analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories), 0, 0) + ' kcal') : '--'}">
+                            --
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -104,16 +106,16 @@
                         <div class="composition-stats">
                             <div class="stat-item">
                                 <span class="stat-label">Current Weight:</span>
-                                <span class="stat-value" th:text="${currentUserWeight != null ? #numbers.formatDecimal(currentUserWeight, 1, 1) + ' kg' : '--'}">--</span>
+                                <span class="stat-value" th:text="${analyticsData.currentUserWeight != null ? #numbers.formatDecimal(analyticsData.currentUserWeight, 1, 1) + ' kg' : '--'}">--</span>
                                 <span class="stat-change" 
-                                      th:classappend="${weightProgress != null ? (weightProgress > 0 ? 'positive' : 'negative') : ''}"
-                                      th:text="${weightProgress != null ? (weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(weightProgress, 1, 1) + ' kg' : 'No change'}">
+                                      th:classappend="${analyticsData.weightProgress != null ? (analyticsData.weightProgress > 0 ? 'positive' : 'negative') : ''}"
+                                      th:text="${analyticsData.weightProgress != null ? (analyticsData.weightProgress > 0 ? '+' : '') + #numbers.formatDecimal(analyticsData.weightProgress, 1, 1) + ' kg' : 'No change'}">
                                 </span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">BMI:</span>
-                                <span class="stat-value" th:text="${currentBmiValue != null ? #numbers.formatDecimal(currentBmiValue, 1, 1) : '--'}">--</span>
-                                <span class="stat-category" th:text="${currentBmiCategory}">--</span>
+                                <span class="stat-value" th:text="${analyticsData.currentBmiValue != null ? #numbers.formatDecimal(analyticsData.currentBmiValue, 1, 1) : '--'}">--</span>
+                                <span class="stat-category" th:text="${analyticsData.currentBmiCategory}">--</span>
                             </div>
                         </div>
                     </div>
@@ -125,7 +127,7 @@
                     <div class="progress-timeline">
                         <h3>Progress Timeline</h3>
                         <div class="timeline-container">
-                            <div class="timeline-item" th:each="entry : ${timelineData}">
+                            <div class="timeline-item" th:each="entry : ${analyticsData.timelineData}">
                                 <div class="timeline-date" th:text="${entry.date}">--</div>
                                 <div class="timeline-weight" th:text="${entry.weight + ' kg'}">--</div>
                                 <div class="timeline-notes" th:text="${entry.notes}">--</div>
@@ -140,30 +142,30 @@
                             <h3>Current Status</h3>
                             <div class="status-item">
                                 <span class="status-label">Average Daily Calories:</span>
-                                <span class="status-value" th:text="${avgDailyCalories != null ? #numbers.formatDecimal(avgDailyCalories, 0, 0) + ' kcal' : '--'}">--</span>
+                                <span class="status-value" th:text="${analyticsData.avgDailyCalories != null ? #numbers.formatDecimal(analyticsData.avgDailyCalories, 0, 0) + ' kcal' : '--'}">--</span>
                             </div>
                             <div class="status-item">
                                 <span class="status-label">Average Daily Exercise:</span>
-                                <span class="status-value" th:text="${avgDailyExercise != null ? #numbers.formatDecimal(avgDailyExercise, 0, 0) + ' kcal' : '--'}">--</span>
+                                <span class="status-value" th:text="${analyticsData.avgDailyExerciseCalories != null ? #numbers.formatDecimal(analyticsData.avgDailyExerciseCalories, 0, 0) + ' kcal' : '--'}">--</span>
                             </div>
                             <div class="status-item">
                                 <span class="status-label">Estimated TDEE:</span>
-                                <span class="status-value" th:text="${tdee != null ? #numbers.formatDecimal(tdee, 0, 0) + ' kcal' : '--'}">--</span>
+                                <span class="status-value" th:text="${analyticsData.tdee != null ? #numbers.formatDecimal(analyticsData.tdee, 0, 0) + ' kcal' : '--'}">--</span>
                             </div>
                         </div>
 
                         <div class="recommendation-section" style="display: none;">
                             <h3>Weight Trend Analysis</h3>
-                            <div class="projection-item" th:if="${weightTrend != null}">
+                            <div class="projection-item" th:if="${analyticsData.weightTrend != null}">
                                 <span class="projection-label">Weekly Trend:</span>
-                                <span class="projection-value" th:classappend="${weightTrend > 0 ? 'positive' : 'negative'}"
-                                      th:text="${weightTrend != 0 ? (weightTrend > 0 ? '+' : '') + #numbers.formatDecimal(weightTrend, 1, 1) + ' kg/week' : 'Stable'}">--</span>
+                                <span class="projection-value" th:classappend="${analyticsData.weightTrend > 0 ? 'positive' : 'negative'}"
+                                      th:text="${analyticsData.weightTrend != 0 ? (analyticsData.weightTrend > 0 ? '+' : '') + #numbers.formatDecimal(analyticsData.weightTrend, 1, 1) + ' kg/week' : 'Stable'}">--</span>
                             </div>
                             <div class="projection-item">
                                 <span class="projection-label">Trend Status:</span>
-                                <span class="projection-value" th:text="${weightTrendDescription}">--</span>
+                                <span class="projection-value" th:text="${analyticsData.weightTrendDescription}">--</span>
                             </div>
-                            <div class="recommendation-text" th:text="${weightRecommendation}">--</div>
+                            <div class="recommendation-text" th:text="${analyticsData.weightRecommendation}">--</div>
                         </div>
 
                         <div class="recommendation-section">
@@ -174,15 +176,15 @@
                             <div class="nutrition-stats">
                                 <div class="nutrition-stat-item">
                                     <div class="nutrition-stat-label">Protein</div>
-                                    <div class="nutrition-stat-value" th:text="${totalProtein != null ? #numbers.formatDecimal(totalProtein, 0, 0) + ' g' : '--'}">--</div>
+                                    <div class="nutrition-stat-value" th:text="${analyticsData.totalProtein7Days != null ? #numbers.formatDecimal(analyticsData.totalProtein7Days, 0, 0) + ' g' : '--'}">--</div>
                                 </div>
                                 <div class="nutrition-stat-item">
                                     <div class="nutrition-stat-label">Carbs</div>
-                                    <div class="nutrition-stat-value" th:text="${totalCarbs != null ? #numbers.formatDecimal(totalCarbs, 0, 0) + ' g' : '--'}">--</div>
+                                    <div class="nutrition-stat-value" th:text="${analyticsData.totalCarbs7Days != null ? #numbers.formatDecimal(analyticsData.totalCarbs7Days, 0, 0) + ' g' : '--'}">--</div>
                                 </div>
                                 <div class="nutrition-stat-item">
                                     <div class="nutrition-stat-label">Fats</div>
-                                    <div class="nutrition-stat-value" th:text="${totalFats != null ? #numbers.formatDecimal(totalFats, 0, 0) + ' g' : '--'}">--</div>
+                                    <div class="nutrition-stat-value" th:text="${analyticsData.totalFats7Days != null ? #numbers.formatDecimal(analyticsData.totalFats7Days, 0, 0) + ' g' : '--'}">--</div>
                                 </div>
                             </div>
                             <div class="view-meals-button">
@@ -214,8 +216,8 @@
                 <div class="form-group">
                     <label for="weight">Weight (kg)</label>
                     <input type="number" id="weight" name="weight" step="0.1" required
-                           th:value="${currentUserWeight != null ? currentUserWeight : ''}">
-                    <small class="form-text" th:if="${currentUserWeight != null}">Your current weight from your profile</small>
+                           th:value="${analyticsData.currentUserWeight != null ? analyticsData.currentUserWeight : ''}">
+                    <small class="form-text" th:if="${analyticsData.currentUserWeight != null}">Your current weight from your profile</small>
                 </div>
 
                 <div class="form-group">
@@ -237,19 +239,21 @@
     </div>
 
     <script th:inline="javascript">
-        const workoutData = /*[[${workoutData}]]*/ [];
-        const caloriesData = /*[[${caloriesData}]]*/ [];
-        const chartMeasurementData = /*[[${chartMeasurementData}]]*/ [];
-        const totalProtein = /*[[${totalProtein}]]*/ 0;
-        const totalCarbs = /*[[${totalCarbs}]]*/ 0;
-        const totalFats = /*[[${totalFats}]]*/ 0;
+        const analyticsData = /*[[${analyticsData}]]*/ {};
+
+        const workoutData = analyticsData.dailyWorkoutCounts7Days || [];
+        const caloriesData = analyticsData.dailyCaloriesBurned7Days || [];
+        const chartMeasurementData = analyticsData.chartMeasurementData || [];
+        const totalProtein = analyticsData.totalProtein7Days || 0;
+        const totalCarbs = analyticsData.totalCarbs7Days || 0;
+        const totalFats = analyticsData.totalFats7Days || 0;
         
         // Workout Frequency Chart
         const workoutCtx = document.getElementById('workoutFrequencyChart').getContext('2d');
         new Chart(workoutCtx, {
             type: 'bar',
             data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                labels: ['6 days ago', '5 days ago', '4 days ago', '3 days ago', '2 days ago', 'Yesterday', 'Today'],
                 datasets: [{
                     label: 'Workouts',
                     data: workoutData,
@@ -276,7 +280,7 @@
         new Chart(caloriesCtx, {
             type: 'line',
             data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                labels: ['6 days ago', '5 days ago', '4 days ago', '3 days ago', '2 days ago', 'Yesterday', 'Today'],
                 datasets: [{
                     label: 'Calories Burned',
                     data: caloriesData,
@@ -302,9 +306,19 @@
         const dateOptions = { month: 'short', day: 'numeric' }; // Format for labels
 
         // Actual measurements data
-        const actualLabels = chartMeasurementData.map(m => new Date(m.dateTime).toLocaleDateString('en-US', dateOptions));
+        const actualLabels = chartMeasurementData.map(m => m.dateTime ? new Date(m.dateTime).toLocaleDateString('en-US', dateOptions) : 'N/A');
         const actualWeights = chartMeasurementData.map(m => m.weight);
-        const actualBmi = chartMeasurementData.map(m => m.bmi); // Use the BMI values directly from the data
+        const actualBmi = chartMeasurementData.map(m => m.bmi);
+
+        // Filter out null/undefined BMI values before calculating min/max
+        const validBmi = actualBmi.filter(bmi => bmi != null && !isNaN(bmi));
+        const minBmi = validBmi.length > 0 ? Math.min(...validBmi) - 1 : 10; // Default min if no valid BMI
+        const maxBmi = validBmi.length > 0 ? Math.max(...validBmi) + 1 : 40; // Default max
+
+        // Filter out null/undefined weight values before calculating min/max
+        const validWeights = actualWeights.filter(w => w != null && !isNaN(w));
+        const minWeight = validWeights.length > 0 ? Math.min(...validWeights) - 1 : 30; // Default min weight
+        const maxWeight = validWeights.length > 0 ? Math.max(...validWeights) + 1 : 150; // Default max weight
 
         // --- Create Chart --- 
         const bodyCompChart = new Chart(bodyCtx, {
@@ -353,7 +367,7 @@
                     x: {
                        title: {
                            display: true,
-                           text: 'Measurement Sequence'
+                           text: 'Measurement Date'
                        }
                     },
                     y: {
@@ -364,8 +378,8 @@
                             display: true,
                             text: 'Weight (kg)'
                         },
-                        min: Math.min(...actualWeights) - 1,
-                        max: Math.max(...actualWeights) + 1
+                        min: minWeight,
+                        max: maxWeight
                     },
                     y2: {
                         type: 'linear',
@@ -375,8 +389,8 @@
                             display: true,
                             text: 'BMI'
                         },
-                        min: Math.min(...actualBmi.filter(Boolean)) - 1,
-                        max: Math.max(...actualBmi.filter(Boolean)) + 1,
+                        min: minBmi,
+                        max: maxBmi,
                         grid: {
                             drawOnChartArea: false 
                         }
@@ -403,7 +417,7 @@
             data: {
                 labels: ['Protein', 'Carbohydrates', 'Fats'],
                 datasets: [{
-                    data: [totalProtein, totalCarbs, totalFats],
+                    data: [totalProtein || 0, totalCarbs || 0, totalFats || 0],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.8)',   // Protein - Red
                         'rgba(54, 162, 235, 0.8)',   // Carbs - Blue
@@ -425,7 +439,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Daily Macronutrient Distribution'
+                        text: 'Macronutrient Distribution (Last 7 Days)'
                     }
                 }
             }

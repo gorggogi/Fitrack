@@ -22,6 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import com.app.fitrack.dto.FoodItemDTO;
+import com.app.fitrack.dto.MealDTO;
 
 @Controller
 public class MealController {
@@ -80,50 +83,47 @@ public class MealController {
         }
     }
 
-    @PostMapping("/meals/add")
-    public String addMeal(@ModelAttribute Meal meal) {
-        if (meal.getDateTime() == null) {
-            meal.setDateTime(LocalDateTime.now());
-        }
-
-        if (meal.getFoodItems() != null) {
-            for (MealFoodItem item : meal.getFoodItems()) {
-                item.setMeal(meal);
-                
-            
-                if (item.getQuantity() <= 0) {
-                    item.setQuantity(1); 
-                }
-                if (item.getUnit() == null || item.getUnit().isEmpty()) {
-                    item.setUnit("g"); 
-                }
-
-             
-                int estimatedCalories = nutritionixService.getCalories(item);
-                item.setCalories(estimatedCalories);
-            }
-        }
-
-        mealService.saveMeal(meal);
-        return "redirect:/user/dashboard";
-    }
-
     @PostMapping("/user/meals/save")
-    public String saveMeal(@AuthenticationPrincipal UserDetails userDetails,
-                          @ModelAttribute Meal meal,
-                          RedirectAttributes redi) {
-        String email = userDetails.getUsername();
-        User user = userService.findByEmail(email);
-        meal.setUser(user);
-        meal.setDateTime(LocalDateTime.now());
-        
-        mealService.saveMeal(meal);
-        
-        // Update goals based on the new meal
-        goalService.updateGoalsBasedOnActivity(user);
-        
-        redi.addFlashAttribute("successMessage", "Meal saved successfully!");
-        return "redirect:/user/meals";
+    @ResponseBody
+    public ResponseEntity<?> saveMealAjax(@AuthenticationPrincipal UserDetails userDetails,
+                                       @ModelAttribute Meal meal) {
+        User user = null; 
+        try {
+            String email = userDetails.getUsername();
+            user = userService.findByEmail(email);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found. Please log in again.");
+            }
+            
+            Meal savedMeal = mealService.saveMeal(meal); 
+            
+            goalService.updateGoalsBasedOnActivity(user);
+            
+            List<Meal> todayMeals = mealService.getMealsForCurrentDate();
+
+            List<MealDTO> todayMealDTOs = todayMeals.stream()
+                .map(m -> new MealDTO(
+                    m.getId(),
+                    m.getDateTime(),
+                    m.getMealName(),
+                    m.getFoodItems().stream()
+                        .map(fi -> new FoodItemDTO(
+                            fi.getFoodItem(),
+                            fi.getProtein(),
+                            fi.getCarbs(),
+                            fi.getFat(),
+                            fi.getCalories() 
+                        ))
+                        .collect(Collectors.toList()),
+                    m.getTotalCalories() 
+                ))
+                .collect(Collectors.toList());
+
+            return ResponseEntity.ok(todayMealDTOs);
+        } catch (Exception e) {
+             logger.error("Error saving meal via AJAX for user {}", (user != null ? user.getEmail() : "UNKNOWN"), e);
+             return ResponseEntity.internalServerError().body("Error saving meal: " + e.getMessage());
+        }
     }
 
     @GetMapping("/user/meals")
@@ -184,79 +184,44 @@ public class MealController {
         }
     }
 
-    @PostMapping("/user/savemeal")
-    public String saveMeal(@AuthenticationPrincipal UserDetails userDetails,
-                          @ModelAttribute Meal meal,
-                          @RequestParam("foodNames[]") List<String> foodNames,
-                          @RequestParam("foodCalories[]") List<Integer> foodCalories,
-                          RedirectAttributes redi) {
-        try {
-            String email = userDetails.getUsername();
-            User user = userService.findByEmail(email);
-            
-            meal.setUser(user);
-            meal.setDateTime(LocalDateTime.now());
-            
-            List<MealFoodItem> foodItems = new ArrayList<>();
-            for (int i = 0; i < foodNames.size(); i++) {
-                MealFoodItem foodItem = new MealFoodItem();
-                foodItem.setFoodItem(foodNames.get(i));
-                foodItem.setCalories(foodCalories.get(i));
-                foodItem.setMeal(meal);
-                foodItems.add(foodItem);
-            }
-            meal.setFoodItems(foodItems);
-            
-            mealService.saveMeal(meal);
-            goalService.updateGoalsBasedOnActivity(user);
-            
-            redi.addFlashAttribute("successMessage", "Meal saved successfully!");
-        } catch (Exception e) {
-            logger.error("Error saving meal", e);
-            redi.addFlashAttribute("errorMessage", "Error saving meal: " + e.getMessage());
-        }
-        
-        return "redirect:/user/meals";
-    }
-
     @PostMapping("/user/meals/{id}/update")
     public String updateMeal(@PathVariable Long id,
                            @AuthenticationPrincipal UserDetails userDetails,
-                           @ModelAttribute Meal meal,
-                           @RequestParam("foodNames[]") List<String> foodNames,
-                           @RequestParam("foodCalories[]") List<Integer> foodCalories,
+                           @ModelAttribute Meal submittedMeal,
                            RedirectAttributes redi) {
+        User user = null;
         try {
             String email = userDetails.getUsername();
-            User user = userService.findByEmail(email);
+            user = userService.findByEmail(email);
             
             Meal existingMeal = mealService.findByIdAndUser(id, user);
             if (existingMeal == null) {
-                redi.addFlashAttribute("errorMessage", "Meal not found");
+                redi.addFlashAttribute("errorMessage", "Meal not found or you do not have permission to edit it.");
                 return "redirect:/user/meals";
             }
             
-            existingMeal.setMealName(meal.getMealName());
-            existingMeal.setDateTime(meal.getDateTime());
+            existingMeal.setMealName(submittedMeal.getMealName());
+            if (submittedMeal.getDateTime() != null) {
+                 existingMeal.setDateTime(submittedMeal.getDateTime());
+            }
             
-            // Clear existing food items
-            existingMeal.getFoodItems().clear();
-            
-            // Add new food items
-            for (int i = 0; i < foodNames.size(); i++) {
-                MealFoodItem foodItem = new MealFoodItem();
-                foodItem.setFoodItem(foodNames.get(i));
-                foodItem.setCalories(foodCalories.get(i));
-                foodItem.setMeal(existingMeal);
-                existingMeal.getFoodItems().add(foodItem);
+            existingMeal.getFoodItems().clear(); 
+            if (submittedMeal.getFoodItems() != null) {
+                 submittedMeal.getFoodItems().forEach(item -> {
+                    item.setMeal(existingMeal);
+                    existingMeal.getFoodItems().add(item);
+                 });
             }
             
             mealService.saveMeal(existingMeal);
-            goalService.updateGoalsBasedOnActivity(user);
+            
+            if(user != null) {
+               goalService.updateGoalsBasedOnActivity(user);
+            }
             
             redi.addFlashAttribute("successMessage", "Meal updated successfully!");
         } catch (Exception e) {
-            logger.error("Error updating meal", e);
+            logger.error("Error updating meal with ID: {}", id, e);
             redi.addFlashAttribute("errorMessage", "Error updating meal: " + e.getMessage());
         }
         

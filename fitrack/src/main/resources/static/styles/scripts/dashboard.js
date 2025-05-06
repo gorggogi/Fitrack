@@ -231,7 +231,167 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Handle meal form submission (NEW)
+    const mealForm = document.getElementById('mealForm');
+    if (mealForm) {
+        mealForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent traditional form submission
+
+            const formData = new FormData(this);
+            const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+            // Show loading state maybe?
+            // const saveButton = mealForm.querySelector('button[type="submit"]');
+            // saveButton.disabled = true;
+            // saveButton.textContent = 'Saving...';
+
+            fetch('/user/meals/save', { 
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json' 
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                // Restore button state
+                // saveButton.disabled = false;
+                // saveButton.textContent = 'Save Meal';
+                
+                if (response.ok) {
+                    return response.json(); // Parse the JSON body which contains List<MealDTO>
+                } else {
+                    // Handle errors
+                    return response.text().then(text => {
+                        throw new Error(text || 'Failed to save meal'); // Throw error to be caught below
+                    });
+                }
+            })
+            .then(todayMealDTOs => {
+                // --- Success: Update UI dynamically --- 
+                console.log("Received updated meals:", todayMealDTOs);
+                updateDashboardMeals(todayMealDTOs); // Call function to update UI
+                closeMealModal(); 
+                // alert('Meal saved!'); // Optional: Replace with a less intrusive notification
+            })
+            .catch(error => {
+                // Restore button state on error too
+                // saveButton.disabled = false;
+                // saveButton.textContent = 'Save Meal';
+
+                console.error('Error saving meal:', error);
+                alert('Error saving meal: ' + error.message); // Show error to user
+            });
+        });
+    }
 });
+
+// --- NEW Function to update dashboard UI --- 
+function updateDashboardMeals(mealDTOs) {
+    const mealsSection = document.querySelector('.meals-section'); // Container for meal items + placeholder
+    const placeholder = mealsSection ? mealsSection.querySelector('.placeholder-message') : null;
+    const mealItemsContainer = mealsSection; // Assuming meals are direct children or find specific inner div if needed
+    
+    // Find summary cards (adjust selectors if needed)
+    const summaryCards = document.querySelectorAll('.summary-card');
+    let calorieSummaryEl = null;
+    let mealCountSummaryEl = null;
+    summaryCards.forEach(card => {
+        const titleEl = card.querySelector('p');
+        if (titleEl && titleEl.textContent.includes('Total Calorie Intake')) {
+            calorieSummaryEl = card.querySelector('h2');
+        }
+        if (titleEl && titleEl.textContent.includes('Workouts Completed')) {
+             // Need the meals count summary. Let's assume it's the 3rd card or needs a specific ID/class.
+             // For now, let's target based on text if possible, or add IDs later.
+             // This selector needs verification based on actual HTML structure for meal count.
+             // Let's assume the 3rd card is 'Meals Logged' or similar, or find by text 'Meals'
+             // Placeholder: Targeting the *Workouts Completed* one for now, needs correction
+            mealCountSummaryEl = card.querySelector('h2'); 
+            // TODO: Fix selector for meal count summary element
+        }
+    });
+
+    if (!mealItemsContainer) {
+        console.error("Could not find meal items container in dashboard.");
+        return;
+    }
+
+    // Clear existing meal items (excluding the header and add button)
+    mealItemsContainer.querySelectorAll('.meal-item').forEach(item => item.remove());
+
+    let totalCaloriesToday = 0;
+    let mealCountToday = 0;
+
+    if (mealDTOs && mealDTOs.length > 0) {
+        mealCountToday = mealDTOs.length;
+        mealDTOs.forEach(meal => {
+            totalCaloriesToday += meal.totalCalories;
+            const mealElement = document.createElement('div');
+            mealElement.className = 'meal-item';
+
+            // Format time (handle potential errors)
+            let formattedTime = 'N/A';
+            try {
+                formattedTime = new Date(meal.dateTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            } catch (e) { console.error("Error formatting date:", e); }
+
+            // Create food item list string
+            const foodListHtml = meal.foodItems
+                                    .map(fi => `<span class="food-item-name">${escapeHtml(fi.foodItem)}</span>`)
+                                    .join(', '); // Join with comma and space
+
+            mealElement.innerHTML =
+                `<div>
+                    <div class="meal-header">
+                        <span>${escapeHtml(meal.mealName)}</span>
+                    </div>
+                    <div class="meal-content">
+                        <span>${foodListHtml}</span>
+                        <span class="meal-calories">(${meal.totalCalories} cal)</span>
+                    </div>
+                </div>
+                <span class="meal-time">${formattedTime}</span>`;
+            
+            mealItemsContainer.appendChild(mealElement);
+        });
+
+        // Hide placeholder if it exists
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
+    } else {
+        // Show placeholder if it exists and there are no meals
+        if (placeholder) {
+            placeholder.style.display = 'block';
+        }
+    }
+
+    // Update summary cards
+    if (calorieSummaryEl) {
+        calorieSummaryEl.textContent = totalCaloriesToday + ' cal'; // Assuming format is just value + ' cal'
+    }
+    if (mealCountSummaryEl) {
+        // TODO: Update this once the correct element selector is found
+        // mealCountSummaryEl.textContent = mealCountToday;
+        console.warn("Selector for meal count summary needs verification. Update skipped.");
+    } else {
+        console.warn("Could not find summary element for meal count.");
+    }
+}
+
+// Helper function to escape HTML characters (basic)
+function escapeHtml(unsafe) {
+    if (typeof unsafe !== 'string') return unsafe;
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
 
 // Meal-related functions
 let itemCount = 1;

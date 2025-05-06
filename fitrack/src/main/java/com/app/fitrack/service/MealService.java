@@ -73,7 +73,7 @@ public class MealService {
         return totalCalories / daysSpanned;
     }
 
-    public double getAverageDailyProtein(User user, int days) {
+    public double getTotalProteinForPeriod(User user, int days) {
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusDays(days);
         List<Meal> recentMeals = mealRepository.findByUserAndDateTimeBetween(user, startDate, endDate);
@@ -81,11 +81,13 @@ public class MealService {
         if (recentMeals.isEmpty()) {
             return 0.0;
         }
+        
+        recentMeals.sort(Comparator.comparing(Meal::getDateTime));
         
         return recentMeals.stream().mapToDouble(Meal::getTotalProtein).sum();
     }
 
-    public double getAverageDailyCarbs(User user, int days) {
+    public double getTotalCarbsForPeriod(User user, int days) {
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusDays(days);
         List<Meal> recentMeals = mealRepository.findByUserAndDateTimeBetween(user, startDate, endDate);
@@ -93,11 +95,13 @@ public class MealService {
         if (recentMeals.isEmpty()) {
             return 0.0;
         }
+        
+        recentMeals.sort(Comparator.comparing(Meal::getDateTime));
         
         return recentMeals.stream().mapToDouble(Meal::getTotalCarbs).sum();
     }
 
-    public double getAverageDailyFats(User user, int days) {
+    public double getTotalFatsForPeriod(User user, int days) {
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate = endDate.minusDays(days);
         List<Meal> recentMeals = mealRepository.findByUserAndDateTimeBetween(user, startDate, endDate);
@@ -105,6 +109,8 @@ public class MealService {
         if (recentMeals.isEmpty()) {
             return 0.0;
         }
+        
+        recentMeals.sort(Comparator.comparing(Meal::getDateTime));
         
         return recentMeals.stream().mapToDouble(Meal::getTotalFat).sum();
     }

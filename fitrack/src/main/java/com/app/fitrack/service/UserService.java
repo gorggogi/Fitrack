@@ -182,6 +182,40 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public String updateUserProfile(String email, Integer age, String gender, Double height, Double newWeight) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return "User not found."; 
+        }
+
+        boolean weightChanged = false;
+        // Check if newWeight is provided and different from the current user's weight
+        if (newWeight != null && (user.getWeight() == null || !user.getWeight().equals(newWeight))) {
+            weightChanged = true;
+        }
+
+        // Update fields only if they are provided (not null)
+        // For age, gender, height, if the request param is null, it means no change was intended.
+        if (age != null) user.setAge(age);
+        if (gender != null) user.setGender(gender);
+        if (height != null) user.setHeight(height);
+        if (newWeight != null) user.setWeight(newWeight); // Update user's weight field
+
+        userRepository.save(user);
+
+        // If weight was actually changed, log a new BodyMeasurement
+        if (weightChanged) {
+            BodyMeasurement updatedMeasurement = new BodyMeasurement();
+            updatedMeasurement.setUser(user);
+            updatedMeasurement.setWeight(newWeight); // Use the newWeight for the measurement
+            updatedMeasurement.setDateTime(LocalDateTime.now());
+            updatedMeasurement.setNotes("Weight updated via profile edit"); 
+            bodyMeasurementService.saveMeasurement(updatedMeasurement);
+        }
+        return "Profile updated successfully.";
+    }
+
     public double calculateBMR(User user) {
         if (user == null || user.getWeight() == null || user.getHeight() == null || user.getAge() == null || user.getGender() == null) {
             // Log this? Return 0 or throw exception?
@@ -249,7 +283,10 @@ public class UserService {
         double workoutFrequency = (double) daysWithWorkouts / days;
 
         // Calculate intensity based on calories burned per minute
-        double avgCaloriesPerMinute = avgDailyCaloriesBurned / avgDailyExerciseMinutes;
+        double avgCaloriesPerMinute = 0.0;
+        if (avgDailyExerciseMinutes > 0) {
+            avgCaloriesPerMinute = avgDailyCaloriesBurned / avgDailyExerciseMinutes;
+        }
 
         // Base activity factor calculation
         double baseActivityFactor = 1.2; // Start with sedentary
