@@ -162,8 +162,22 @@ public class MealController {
             if (meal == null) {
                 return ResponseEntity.notFound().build();
             }
-            
-            return ResponseEntity.ok(meal);
+
+            // Build a map for the frontend
+            Map<String, Object> mealMap = new HashMap<>();
+            mealMap.put("id", meal.getId());
+            mealMap.put("mealName", meal.getMealName());
+            mealMap.put("dateTime", meal.getDateTime());
+            List<Map<String, Object>> foodItems = new ArrayList<>();
+            for (MealFoodItem item : meal.getFoodItems()) {
+                Map<String, Object> itemMap = new HashMap<>();
+                itemMap.put("foodItem", item.getFoodItem());
+                itemMap.put("calories", item.getCalories());
+                foodItems.add(itemMap);
+            }
+            mealMap.put("foodItems", foodItems);
+
+            return ResponseEntity.ok(mealMap);
         } catch (Exception e) {
             logger.error("Error fetching meal", e);
             return ResponseEntity.internalServerError().body("Error fetching meal: " + e.getMessage());

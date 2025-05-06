@@ -197,12 +197,11 @@
 
         function editMeal(id) {
             const csrfToken = document.querySelector('input[name="_csrf"]').value;
-            
             // Show loading state
             const editIcon = document.querySelector(`a[onclick="editMeal(${id})"]`);
             const originalIcon = editIcon.innerHTML;
             editIcon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            
+
             fetch(`/user/meals/${id}`, {
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
@@ -219,10 +218,10 @@
                 document.getElementById('mealId').value = meal.id;
                 document.getElementById('mealName').value = meal.mealName;
                 document.getElementById('dateTime').value = meal.dateTime;
-                
+
                 const container = document.getElementById('foodItemsContainer');
                 container.innerHTML = '';
-                
+
                 meal.foodItems.forEach(foodItem => {
                     const foodItemDiv = document.createElement('div');
                     foodItemDiv.className = 'food-item-input';
@@ -233,10 +232,10 @@
                     `;
                     container.appendChild(foodItemDiv);
                 });
-                
+
                 document.getElementById('modalTitle').textContent = 'Edit Meal';
                 document.getElementById('mealForm').action = `/user/meals/${id}/update`;
-                openMealModal();
+                document.getElementById('mealModal').style.display = 'flex';
             })
             .catch(error => {
                 console.error('Error:', error);
