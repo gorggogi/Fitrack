@@ -54,26 +54,26 @@
         </section>
 
         <div class="dashboard-grid">
-            <div class="section-card workouts-section">
+            <div class="section-card workouts-section" onclick="window.location.href='/user/scheduledworkouts'" style="cursor: pointer;">
                 <div class="section-header">
                     <h3 class="section-title">Your Workouts</h3>
-                    <button type="button" class="add-button" onclick="openWorkoutModal()">+</button>
+                    <button type="button" class="add-button" onclick="event.stopPropagation(); openWorkoutModal()">+</button>
                 </div>
             
                 <div th:if="${#lists.isEmpty(workouts)}" class="placeholder-message">
-                    <p th:text="${workoutPlaceholder}" ></p>
+                    <p th:text="${workoutPlaceholder}"></p>
                 </div>
             
                 <div th:each="workout : ${workouts}" class="workout-item"
-     th:attr="data-id=${workout.id}, 
-              data-name=${workout.workoutName}, 
-              data-duration=${workout.duration}, 
-              data-calories=${workout.caloriesBurned}"
-     onclick="openModal(this)">
-    <span th:text="${workout.workoutName}"></span>
-    <span th:text="${workout.duration} + ' mins'"></span>
-    <span class="status">Pending</span>
-</div>
+                     th:attr="data-id=${workout.id}, 
+                            data-name=${workout.workoutName}, 
+                            data-duration=${workout.duration}, 
+                            data-calories=${workout.caloriesBurned}"
+                     onclick="event.stopPropagation(); openModal(this)">
+                    <span th:text="${workout.workoutName}"></span>
+                    <span th:text="${workout.duration} + ' mins'"></span>
+                    <span class="status">Pending</span>
+                </div>
             </div>            
             <div class="section-card meals-section">
                 <div class="section-header">

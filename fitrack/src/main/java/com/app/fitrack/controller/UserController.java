@@ -28,6 +28,10 @@ import com.app.fitrack.service.GoalService;
 import com.app.fitrack.model.Goal;
 import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -290,6 +294,72 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         }
             redi.addFlashAttribute("errorMessage", "Failed to save measurement: " + e.getMessage());
         return "redirect:/user/measurements";
+        }
+    }
+
+    @GetMapping("/user/scheduledworkouts")
+    public String showScheduledWorkouts(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
+
+        // Get user's full name
+        String fullName = user.getFirstName() + " " + user.getLastName();
+        model.addAttribute("fullName", fullName);
+
+        // Get all scheduled workouts
+        List<Workout> allWorkouts = workoutService.getAllUserWorkouts(user);
+        
+        // Separate workouts into daily and weekly categories
+        List<Workout> dailyWorkouts = allWorkouts.stream()
+            .filter(workout -> workout.getRepeatDays().contains("Daily"))
+            .collect(Collectors.toList());
+            
+        List<Workout> weeklyWorkouts = allWorkouts.stream()
+            .filter(workout -> !workout.getRepeatDays().contains("Daily"))
+            .collect(Collectors.toList());
+
+        model.addAttribute("dailyWorkouts", dailyWorkouts);
+        model.addAttribute("weeklyWorkouts", weeklyWorkouts);
+
+        return "scheduledworkouts";
+    }
+
+    @PostMapping("/user/workouts/{id}/delete")
+    @ResponseBody
+    public ResponseEntity<?> deleteWorkout(@PathVariable Long id) {
+        try {
+            workoutService.deleteWorkout(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error deleting workout: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/user/workouts/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getWorkout(@PathVariable Long id) {
+        try {
+            Workout workout = workoutService.getWorkoutById(id);
+            return ResponseEntity.ok(workout);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error getting workout: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/workouts/{id}/update")
+    @ResponseBody
+    public ResponseEntity<?> updateWorkout(@PathVariable Long id, 
+                                         @RequestParam(value = "repeatDays", required = false) List<String> repeatDays,
+                                         @ModelAttribute Workout workout) {
+        try {
+            if (repeatDays == null || repeatDays.isEmpty()) {
+                repeatDays = List.of("Daily");
+            }
+            workout.setRepeatDays(repeatDays);
+            workoutService.updateWorkout(id, workout);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating workout: " + e.getMessage());
         }
     }
 

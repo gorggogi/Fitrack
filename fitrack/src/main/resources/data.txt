@@ -107,6 +107,81 @@ VALUES
 (68, 1, '2025-04-22 10:00:00', 'HIIT', 30, 300),
 (69, 1, '2025-04-23 10:00:00', 'Cardio', 30, 200);
 
+-- Insert workout repeat days
+-- Morning Walks (Daily)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+(1, 'Daily'), (7, 'Daily'), (13, 'Daily'), (17, 'Daily'), (20, 'Daily'),
+(29, 'Daily'), (34, 'Daily'), (38, 'Daily'), (41, 'Daily'), (45, 'Daily'),
+(51, 'Daily'), (56, 'Daily'), (59, 'Daily'), (63, 'Daily'), (66, 'Daily');
+
+-- Full Body Workouts (Mon, Wed, Fri)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+(2, 'Monday'), (2, 'Wednesday'), (2, 'Friday'),
+(9, 'Monday'), (9, 'Wednesday'), (9, 'Friday'),
+(14, 'Monday'), (14, 'Wednesday'), (14, 'Friday'),
+(18, 'Monday'), (18, 'Wednesday'), (18, 'Friday'),
+(21, 'Monday'), (21, 'Wednesday'), (21, 'Friday'),
+(24, 'Monday'), (24, 'Wednesday'), (24, 'Friday'),
+(30, 'Monday'), (30, 'Wednesday'), (30, 'Friday'),
+(35, 'Monday'), (35, 'Wednesday'), (35, 'Friday'),
+(39, 'Monday'), (39, 'Wednesday'), (39, 'Friday'),
+(42, 'Monday'), (42, 'Wednesday'), (42, 'Friday'),
+(46, 'Monday'), (46, 'Wednesday'), (46, 'Friday'),
+(51, 'Monday'), (51, 'Wednesday'), (51, 'Friday'),
+(57, 'Monday'), (57, 'Wednesday'), (57, 'Friday'),
+(61, 'Monday'), (61, 'Wednesday'), (61, 'Friday'),
+(64, 'Monday'), (64, 'Wednesday'), (64, 'Friday'),
+(67, 'Monday'), (67, 'Wednesday'), (67, 'Friday');
+
+-- Cardio (Tue, Thu)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+(4, 'Tuesday'), (4, 'Thursday'),
+(10, 'Tuesday'), (10, 'Thursday'),
+(19, 'Tuesday'), (19, 'Thursday'),
+(26, 'Tuesday'), (26, 'Thursday'),
+(40, 'Tuesday'), (40, 'Thursday'),
+(48, 'Tuesday'), (48, 'Thursday'),
+(53, 'Tuesday'), (53, 'Thursday'),
+(60, 'Tuesday'), (60, 'Thursday'),
+(69, 'Tuesday'), (69, 'Thursday');
+
+-- HIIT (Mon, Wed)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+(6, 'Monday'), (6, 'Wednesday'),
+(16, 'Monday'), (16, 'Wednesday'),
+(28, 'Monday'), (28, 'Wednesday'),
+(37, 'Monday'), (37, 'Wednesday'),
+(50, 'Monday'), (50, 'Wednesday'),
+(58, 'Monday'), (58, 'Wednesday'),
+(68, 'Monday'), (68, 'Wednesday');
+
+-- Core Workouts (Tue, Thu)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+(5, 'Tuesday'), (5, 'Thursday'),
+(15, 'Tuesday'), (15, 'Thursday'),
+(27, 'Tuesday'), (27, 'Thursday'),
+(36, 'Tuesday'), (36, 'Thursday'),
+(49, 'Tuesday'), (49, 'Thursday');
+
+-- Yoga (Sat, Sun)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+(3, 'Saturday'), (3, 'Sunday'),
+(11, 'Saturday'), (11, 'Sunday'),
+(22, 'Saturday'), (22, 'Sunday'),
+(31, 'Saturday'), (31, 'Sunday'),
+(43, 'Saturday'), (43, 'Sunday'),
+(54, 'Saturday'), (54, 'Sunday'),
+(62, 'Saturday'), (62, 'Sunday');
+
+-- Rest Days (Sun)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+(12, 'Sunday'),
+(23, 'Sunday'),
+(33, 'Sunday'),
+(44, 'Sunday'),
+(55, 'Sunday'),
+(65, 'Sunday');
+
 -- Insert workout logs (matching the extended workouts)
 INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at)
 VALUES

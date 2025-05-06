@@ -156,4 +156,42 @@ public class WorkoutService {
         
         return (int) workoutLogRepository.countByUserAndCompletedAtBetween(user, startOfDay, endOfDay);
     }
+
+    public List<Workout> getAllUserWorkouts(User user) {
+        return workoutRepository.findByUser(user);
+    }
+
+    public void deleteWorkout(Long workoutId) {
+        Workout workout = workoutRepository.findById(workoutId)
+            .orElseThrow(() -> new IllegalArgumentException("Workout not found with ID: " + workoutId));
+        
+        User currentUser = userService.getAuthenticatedUser();
+        if (currentUser == null || !workout.getUser().equals(currentUser)) {
+            throw new IllegalStateException("Unauthorized to delete this workout");
+        }
+
+        workoutRepository.delete(workout);
+    }
+
+    public Workout getWorkoutById(Long id) {
+        return workoutRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Workout not found with ID: " + id));
+    }
+
+    public Workout updateWorkout(Long id, Workout updatedWorkout) {
+        Workout existingWorkout = getWorkoutById(id);
+        User currentUser = userService.getAuthenticatedUser();
+        
+        if (currentUser == null || !existingWorkout.getUser().equals(currentUser)) {
+            throw new IllegalStateException("Unauthorized to update this workout");
+        }
+
+        // Update the fields
+        existingWorkout.setWorkoutName(updatedWorkout.getWorkoutName());
+        existingWorkout.setDuration(updatedWorkout.getDuration());
+        existingWorkout.setCaloriesBurned(updatedWorkout.getCaloriesBurned());
+        existingWorkout.setRepeatDays(updatedWorkout.getRepeatDays());
+
+        return workoutRepository.save(existingWorkout);
+    }
 }
