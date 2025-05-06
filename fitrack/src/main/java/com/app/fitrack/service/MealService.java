@@ -112,5 +112,21 @@ public class MealService {
     public List<Meal> findMealsByUserAndDateRange(User user, LocalDateTime startDate, LocalDateTime endDate) {
         return mealRepository.findByUserAndDateTimeBetweenOrderByDateTimeDesc(user, startDate, endDate);
     }
+
+    public List<Meal> findByUserAndDateTimeBetween(User user, LocalDateTime start, LocalDateTime end) {
+        return mealRepository.findByUserAndDateTimeBetween(user, start, end);
+    }
+
+    public List<Meal> findByUserAndDateTimeBefore(User user, LocalDateTime dateTime) {
+        return mealRepository.findByUserAndDateTimeBefore(user, dateTime);
+    }
+
+    public Meal findByIdAndUser(Long id, User user) {
+        return mealRepository.findByIdAndUser(id, user);
+    }
+
+    public void deleteMeal(Meal meal) {
+        mealRepository.delete(meal);
+    }
 }
 

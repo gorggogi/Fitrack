@@ -148,4 +148,8 @@ public class User {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

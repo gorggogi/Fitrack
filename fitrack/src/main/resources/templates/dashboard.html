@@ -75,10 +75,10 @@
                     <span class="status">Pending</span>
                 </div>
             </div>            
-            <div class="section-card meals-section">
+            <div class="section-card meals-section" onclick="window.location.href='/user/meals'" style="cursor: pointer;">
                 <div class="section-header">
                     <h3 class="section-title">Your Meals</h3>
-                    <button type="button" class="add-button" onclick="openMealModal()">+</button>
+                    <button type="button" class="add-button" onclick="event.stopPropagation(); openMealModal()">+</button>
                 </div>
                 <div th:if="${#lists.isEmpty(meals)}" class="placeholder-message">
                     <p th:text="${placeholderMessage}"></p>

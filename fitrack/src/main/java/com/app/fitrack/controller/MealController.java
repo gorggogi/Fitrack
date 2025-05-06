@@ -1,15 +1,13 @@
 package com.app.fitrack.controller;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -124,5 +122,144 @@ public class MealController {
         
         redi.addFlashAttribute("successMessage", "Meal saved successfully!");
         return "redirect:/user/meals";
+    }
+
+    @GetMapping("/user/meals")
+    public String getLoggedMeals(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
+        
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.plusDays(1).atStartOfDay();
+        
+        List<Meal> todayMeals = mealService.findByUserAndDateTimeBetween(user, startOfDay, endOfDay);
+        List<Meal> pastMeals = mealService.findByUserAndDateTimeBefore(user, startOfDay);
+        
+        model.addAttribute("todayMeals", todayMeals);
+        model.addAttribute("pastMeals", pastMeals);
+        model.addAttribute("fullName", user.getFullName());
+        
+        return "loggedmeals";
+    }
+
+    @GetMapping("/user/meals/{id}")
+    @ResponseBody
+    public ResponseEntity<?> getMeal(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String email = userDetails.getUsername();
+            User user = userService.findByEmail(email);
+            
+            Meal meal = mealService.findByIdAndUser(id, user);
+            if (meal == null) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            return ResponseEntity.ok(meal);
+        } catch (Exception e) {
+            logger.error("Error fetching meal", e);
+            return ResponseEntity.internalServerError().body("Error fetching meal: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/savemeal")
+    public String saveMeal(@AuthenticationPrincipal UserDetails userDetails,
+                          @ModelAttribute Meal meal,
+                          @RequestParam("foodNames[]") List<String> foodNames,
+                          @RequestParam("foodCalories[]") List<Integer> foodCalories,
+                          RedirectAttributes redi) {
+        try {
+            String email = userDetails.getUsername();
+            User user = userService.findByEmail(email);
+            
+            meal.setUser(user);
+            meal.setDateTime(LocalDateTime.now());
+            
+            List<MealFoodItem> foodItems = new ArrayList<>();
+            for (int i = 0; i < foodNames.size(); i++) {
+                MealFoodItem foodItem = new MealFoodItem();
+                foodItem.setFoodItem(foodNames.get(i));
+                foodItem.setCalories(foodCalories.get(i));
+                foodItem.setMeal(meal);
+                foodItems.add(foodItem);
+            }
+            meal.setFoodItems(foodItems);
+            
+            mealService.saveMeal(meal);
+            goalService.updateGoalsBasedOnActivity(user);
+            
+            redi.addFlashAttribute("successMessage", "Meal saved successfully!");
+        } catch (Exception e) {
+            logger.error("Error saving meal", e);
+            redi.addFlashAttribute("errorMessage", "Error saving meal: " + e.getMessage());
+        }
+        
+        return "redirect:/user/meals";
+    }
+
+    @PostMapping("/user/meals/{id}/update")
+    public String updateMeal(@PathVariable Long id,
+                           @AuthenticationPrincipal UserDetails userDetails,
+                           @ModelAttribute Meal meal,
+                           @RequestParam("foodNames[]") List<String> foodNames,
+                           @RequestParam("foodCalories[]") List<Integer> foodCalories,
+                           RedirectAttributes redi) {
+        try {
+            String email = userDetails.getUsername();
+            User user = userService.findByEmail(email);
+            
+            Meal existingMeal = mealService.findByIdAndUser(id, user);
+            if (existingMeal == null) {
+                redi.addFlashAttribute("errorMessage", "Meal not found");
+                return "redirect:/user/meals";
+            }
+            
+            existingMeal.setMealName(meal.getMealName());
+            existingMeal.setDateTime(meal.getDateTime());
+            
+            // Clear existing food items
+            existingMeal.getFoodItems().clear();
+            
+            // Add new food items
+            for (int i = 0; i < foodNames.size(); i++) {
+                MealFoodItem foodItem = new MealFoodItem();
+                foodItem.setFoodItem(foodNames.get(i));
+                foodItem.setCalories(foodCalories.get(i));
+                foodItem.setMeal(existingMeal);
+                existingMeal.getFoodItems().add(foodItem);
+            }
+            
+            mealService.saveMeal(existingMeal);
+            goalService.updateGoalsBasedOnActivity(user);
+            
+            redi.addFlashAttribute("successMessage", "Meal updated successfully!");
+        } catch (Exception e) {
+            logger.error("Error updating meal", e);
+            redi.addFlashAttribute("errorMessage", "Error updating meal: " + e.getMessage());
+        }
+        
+        return "redirect:/user/meals";
+    }
+
+    @PostMapping("/user/meals/{id}/delete")
+    @ResponseBody
+    public ResponseEntity<?> deleteMeal(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String email = userDetails.getUsername();
+            User user = userService.findByEmail(email);
+            
+            Meal meal = mealService.findByIdAndUser(id, user);
+            if (meal == null) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            mealService.deleteMeal(meal);
+            goalService.updateGoalsBasedOnActivity(user);
+            
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            logger.error("Error deleting meal", e);
+            return ResponseEntity.internalServerError().body("Error deleting meal: " + e.getMessage());
+        }
     }
 }
