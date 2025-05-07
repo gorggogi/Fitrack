@@ -2297,13 +2297,13 @@ button.primary {
 
 /* Completed Goal Detail Modal Styles */
 .completed-goal-detail-modal .modal-content {
-    background-color: #2C2C2E; /* Dark background */
-    color: white;
+    background-color: #fff; /* Light background */
+    color: #333; /* Default dark text color */
     text-align: center;
     padding: 30px 20px;
-    border-radius: 20px; /* More rounded corners like the image */
-    max-width: 380px; /* Adjusted max-width */
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border-radius: 20px;
+    max-width: 380px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15); /* Adjusted shadow for light bg */
 }
 
 .completed-goal-icon-container {
@@ -2311,36 +2311,37 @@ button.primary {
 }
 
 .modal-trophy-icon {
-    font-size: 4em; /* Large trophy icon */
+    font-size: 4em;
     color: #FFD700; /* Gold color for the trophy */
-    opacity: 0.8;
+    opacity: 1; /* Ensure full opacity */
 }
 
 .completed-goal-name-text {
     font-size: 1.4em;
     font-weight: 600;
-    margin-bottom: 20px; /* Increased margin after name */
+    margin-bottom: 20px;
+    color: #333; /* Explicit dark color */
 }
 
 .completed-goal-info-text {
     font-size: 0.95em;
-    line-height: 1.6; /* Slightly increased line height for readability */
-    color: #dcdcdc;
-    margin-bottom: 10px; /* Consistent margin for info texts */
+    line-height: 1.6;
+    color: #555; /* Medium dark color for info text */
+    margin-bottom: 10px;
 }
 
 .completed-goal-info-text:last-of-type {
-    /* This will now apply to the 'Set Date' text if it's the last one before actions */
-    margin-bottom: 25px; 
+    margin-bottom: 25px;
 }
 
 .completed-goal-actions {
     display: flex;
-    justify-content: space-between; /* Puts archive left, close right */
+    justify-content: space-between;
     align-items: center;
     padding-top: 20px;
-    border-top: 1px solid #444; /* Subtle separator */
+    border-top: 1px solid #eee; /* Lighter separator */
     margin-top: 20px;
+    gap: 10px; /* Add gap between buttons */
 }
 
 .completed-goal-actions .btn {
@@ -2352,18 +2353,18 @@ button.primary {
 
 .completed-goal-actions .archive-btn {
     background-color: transparent;
-    color: #a0a0a0; /* Muted color for archive */
-    border: 1px solid #555;
+    color: #555;
+    border: 1px solid #ccc;
 }
 
 .completed-goal-actions .archive-btn:hover {
-    background-color: #3a3a3c;
-    color: white;
-    border-color: #666;
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #bbb;
 }
 
 .completed-goal-actions .close-btn-modal {
-    background-color: #007AFF;
+    background-color: #007AFF; /* Standard primary blue */
     color: white;
     border: none;
 }
