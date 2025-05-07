@@ -147,6 +147,54 @@ function closeMealModal() {
     document.getElementById('mealModal').style.display = 'none';
 }
 
+// Functions for Completed Goal Detail Modal
+function openCompletedGoalDetailModal(goalCardElement) {
+    const modal = document.getElementById('completedGoalDetailModal');
+    if (!modal) return;
+
+    const goalName = goalCardElement.getAttribute('data-goal-name');
+    const goalStartDate = goalCardElement.getAttribute('data-goal-start-date');
+    const goalType = goalCardElement.getAttribute('data-goal-type');
+    const goalInitialValue = goalCardElement.getAttribute('data-goal-initial-value'); 
+    const goalAchievedValue = goalCardElement.getAttribute('data-goal-achieved-value');
+
+    let unitSuffix = '';
+    let startingLabel = 'Starting:'; // Default label
+
+    if (goalType) {
+        const upperGoalType = goalType.toUpperCase();
+        if (upperGoalType === 'WEIGHT_LOSS' || upperGoalType === 'WEIGHT_GAIN') {
+            unitSuffix = ' kg';
+            startingLabel = 'Initial Weight:'; // Specific label for weight goals
+        }
+    }
+
+    const formattedGoalType = goalType ? goalType.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : 'N/A';
+
+    document.getElementById('completedGoalNameModalText').textContent = goalName;
+    document.getElementById('completedGoalTypeModalText').textContent = `Type: ${formattedGoalType}`;
+    document.getElementById('completedGoalTargetModalText').textContent = `${startingLabel} ${goalInitialValue}${unitSuffix}`;
+    document.getElementById('completedGoalAchievedModalText').textContent = `Achieved: ${goalAchievedValue}${unitSuffix}`;
+    document.getElementById('completedGoalSetDateText').textContent = `You set this goal on ${goalStartDate}.`;
+
+    // Placeholder for archive button functionality
+    const archiveButton = document.getElementById('archiveGoalButton');
+    archiveButton.onclick = function() {
+        alert('Archive functionality for "' + goalName + '" to be implemented.');
+        // Potentially call a backend service here, then close or update UI
+        // closeCompletedGoalDetailModal();
+    };
+
+    modal.style.display = 'flex';
+}
+
+function closeCompletedGoalDetailModal() {
+    const modal = document.getElementById('completedGoalDetailModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
 // Initialize modals when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     // --- Check sessionStorage for toast FIRST --- 
@@ -167,7 +215,13 @@ document.addEventListener('DOMContentLoaded', function() {
         showGoalCompletedToast(completedGoalNameFromBackend, false); // Show toast from flash, don't store
     }
 
-    
+    // Add click listener for completed goals to open detail modal
+    const completedGoalCards = document.querySelectorAll('.goal-card.completed-goal');
+    completedGoalCards.forEach(card => {
+        card.addEventListener('click', function() {
+            openCompletedGoalDetailModal(this);
+        });
+    });
     
     // Close modals when clicking outside
     window.onclick = function(event) {
@@ -190,6 +244,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // This part is tricky because the toast might be clicked to view/close.
             // A more robust way would be if the click is on the body directly.
             // For simplicity, we'll rely on the auto-dismiss and close button for now.
+        }
+        
+        // Close Completed Goal Detail Modal if clicking outside
+        const completedGoalModal = document.getElementById('completedGoalDetailModal');
+        if (event.target == completedGoalModal) {
+            closeCompletedGoalDetailModal();
         }
     }
 

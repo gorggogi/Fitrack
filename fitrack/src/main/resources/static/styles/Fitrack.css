@@ -2289,3 +2289,86 @@ button.primary {
     text-decoration: none;
 }
 
+.goal-card.completed-goal {
+    cursor: pointer;
+    /* Optional: Add a slightly different background or border to highlight completed, clickable goals */
+    /* background-color: #e8f5e9; */ 
+}
+
+/* Completed Goal Detail Modal Styles */
+.completed-goal-detail-modal .modal-content {
+    background-color: #2C2C2E; /* Dark background */
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    border-radius: 20px; /* More rounded corners like the image */
+    max-width: 380px; /* Adjusted max-width */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.completed-goal-icon-container {
+    margin-bottom: 15px;
+}
+
+.modal-trophy-icon {
+    font-size: 4em; /* Large trophy icon */
+    color: #FFD700; /* Gold color for the trophy */
+    opacity: 0.8;
+}
+
+.completed-goal-name-text {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: 20px; /* Increased margin after name */
+}
+
+.completed-goal-info-text {
+    font-size: 0.95em;
+    line-height: 1.6; /* Slightly increased line height for readability */
+    color: #dcdcdc;
+    margin-bottom: 10px; /* Consistent margin for info texts */
+}
+
+.completed-goal-info-text:last-of-type {
+    /* This will now apply to the 'Set Date' text if it's the last one before actions */
+    margin-bottom: 25px; 
+}
+
+.completed-goal-actions {
+    display: flex;
+    justify-content: space-between; /* Puts archive left, close right */
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid #444; /* Subtle separator */
+    margin-top: 20px;
+}
+
+.completed-goal-actions .btn {
+    padding: 8px 16px;
+    font-size: 0.9em;
+    border-radius: 6px;
+    text-transform: lowercase;
+}
+
+.completed-goal-actions .archive-btn {
+    background-color: transparent;
+    color: #a0a0a0; /* Muted color for archive */
+    border: 1px solid #555;
+}
+
+.completed-goal-actions .archive-btn:hover {
+    background-color: #3a3a3c;
+    color: white;
+    border-color: #666;
+}
+
+.completed-goal-actions .close-btn-modal {
+    background-color: #007AFF;
+    color: white;
+    border: none;
+}
+
+.completed-goal-actions .close-btn-modal:hover {
+    background-color: #0056b3;
+}
+

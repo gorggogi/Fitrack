@@ -64,7 +64,15 @@
                     <h3 class="goal-title">No goals set yet</h3>
                     <p class="placeholder-message">Click the + button to add a new goal</p>
                 </div>
-                <div th:each="goal : ${goals}" class="goal-card">
+                <div th:each="goal : ${goals}"
+                     class="goal-card"
+                     th:classappend="${goalService.calculateProgress(goal) >= 100 ? 'completed-goal' : ''}"
+                     th:attr="data-goal-name=${goal.description},
+                              data-goal-start-date=${goal.startDate != null ? #temporals.format(goal.startDate, 'MMM dd, yyyy') : 'N/A'},
+                              data-goal-type=${goal.goalType != null ? goal.goalType : 'N/A'},
+                              data-goal-initial-value=${goal.startValue != null ? goal.startValue : 'N/A'},
+                              data-goal-target-value=${goal.targetValue},
+                              data-goal-achieved-value=${goal.currentValue}">
                     <div th:if="${goalService.calculateProgress(goal) >= 100}" class="goal-completed-icon">
                         <i class="fas fa-trophy"></i>
                     </div>
@@ -284,6 +292,24 @@
     <div class="toast-content">
         <span id="toastMessage"></span>
         <a id="toastViewLink" href="/user/dashboard" class="toast-view-link">View</a>
+    </div>
+</div>
+
+<!-- Completed Goal Detail Modal -->
+<div id="completedGoalDetailModal" class="modal completed-goal-detail-modal">
+    <div class="modal-content completed-goal-modal-content">
+        <div class="completed-goal-icon-container">
+            <i class="fas fa-trophy modal-trophy-icon"></i>
+        </div>
+        <h2 id="completedGoalNameModalText" class="completed-goal-name-text"></h2>
+        <p id="completedGoalTypeModalText" class="completed-goal-info-text"></p>
+        <p id="completedGoalTargetModalText" class="completed-goal-info-text"></p>
+        <p id="completedGoalAchievedModalText" class="completed-goal-info-text"></p>
+        <p id="completedGoalSetDateText" class="completed-goal-info-text"></p>
+        <div class="modal-actions completed-goal-actions">
+            <button type="button" id="archiveGoalButton" class="btn btn-secondary archive-btn">archive goal</button>
+            <button type="button" class="btn btn-primary close-btn-modal" onclick="closeCompletedGoalDetailModal()">close</button>
+        </div>
     </div>
 </div>
 
