@@ -12,4 +12,5 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
     List<Goal> findByUserOrderByTargetDateDesc(User user);
     List<Goal> findByUserAndStatus(User user, String status);
     List<Goal> findByUserAndGoalType(User user, String goalType);
+    List<Goal> findByUserAndArchivedFalse(User user);
 } 

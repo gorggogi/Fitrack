@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "goals")
 public class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +37,12 @@ public class Goal {
 
     @Column
     private Double startValue;
+
+    @Column(nullable = true)
+    private LocalDateTime completionDate;
+
+    @Column(nullable = false)
+    private boolean archived = false;
 
     // Getters and Setters
     public Long getId() {
@@ -116,5 +123,21 @@ public class Goal {
 
     public void setStartValue(Double startValue) {
         this.startValue = startValue;
+    }
+
+    public LocalDateTime getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(LocalDateTime completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 } 

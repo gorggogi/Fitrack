@@ -152,20 +152,21 @@ function openCompletedGoalDetailModal(goalCardElement) {
     const modal = document.getElementById('completedGoalDetailModal');
     if (!modal) return;
 
+    const goalId = goalCardElement.getAttribute('data-goal-id'); // Get the goal ID
     const goalName = goalCardElement.getAttribute('data-goal-name');
     const goalStartDate = goalCardElement.getAttribute('data-goal-start-date');
     const goalType = goalCardElement.getAttribute('data-goal-type');
-    const goalInitialValue = goalCardElement.getAttribute('data-goal-initial-value'); 
+    const goalInitialValue = goalCardElement.getAttribute('data-goal-initial-value');
     const goalAchievedValue = goalCardElement.getAttribute('data-goal-achieved-value');
 
     let unitSuffix = '';
-    let startingLabel = 'Starting:'; // Default label
+    let startingLabel = 'Starting:';
 
     if (goalType) {
         const upperGoalType = goalType.toUpperCase();
         if (upperGoalType === 'WEIGHT_LOSS' || upperGoalType === 'WEIGHT_GAIN') {
             unitSuffix = ' kg';
-            startingLabel = 'Initial Weight:'; // Specific label for weight goals
+            startingLabel = 'Initial Weight:';
         }
     }
 
@@ -177,12 +178,57 @@ function openCompletedGoalDetailModal(goalCardElement) {
     document.getElementById('completedGoalAchievedModalText').textContent = `Achieved: ${goalAchievedValue}${unitSuffix}`;
     document.getElementById('completedGoalSetDateText').textContent = `You set this goal on ${goalStartDate}.`;
 
-    // Placeholder for archive button functionality
+    // Archive button functionality
     const archiveButton = document.getElementById('archiveGoalButton');
     archiveButton.onclick = function() {
-        alert('Archive functionality for "' + goalName + '" to be implemented.');
-        // Potentially call a backend service here, then close or update UI
-        // closeCompletedGoalDetailModal();
+        if (!goalId) {
+            alert('Error: Goal ID not found.');
+            return;
+        }
+        
+        if (!confirm(`Are you sure you want to archive the goal "${goalName}"?`)) {
+            return; // User cancelled
+        }
+
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
+        if (!csrfToken) {
+            alert('Error: Security token not found. Please refresh the page.');
+            return;
+        }
+
+        // Disable button while processing
+        archiveButton.disabled = true;
+        archiveButton.textContent = 'archiving...';
+
+        fetch(`/user/goals/archive/${goalId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Even if no body, good practice
+                'X-CSRF-TOKEN': csrfToken
+            },
+            credentials: 'same-origin' // Important for CSRF
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Try to get error text from response
+                return response.text().then(text => { 
+                    throw new Error(text || `Failed to archive goal. Status: ${response.status}`); 
+                });
+            }
+            return response.text(); // Or response.json() if backend sends JSON confirmation
+        })
+        .then(message => {
+            console.log(message); // Log success message from backend
+            closeCompletedGoalDetailModal();
+            window.location.reload(); // Reload page to reflect changes
+        })
+        .catch(error => {
+            console.error('Error archiving goal:', error);
+            alert('Error archiving goal: ' + error.message);
+            // Re-enable button on error
+            archiveButton.disabled = false;
+            archiveButton.textContent = 'archive goal';
+        });
     };
 
     modal.style.display = 'flex';

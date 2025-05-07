@@ -9,6 +9,8 @@ import com.app.fitrack.repository.WorkoutLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
 
 @Service
 public class GoalService {
+
+    private static final Logger log = LoggerFactory.getLogger(GoalService.class);
 
     @Autowired
     private GoalRepository goalRepository;
@@ -33,7 +37,8 @@ public class GoalService {
     private MealService mealService;
 
     public List<Goal> getUserGoals(User user) {
-        return goalRepository.findByUserOrderByTargetDateDesc(user);
+        log.debug("Fetching active goals for user: {}", user.getEmail());
+        return goalRepository.findByUserAndArchivedFalse(user);
     }
 
     public List<Goal> getActiveGoals(User user) {
@@ -228,5 +233,31 @@ public class GoalService {
         }
         goalRepository.save(goal);
         return justCompleted ? goal : null;
+    }
+
+    @Transactional
+    public void archiveGoal(Long goalId, User currentUser) {
+        log.info("Attempting to archive goal with id: {} for user: {}", goalId, currentUser.getEmail());
+        Goal goal = goalRepository.findById(goalId)
+            .orElseThrow(() -> {
+                 log.warn("Archive failed: Goal not found with id: {}", goalId);
+                 return new RuntimeException("Goal not found with id: " + goalId);
+             });
+
+        // Security check: Ensure the goal belongs to the current user
+        if (!goal.getUser().getId().equals(currentUser.getId())) { // Compare by ID for safety
+             log.warn("Archive failed: User {} attempted to archive goal {} owned by user {}", 
+                     currentUser.getEmail(), goalId, goal.getUser().getEmail());
+             throw new SecurityException("User not authorized to archive this goal.");
+        }
+
+        if (goal.isArchived()) {
+             log.info("Goal {} already archived for user {}. No action needed.", goalId, currentUser.getEmail());
+             return; // Already archived
+        }
+
+        goal.setArchived(true);
+        goalRepository.save(goal);
+        log.info("Successfully archived goal {} for user {}", goalId, currentUser.getEmail());
     }
 } 

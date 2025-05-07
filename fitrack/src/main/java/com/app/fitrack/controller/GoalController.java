@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -83,5 +85,29 @@ public class GoalController {
     public String deleteGoal(@PathVariable Long goalId) {
         goalService.deleteGoal(goalId);
         return "redirect:/user/goals";
+    }
+
+    @PostMapping("/archive/{goalId}")
+    @ResponseBody
+    public ResponseEntity<?> archiveGoal(@PathVariable Long goalId, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = userService.findByEmail(userDetails.getUsername());
+        if (currentUser == null) {
+            logger.warn("Archive attempt failed: User not found for principal {}", userDetails.getUsername());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
+        }
+
+        try {
+            goalService.archiveGoal(goalId, currentUser);
+            return ResponseEntity.ok().body("Goal archived successfully.");
+        } catch (SecurityException e) {
+            logger.error("Security error archiving goal {} for user {}: {}", goalId, currentUser.getEmail(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (RuntimeException e) {
+            logger.error("Error archiving goal {} for user {}: {}", goalId, currentUser.getEmail(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            logger.error("Unexpected error archiving goal {} for user {}: {}", goalId, currentUser.getEmail(), e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error archiving goal.");
+        }
     }
 } 
