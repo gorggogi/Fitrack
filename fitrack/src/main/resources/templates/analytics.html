@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles/Fitrack.css">
-    <!-- Chart.js Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="/styles/scripts/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Moment.js and adapter REMOVED -->
-    <title>Fitness Analytics</title>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 </head>
 <body>
     <div class="container">
@@ -17,10 +17,10 @@
                 <span class="site-name">Fitrack</span>
             </div>
             <ul class="nav-links">
-                <li><a href="/user/dashboard">Dashboard</a></li>
-                <li><a href="/user/analytics" class="active">Analytics</a></li>
+                <li><a href="/user/dashboard">Fitrack</a></li>
                 <li><a href="#">Workouts</a></li>
                 <li><a href="#">Meals</a></li>
+                <li><a href="#">Goals</a></li>
             </ul>
             <div class="user-info">
                 <span th:text="${analyticsData.fullName}" class="user-name"></span>
@@ -30,8 +30,10 @@
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <input type="submit" value="Logout" />
                     </form>
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
-                </div>
+                    <a href="/user/analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                  <!--  <a href="/user/diet">Diet</a> -->
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
             </div>
         </header>
 
@@ -238,7 +240,16 @@
         </div>
     </div>
 
+    <!-- Goal Completion Toast Notification -->
+    <div id="goalCompletedToast" class="toast-notification" style="display: none;">
+        <div class="toast-content">
+            <span id="toastMessage"></span>
+            <a id="toastViewLink" href="/user/dashboard" class="toast-view-link">View</a>
+        </div>
+    </div>
+
     <script th:inline="javascript">
+        const completedGoalNameFromBackend = /*[[${completedGoalName}]]*/ null;
         const analyticsData = /*[[${analyticsData}]]*/ {};
 
         const workoutData = analyticsData.dailyWorkoutCounts7Days || [];
@@ -519,36 +530,66 @@
         document.getElementById('measurementForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            
-            // Log the form data for debugging
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}: ${value}`);
-            }
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
             
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
                 credentials: 'same-origin',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json' // Important: tell the server we want JSON back
                 }
             })
             .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(`Server returned ${response.status}: ${text}`);
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                if (!response.ok) {
+                    // Try to parse error as JSON, then fallback to text
+                    return response.json().catch(() => response.text()).then(errorData => {
+                        let errorMessage = "Failed to save measurement.";
+                        if (typeof errorData === 'string') {
+                            errorMessage = errorData;
+                        } else if (errorData && errorData.message) {
+                            errorMessage = errorData.message;
+                        }
+                        throw new Error(errorMessage);
                     });
                 }
-                return response.text();
+                return response.json(); // Expect JSON response
             })
-            .then(() => {
-                window.location.reload(); // Refresh the page to show new measurement
+            .then(data => {
+                closeMeasurementModal(); // Close the modal first!
+                if (data.success) {
+                    if (data.completedGoalName) {
+                        // Ensure showGoalCompletedToast is available (it should be from dashboard.js)
+                        if (typeof showGoalCompletedToast === 'function') {
+                            // Call toast AND tell it to store in session because we reload immediately after
+                            showGoalCompletedToast(data.completedGoalName, true);
+                        } else {
+                            console.warn('showGoalCompletedToast function not found, but goal was completed.');
+                            // Fallback alert if toast function isn't loaded/working
+                            alert('You have completed your goal: "' + data.completedGoalName + '"! Page will now reload.');
+                        }
+                        // Reload immediately after showing the toast
+                        window.location.reload();
+                    } else {
+                        // If no goal was completed, just reload immediately to show updated analytics
+                        window.location.reload();
+                    }
+                } else {
+                    // Server indicated failure in the JSON response
+                    alert('Failed to save measurement: ' + (data.message || 'Unknown error'));
+                }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to save measurement: ' + error.message);
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                console.error('Error saving measurement:', error);
+                alert('Error saving measurement: ' + error.message);
             });
         });
     </script>

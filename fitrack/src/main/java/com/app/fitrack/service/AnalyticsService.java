@@ -4,6 +4,8 @@ import com.app.fitrack.dto.AnalyticsPageDTO;
 import com.app.fitrack.model.BodyMeasurement;
 import com.app.fitrack.model.User;
 import com.app.fitrack.model.WorkoutLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @Service
 public class AnalyticsService {
 
+    private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
+
     @Autowired
     private UserService userService;
 
@@ -33,9 +37,14 @@ public class AnalyticsService {
     private MealService mealService;
 
     public AnalyticsPageDTO getAnalyticsPageData(User user) {
+        log.debug("Entering getAnalyticsPageData for user: {}", user.getEmail());
         AnalyticsPageDTO dto = new AnalyticsPageDTO();
 
+        log.debug("User details: firstName={}, lastName={}", user.getFirstName(), user.getLastName());
+        
         dto.setFullName(user.getFirstName() + " " + user.getLastName());
+        
+        log.debug("DTO fullName set to: {}", dto.getFullName());
 
         List<BodyMeasurement> measurements = bodyMeasurementService.getMeasurementsForUser(user);
         BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0);
@@ -64,6 +73,7 @@ public class AnalyticsService {
         populateWeightProgressAndTrend(dto, measurements, latestMeasurement);
         populateNutrientNeeds(dto, latestMeasurement, tdee);
         
+        log.debug("Returning AnalyticsPageDTO for user: {}", user.getEmail());
         return dto;
     }
 

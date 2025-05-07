@@ -6,6 +6,8 @@ import com.app.fitrack.model.BodyMeasurement;
 import com.app.fitrack.model.WorkoutLog;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -66,6 +68,8 @@ class FoodItemDTO { // Note: Made package-private
 @Controller
 public class AnalyticsController {
 
+    private static final Logger log = LoggerFactory.getLogger(AnalyticsController.class); // Ensure logger is defined
+
     @Autowired
     private UserService userService;
 
@@ -84,15 +88,30 @@ public class AnalyticsController {
     @GetMapping("/user/analytics")
     public String showAnalytics(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         String email = userDetails.getUsername();
+        log.debug("Analytics page requested for user: {}", email);
         User user = userService.findByEmail(email);
 
         if (user == null) {
-            // Handle user not found case, perhaps redirect to an error page or login
+            log.warn("User not found for email: {}. Redirecting.", email);
             return "redirect:/user/login?error=UserNotFoundForAnalytics";
         }
 
         AnalyticsPageDTO analyticsData = analyticsService.getAnalyticsPageData(user);
+        
+        // Check if DTO is null and log fullName just before adding to model
+        if (analyticsData != null) { 
+            log.debug("AnalyticsData DTO retrieved. FullName from DTO: {}", analyticsData.getFullName());
+            // The explicit setFullName here is redundant if the service does it, but keep for now if needed.
+            // analyticsData.setFullName(user.getFirstName() + " " + user.getLastName());
+        } else {
+            log.warn("AnalyticsService returned null DTO for user: {}", email);
+            // Optionally create an empty DTO to avoid null pointer in template, 
+            // or handle this case differently depending on requirements.
+            analyticsData = new AnalyticsPageDTO(); 
+        }
+        
         model.addAttribute("analyticsData", analyticsData);
+        log.debug("Added analyticsData to model for view.");
         
         return "analytics";
     }
