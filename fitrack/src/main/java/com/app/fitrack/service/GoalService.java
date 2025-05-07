@@ -38,7 +38,30 @@ public class GoalService {
 
     public List<Goal> getUserGoals(User user) {
         log.debug("Fetching active goals for user: {}", user.getEmail());
+        return getActiveUnarchivedGoals(user);
+    }
+
+    public List<Goal> getActiveUnarchivedGoals(User user) {
         return goalRepository.findByUserAndArchivedFalse(user);
+    }
+
+    public List<Goal> getAllGoalsForUser(User user) {
+        log.debug("Fetching ALL goals for user: {}", user.getEmail());
+        return goalRepository.findByUserOrderByStartDateDesc(user);
+    }
+
+    public long getActiveCompletedGoalCount(User user) {
+        List<Goal> completedGoals = goalRepository.findByUserAndStatusAndArchivedFalse(user, "COMPLETED");
+        long count = completedGoals.size();
+        log.debug("Found {} active (non-archived) completed goals for user: {}", count, user.getEmail());
+        return count;
+    }
+
+    public long getTotalCompletedGoalCount(User user) {
+        List<Goal> allCompletedGoals = goalRepository.findByUserAndStatus(user, "COMPLETED");
+        long count = allCompletedGoals.size();
+        log.debug("Found {} total completed goals (including archived) for user: {}", count, user.getEmail());
+        return count;
     }
 
     public List<Goal> getActiveGoals(User user) {

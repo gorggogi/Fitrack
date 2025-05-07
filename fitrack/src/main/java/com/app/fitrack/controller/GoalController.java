@@ -32,16 +32,27 @@ public class GoalController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public String showGoals(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        String email = userDetails.getUsername();
-        User user = userService.findByEmail(email);
-        List<Goal> goals = goalService.getUserGoals(user);
-        
+    @GetMapping("")
+    public String showActiveGoalsPage(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Goal> goals = goalService.getActiveUnarchivedGoals(user);
         model.addAttribute("goals", goals);
         model.addAttribute("goalService", goalService);
-        model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
         return "goals";
+    }
+
+    @GetMapping("/all")
+    public String showAllGoalsPage(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        List<Goal> allGoals = goalService.getAllGoalsForUser(user);
+        long totalCompletedCount = goalService.getTotalCompletedGoalCount(user);
+        
+        model.addAttribute("allGoals", allGoals);
+        model.addAttribute("totalCompletedGoalCount", totalCompletedCount);
+        model.addAttribute("goalService", goalService);
+        model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
+        
+        return "all-goals";
     }
 
     @GetMapping("/add")

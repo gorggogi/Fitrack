@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Goals - Fitrack</title>
+    <link rel="stylesheet" href="/styles/Fitrack.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Include dashboard.js if you need modals or other shared scripts -->
+    <script src="/styles/scripts/dashboard.js"></script> 
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar (Assuming you have a navbar fragment) -->
+        <!-- If no fragment, copy navbar HTML here and populate fullName -->
+        <header class="navbar">
+             <div class="logo-container">
+                 <div class="logo"></div>
+                 <span class="site-name">Fitrack</span>
+             </div>
+             <ul class="nav-links">
+                 <li><a href="/user/dashboard">Dashboard</a></li>
+                 <li><a href="/user/workouts">Workouts</a></li> <!-- Update links as needed -->
+                 <li><a href="/user/meals">Meals</a></li>
+                 <li><a href="/user/goals/all" class="active">Goals</a></li> <!-- Make this active -->
+                 <li><a href="/user/analytics">Analytics</a></li>
+             </ul>
+             <div class="user-info">
+                 <span th:text="${fullName}" class="user-name"></span>
+                 <div class="user-icon" onclick="toggleDropdown()"></div>
+                 <div class="dropdown-menu" id="dropdownMenu">
+                     <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
+                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                         <input type="submit" value="Logout" />
+                     </form>
+                     <a href="/user/analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                     <a href="/user/goals/all"><i class="fas fa-bullseye"></i> Goals</a>
+                     <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                 </div>
+             </div>
+         </header>
+
+        <div class="all-goals-container">
+            <h1>Goal History</h1>
+
+            <!-- Trophy Count -->
+            <div class="trophy-count-section">
+                <h2><i class="fas fa-trophy"></i> Trophies Earned: <span th:text="${totalCompletedGoalCount}">0</span></h2>
+                <p>(All completed goals, including archived)</p>
+            </div>
+
+            <!-- Goals List -->
+            <div class="goals-grid all-goals-grid"> 
+                <div th:if="${#lists.isEmpty(allGoals)}" class="goal-card empty-state">
+                    <h3 class="goal-title">No goals found</h3>
+                    <p>Add a goal from the dashboard!</p>
+                </div>
+
+                <!-- Iterate through ALL goals -->
+                <div th:each="goal : ${allGoals}"
+                     class="goal-card"
+                     th:classappend="(${goal.status == 'COMPLETED'} ? 'goal-completed' : (${goal.status == 'IN_PROGRESS'} ? 'goal-active' : (${goal.status == 'FAILED'} ? 'goal-failed' : ''))) + ' ' + (${goal.archived and goal.status != 'COMPLETED'} ? 'goal-archived' : '')"
+                     th:attr="data-goal-id=${goal.id},
+                              data-goal-name=${goal.description},
+                              data-goal-start-date=${goal.startDate != null ? #temporals.format(goal.startDate, 'MMM dd, yyyy') : 'N/A'},
+                              data-goal-type=${goal.goalType != null ? goal.goalType : 'N/A'},
+                              data-goal-initial-value=${goal.startValue != null ? goal.startValue : 'N/A'},
+                              data-goal-target-value=${goal.targetValue},
+                              data-goal-achieved-value=${goal.currentValue},
+                              data-goal-status=${goal.status},
+                              data-goal-archived=${goal.archived}"
+                     th:onclick="${goal.status == 'COMPLETED' and !goal.archived ? 'openCompletedGoalDetailModal(this)' : null}" >
+
+                    <!-- Title -->
+                    <h3 class="goal-title" th:text="${goal.description}">Goal Description</h3>
+
+                    <!-- Archived Indicator (Only show if archived AND NOT completed) -->
+                    <div th:if="${goal.archived and goal.status != 'COMPLETED'}" class="archived-indicator">
+                        <i class="fas fa-archive"></i> Archived
+                    </div>
+                    
+                    <!-- Completed Indicator (Show if completed, regardless of archived status) -->
+                     <div th:if="${goal.status == 'COMPLETED'}" class="completed-indicator">
+                        <i class="fas fa-trophy"></i> Completed <span th:if="${goal.completionDate}" th:text="${#temporals.format(goal.completionDate, 'MMM dd, yyyy')}"></span>
+                    </div>
+
+                    <!-- Active Goal Progress (Only show if IN_PROGRESS and NOT archived) -->
+                    <div th:if="${goal.status == 'IN_PROGRESS' and !goal.archived}">
+                         <div class="progress-bar">
+                             <div class="progress-fill" 
+                                  th:style="'width: ' + ${goalService.calculateProgress(goal)} + '%;'"></div>
+                         </div>
+                         <div class="progress-labels">
+                             <span th:text="${#numbers.formatDecimal(goal.currentValue, 1, 1)} + ' / ' + ${#numbers.formatDecimal(goal.targetValue, 1, 1)}">Current / Target</span>
+                             <!-- Add unit if available/needed -->
+                         </div>
+                    </div>
+                    
+                    <!-- Failed Indicator -->
+                     <div th:if="${goal.status == 'FAILED' and !goal.archived}" class="failed-indicator">
+                        <i class="fas fa-times-circle"></i> Failed <span th:if="${goal.targetDate}" th:text="'(Target: ' + ${#temporals.format(goal.targetDate, 'MMM dd, yyyy')} + ')'"></span>
+                    </div>
+
+                    <!-- Common Details (Maybe less prominent for archived/failed?) -->
+                     <div class="goal-common-details">
+                         <p>Type: <span th:text="${goal.goalType != null ? goal.goalType.replace('_', ' ') : 'N/A'}"></span></p>
+                         <p th:if="${goal.startValue != null}">Initial: <span th:text="${#numbers.formatDecimal(goal.startValue, 1, 1)}"></span></p>
+                         <p>Target: <span th:text="${#numbers.formatDecimal(goal.targetValue, 1, 1)}"></span></p>
+                         <p>Set: <span th:text="${goal.startDate != null ? #temporals.format(goal.startDate, 'MMM dd') : 'N/A'}"></span></p>
+                     </div>
+
+                     <!-- Action buttons could go here (e.g., Unarchive) -->
+                     <!-- <div th:if="${goal.archived}" class="goal-actions"> -->
+                     <!--    <button>Unarchive</button> -->
+                     <!-- </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Goal Detail Modal (Copied from dashboard.html - ensure it's included if not using fragments) -->
+    <div id="completedGoalDetailModal" class="modal completed-goal-detail-modal">
+        <div class="modal-content completed-goal-modal-content">
+            <div class="completed-goal-icon-container">
+                <i class="fas fa-trophy modal-trophy-icon"></i>
+            </div>
+            <h2 id="completedGoalNameModalText" class="completed-goal-name-text"></h2>
+            <p id="completedGoalTypeModalText" class="completed-goal-info-text"></p>
+            <p id="completedGoalTargetModalText" class="completed-goal-info-text"></p> <!-- Label changes in JS -->
+            <p id="completedGoalAchievedModalText" class="completed-goal-info-text"></p>
+            <p id="completedGoalSetDateText" class="completed-goal-info-text"></p>
+            <div class="modal-actions completed-goal-actions">
+                <button type="button" id="archiveGoalButton" class="btn btn-secondary archive-btn">archive goal</button>
+                <button type="button" class="btn btn-primary close-btn-modal" onclick="closeCompletedGoalDetailModal()">close</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html> 
