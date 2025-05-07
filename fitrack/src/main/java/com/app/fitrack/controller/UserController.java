@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
+import java.util.Map;
+import java.util.HashMap;
 
 
 @Controller
@@ -252,7 +254,8 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     }
 
     @PostMapping("/user/measurements/save")
-    public String saveMeasurements(@AuthenticationPrincipal UserDetails userDetails,
+    @ResponseBody
+    public ResponseEntity<?> saveMeasurements(@AuthenticationPrincipal UserDetails userDetails,
                                  @RequestParam Double weight,
                                  @RequestParam(name = "measurementDateTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
                                  @RequestParam(required = false) String notes,
@@ -262,42 +265,69 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         User user = userService.findByEmail(email);
         logger.info("[saveMeasurements] User fetched. Current weight from User object: {}", user.getWeight());
         
-        try {
-        // Create and save the new measurement record
-        BodyMeasurement measurement = new BodyMeasurement();
-        measurement.setUser(user);
-        if (dateTime != null) {
-            measurement.setDateTime(dateTime);
-        } else {
-            measurement.setDateTime(LocalDateTime.now());
-        }
-        measurement.setWeight(weight);
-        measurement.setNotes(notes);
-        bodyMeasurementService.saveMeasurement(measurement);
+        Map<String, Object> responseBody = new HashMap<>();
+        String completedGoalName = null;
 
-        // Update the main user profile weight
-        logger.info("[saveMeasurements] Updating User object weight to: {}", weight);
-        user.setWeight(weight);
+        try {
+            // Create and save the new measurement record
+            BodyMeasurement measurement = new BodyMeasurement();
+            measurement.setUser(user);
+            if (dateTime != null) {
+                measurement.setDateTime(dateTime);
+            } else {
+                measurement.setDateTime(LocalDateTime.now());
+            }
+            measurement.setWeight(weight);
+            measurement.setNotes(notes);
+            bodyMeasurementService.saveMeasurement(measurement);
+
+            // Update the main user profile weight
+            logger.info("[saveMeasurements] Updating User object weight to: {}", weight);
+            user.setWeight(weight);
             User savedUser = userService.saveUser(user);
             logger.info("[saveMeasurements] User saved via userService.saveUser. Weight on returned User object: {}", savedUser.getWeight());
             
             // Update goals based on the new measurement
-            goalService.updateGoalsBasedOnActivity(savedUser);
-            
-            // Check if this is an AJAX request
-            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                return "redirect:/user/analytics";
+            List<Goal> newlyCompletedGoals = goalService.updateGoalsBasedOnActivity(savedUser);
+            if (newlyCompletedGoals != null && !newlyCompletedGoals.isEmpty()) {
+                // Storing the first completed goal's name for the response
+                completedGoalName = newlyCompletedGoals.get(0).getDescription();
+            }
+
+            boolean isAjaxRequest = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+
+            if (isAjaxRequest) {
+                responseBody.put("success", true);
+                responseBody.put("message", "Measurement saved successfully!");
+                if (completedGoalName != null) {
+                    responseBody.put("completedGoalName", completedGoalName);
+                }
+                // For AJAX, we want the client to reload to get fresh analytics data, including charts.
+                // So, we signal success, and the client will handle the reload and toast.
+                // We also ensure the redirect URL is part of the response for clarity, 
+                // though the client JS will likely just reload the current page.
+                responseBody.put("redirectTo", "/user/analytics"); 
+                return ResponseEntity.ok(responseBody);
+            } else {
+                // Non-AJAX: Use RedirectAttributes for flash messages
+                redi.addFlashAttribute("successMessage", "Measurement saved successfully!");
+                if (completedGoalName != null) {
+                    redi.addFlashAttribute("completedGoalName", completedGoalName);
+                }
+                return ResponseEntity.status(HttpStatus.FOUND).header("Location", "/user/measurements").build();
             }
             
-            redi.addFlashAttribute("successMessage", "Measurement saved successfully!");
-            return "redirect:/user/measurements";
         } catch (Exception e) {
             logger.error("[saveMeasurements] Error saving measurement", e);
-            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save measurement: " + e.getMessage());
-        }
+            boolean isAjaxRequest = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+            if (isAjaxRequest) {
+                responseBody.put("success", false);
+                responseBody.put("message", "Failed to save measurement: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
+            }
             redi.addFlashAttribute("errorMessage", "Failed to save measurement: " + e.getMessage());
-        return "redirect:/user/measurements";
+            // For non-AJAX error, redirect back to the measurements page
+            return ResponseEntity.status(HttpStatus.FOUND).header("Location", "/user/measurements").build();
         }
     }
 

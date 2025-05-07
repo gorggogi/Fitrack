@@ -76,5 +76,20 @@
             </div>
         </div>
     </div>
+
+<!-- Goal Completion Toast Notification -->
+<div id="goalCompletedToast" class="toast-notification" style="display: none;">
+    <div class="toast-content">
+        <span id="toastMessage"></span>
+        <a id="toastViewLink" href="/user/dashboard" class="toast-view-link">View</a>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const completedGoalNameFromBackend = /*[[${completedGoalName}]]*/ null;
+    /*]]>*/
+</script>
+
 </body>
 </html> 

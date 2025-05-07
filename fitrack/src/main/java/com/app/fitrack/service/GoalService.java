@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class GoalService {
@@ -101,9 +102,10 @@ public class GoalService {
     }
 
     @Transactional
-    public void updateGoalsBasedOnActivity(User user) {
+    public List<Goal> updateGoalsBasedOnActivity(User user) {
         List<Goal> activeGoals = getActiveGoals(user);
-        if (activeGoals.isEmpty()) return;
+        List<Goal> newlyCompletedGoals = new ArrayList<>();
+        if (activeGoals.isEmpty()) return newlyCompletedGoals;
 
         // Get latest measurements and activity data
         BodyMeasurement latestMeasurement = bodyMeasurementService.getLatestMeasurement(user);
@@ -120,43 +122,61 @@ public class GoalService {
 
         // Update each active goal
         for (Goal goal : activeGoals) {
+            Goal completedGoal = null;
             switch (goal.getGoalType().toUpperCase()) {
                 case "WEIGHT_LOSS":
                 case "WEIGHT_GAIN":
                     if (latestMeasurement != null) {
-                        updateWeightGoal(goal, latestMeasurement.getWeight());
+                        completedGoal = updateWeightGoal(goal, latestMeasurement.getWeight());
                     }
                     break;
                 case "EXERCISE":
-                    updateExerciseGoal(goal, workoutFrequency, avgDailyExercise);
+                    completedGoal = updateExerciseGoal(goal, workoutFrequency, avgDailyExercise);
                     break;
                 case "NUTRITION":
-                    updateNutritionGoal(goal, avgDailyCalories);
+                    completedGoal = updateNutritionGoal(goal, avgDailyCalories);
                     break;
             }
+            if (completedGoal != null) {
+                newlyCompletedGoals.add(completedGoal);
+            }
         }
+        return newlyCompletedGoals;
     }
 
-    private void updateWeightGoal(Goal goal, Double currentWeight) {
-        if (currentWeight == null) return;
+    private Goal updateWeightGoal(Goal goal, Double currentWeight) {
+        if (currentWeight == null) return null;
         
+        boolean justCompleted = false;
+        String originalStatus = goal.getStatus();
+
         goal.setCurrentValue(currentWeight);
         
         // Check goal type directly
         if (goal.getGoalType().equals("WEIGHT_LOSS")) {
             if (currentWeight <= goal.getTargetValue()) {
+                if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
+                    justCompleted = true;
+                }
                 goal.setStatus("COMPLETED");
             }
         } else if (goal.getGoalType().equals("WEIGHT_GAIN")) {
             if (currentWeight >= goal.getTargetValue()) {
+                 if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
+                    justCompleted = true;
+                }
                 goal.setStatus("COMPLETED");
             }
         }
         
         goalRepository.save(goal);
+        return justCompleted ? goal : null;
     }
 
-    private void updateExerciseGoal(Goal goal, int workoutFrequency, double avgDailyExercise) {
+    private Goal updateExerciseGoal(Goal goal, int workoutFrequency, double avgDailyExercise) {
+        boolean justCompleted = false;
+        String originalStatus = goal.getStatus();
+
         // Update based on workout frequency
         goal.setCurrentValue((double) workoutFrequency);
         
@@ -166,12 +186,19 @@ public class GoalService {
         }
         
         if (goal.getCurrentValue() >= goal.getTargetValue()) {
+            if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
+                justCompleted = true;
+            }
             goal.setStatus("COMPLETED");
         }
         goalRepository.save(goal);
+        return justCompleted ? goal : null;
     }
 
-    private void updateNutritionGoal(Goal goal, double avgDailyCalories) {
+    private Goal updateNutritionGoal(Goal goal, double avgDailyCalories) {
+        boolean justCompleted = false;
+        String originalStatus = goal.getStatus();
+
         goal.setCurrentValue(avgDailyCalories);
         
         // Check if goal is about maintaining, increasing, or decreasing calories
@@ -179,17 +206,27 @@ public class GoalService {
             // Allow for 5% variance
             double variance = Math.abs(goal.getTargetValue() - avgDailyCalories) / goal.getTargetValue();
             if (variance <= 0.05) {
+                 if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
+                    justCompleted = true;
+                }
                 goal.setStatus("COMPLETED");
             }
         } else if (goal.getDescription().toLowerCase().contains("reduce")) {
             if (avgDailyCalories <= goal.getTargetValue()) {
+                if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
+                    justCompleted = true;
+                }
                 goal.setStatus("COMPLETED");
             }
         } else if (goal.getDescription().toLowerCase().contains("increase")) {
             if (avgDailyCalories >= goal.getTargetValue()) {
+                 if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
+                    justCompleted = true;
+                }
                 goal.setStatus("COMPLETED");
             }
         }
         goalRepository.save(goal);
+        return justCompleted ? goal : null;
     }
 } 

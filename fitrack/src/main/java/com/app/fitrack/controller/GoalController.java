@@ -70,8 +70,12 @@ public class GoalController {
 
     @PostMapping("/update/{goalId}")
     public String updateGoalProgress(@PathVariable Long goalId,
-                                   @RequestParam Double currentValue) {
-        goalService.updateGoalProgress(goalId, currentValue);
+                                   @RequestParam Double currentValue,
+                                   RedirectAttributes redirectAttributes) {
+        Goal updatedGoal = goalService.updateGoalProgress(goalId, currentValue);
+        if (updatedGoal != null && "COMPLETED".equalsIgnoreCase(updatedGoal.getStatus())) {
+            redirectAttributes.addFlashAttribute("completedGoalName", updatedGoal.getDescription());
+        }
         return "redirect:/user/goals";
     }
 

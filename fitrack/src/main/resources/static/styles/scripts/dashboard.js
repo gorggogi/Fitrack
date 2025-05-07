@@ -149,6 +149,26 @@ function closeMealModal() {
 
 // Initialize modals when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+    // --- Check sessionStorage for toast FIRST --- 
+    let goalNameFromSession = null;
+    try {
+        goalNameFromSession = sessionStorage.getItem('fitrackShowToastGoal');
+        if (goalNameFromSession) {
+            sessionStorage.removeItem('fitrackShowToastGoal'); // Remove immediately after reading
+        }
+    } catch (e) {
+        console.error("Failed to read from sessionStorage", e);
+    }
+
+    if (goalNameFromSession) {
+        showGoalCompletedToast(goalNameFromSession, false); // Show toast from session, don't re-store
+    } else if (typeof completedGoalNameFromBackend !== 'undefined' && completedGoalNameFromBackend) {
+        // --- Else, check flash attribute from backend --- 
+        showGoalCompletedToast(completedGoalNameFromBackend, false); // Show toast from flash, don't store
+    }
+
+    
+    
     // Close modals when clicking outside
     window.onclick = function(event) {
         const goalModal = document.getElementById('goalModal');
@@ -163,6 +183,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (event.target == mealModal) {
             closeMealModal();
+        }
+        // Close toast if clicking outside of it (optional, good UX)
+        const toast = document.getElementById('goalCompletedToast');
+        if (toast && toast.style.display !== 'none' && !toast.contains(event.target)) {
+            // This part is tricky because the toast might be clicked to view/close.
+            // A more robust way would be if the click is on the body directly.
+            // For simplicity, we'll rely on the auto-dismiss and close button for now.
         }
     }
 
@@ -287,6 +314,37 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+let toastTimeout; // Variable to hold the timeout ID
+
+function showGoalCompletedToast(goalName, storeInSession = false) {
+    const toast = document.getElementById('goalCompletedToast');
+    const toastMessageSpan = document.getElementById('toastMessage');
+
+    if (toast && toastMessageSpan) {
+        toastMessageSpan.textContent = 'You have completed your goal! "' + goalName + '"';
+        toast.style.display = 'flex'; // Show the toast
+
+        // Clear any existing timeout to prevent multiple auto-dismiss timers
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+        }
+
+        // Auto-dismiss after 15 seconds (15000 milliseconds)
+        toastTimeout = setTimeout(function() {
+            toast.style.display = 'none';
+        }, 15000);
+
+        // If triggered by an action expected to reload page, store it
+        if (storeInSession) {
+            try {
+                sessionStorage.setItem('fitrackShowToastGoal', goalName);
+            } catch (e) {
+                console.error("Failed to write to sessionStorage", e);
+            }
+        }
+    }
+}
 
 // --- NEW Function to update dashboard UI --- 
 function updateDashboardMeals(mealDTOs) {

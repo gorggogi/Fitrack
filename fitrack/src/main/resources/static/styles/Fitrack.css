@@ -2239,3 +2239,53 @@ button.primary {
     }
 }
 
+/* Goal Completion Toast Notification Styles */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    padding: 14px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 1050;
+    font-size: 0.95em;
+    box-sizing: border-box;
+    min-width: 280px;
+    max-width: 400px;
+    display: flex;
+    align-items: flex-start; /* Changed back for variable height content */
+}
+
+.toast-content {
+    flex-grow: 1;
+    /* display: flex; REMOVED to allow natural text flow */
+    /* align-items: center; REMOVED */
+    /* overflow: hidden; REMOVED to allow wrapping */
+    box-sizing: border-box;
+}
+
+.toast-content #toastMessage {
+    margin-right: 8px;
+    line-height: 1.3;
+    /* white-space: nowrap; REMOVED */
+    /* overflow: hidden; REMOVED */
+    /* text-overflow: ellipsis; REMOVED */
+    /* min-width: 0; REMOVED */
+}
+
+.toast-notification .toast-view-link {
+    color: white;
+    text-decoration: underline;
+    /* white-space: nowrap; REMOVED */
+    /* flex-shrink: 0; REMOVED */
+    box-sizing: border-box;
+    font-weight: 500;
+}
+
+.toast-notification .toast-view-link:hover {
+    color: #e0e0e0;
+    text-decoration: none;
+}
+
