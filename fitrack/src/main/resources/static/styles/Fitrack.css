@@ -2374,114 +2374,151 @@ button.primary {
     background-color: #0056b3;
 }
 
-/* All Goals Page Styles */
-.all-goals-container {
-    padding: 2rem 0;
+/* All Goals Page - New Trophies Layout */
+.trophies-main-title {
+    text-align: center;
+    font-size: 2.5em; /* Adjust as needed */
+    margin-bottom: 30px;
+    color: #333; /* Or your primary text color */
 }
 
-.all-goals-container h1 {
+.trophy-count-display {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 40px;
+    position: relative; /* For positioning the number inside the trophy */
+}
+
+.trophy-count-display .fa-trophy {
+    color: #FFD700; /* Gold color for trophy - this becomes the fill */
+    font-size: 8em; /* Make it quite large, adjust as needed */
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: white;
+    text-stroke-width: 2px; /* Standard property */
+    text-stroke-color: white; /* Standard property */
+    /* Removed old text-shadow outline */
+}
+
+.trophy-count-display .trophy-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%); 
+    font-size: 2em; 
+    font-weight: 900; /* Increased font-weight for a thicker number */
+    color: #000; /* Black number - this becomes the fill */
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: white;
+    text-stroke-width: 2px; /* Standard property */
+    text-stroke-color: white; /* Standard property */
+}
+
+.goals-category-section {
+    margin-bottom: 30px;
+}
+
+.goals-category-title {
+    font-size: 1.8em;
+    color: #444;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #eee;
+}
+
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between goal cards */
+}
+
+/* Override existing .goal-card for the new layout if necessary, or use new classes */
+.goal-card.goal-completed-layout,
+.goal-card.goal-ongoing-layout {
+    display: flex;
+    align-items: center;
+    padding: 8px 45px; /* Maintained: 8px top/bottom, 45px left/right */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    gap: 15px; 
+    height: 100px; /* YOUR LATEST CHANGE IS HERE */
+    min-height: auto
+}
+
+.goal-card-icon {
+    font-size: 1.5em;
+    color: #FFD700; /* Gold for completed trophy icon */
+}
+
+.goal-card-icon-ongoing {
+    font-size: 1.5em; /* Consistent with completed icon */
+    color: #007AFF; /* A blue color for ongoing status */
+    /* The fa-spin class will handle animation */
+}
+
+.goal-card-status-text {
+    font-weight: bold;
     color: #333;
 }
 
-.trophy-count-section {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 12px;
-}
-
-.trophy-count-section h2 {
-    color: #FFD700; /* Gold */
-    margin-bottom: 0.5rem;
-}
-
-.trophy-count-section h2 .fa-trophy {
-    margin-right: 10px;
-}
-
-.trophy-count-section p {
-    color: #6c757d;
-    font-size: 0.9em;
-}
-
-.all-goals-grid {
-    /* Uses .goals-grid styles, add overrides if needed */
-    /* Example: Maybe more columns on wider screens */
-    /* grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); */
-}
-
-.goal-card.goal-completed {
-    /* border-left: 5px solid #28a745; REMOVED Green border for completed */
-    /* background-color: #f0fff0; REMOVED Subtle light green background */
-}
-
-.goal-card.goal-active {
-    border-left: 5px solid #007AFF; /* Blue border for active */
-}
-
-.goal-card.goal-failed {
-     border-left: 5px solid #dc3545; /* Red border for failed */
-     opacity: 0.8; /* Slightly faded */
-}
-
-.goal-card.goal-archived {
-    border-left: 5px solid #6c757d; /* Grey border for archived */
-    background-color: #f8f9fa; /* Lighter background */
-    opacity: 0.7;
-    cursor: default; /* Not clickable */
-}
-
-.goal-card.goal-archived:hover {
-    transform: none; /* Disable hover effect */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Keep base shadow */
-}
-
-.archived-indicator, .completed-indicator, .failed-indicator {
-    font-size: 0.9em;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.archived-indicator {
-    color: #6c757d;
-}
-
-.completed-indicator {
-    color: #28a745; /* Keep text green */
-}
-
-.completed-indicator .fa-trophy { /* Target only the trophy icon */
-    color: #FFD700; /* Gold/Yellow color */
-    margin-right: 5px;
-}
-
-.failed-indicator {
-    color: #dc3545;
-}
-
-.archived-indicator .fa-archive,
-/* .completed-indicator .fa-check-circle, */ /* Removed or commented out old check style */
-.failed-indicator .fa-times-circle {
-    margin-right: 5px;
-}
-
-.goal-common-details {
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
-    font-size: 0.85em;
+.goal-card-description {
+    flex-grow: 1; /* Allows description to take available space */
+    font-size: 1.1em;
     color: #555;
 }
 
-.goal-common-details p {
-    margin: 4px 0;
+.goal-card-date {
+    font-size: 0.9em;
+    color: #777;
+    white-space: nowrap; /* Prevent date from wrapping */
 }
 
-.goal-card.goal-archived .goal-common-details {
-    border-top-color: #ddd;
-    color: #777;
+/* Specific adjustments for ongoing cards if they differ significantly */
+.goal-card.goal-ongoing-layout .goal-card-description {
+    /* Example: if ongoing description needs more emphasis or different alignment */
 }
+
+.goal-card.empty-state {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    background: #f9f9f9;
+    border: 1px dashed #ddd;
+    border-radius: 8px;
+}
+
+/* Remove or adjust old .trophy-count-section if it conflicts */
+.trophy-count-section {
+    /* display: none; */ /* If the old one should be hidden entirely */
+    /* Or adjust its styles if it's being repurposed */
+    text-align: center; /* Keep this for the new trophy display */
+    margin-bottom: 2.5rem; /* Keep existing margin or adjust */
+    /* background-color: #f8f9fa; */ /* Remove if not needed for new design */
+    /* border-radius: 12px; */ /* Remove if not needed */
+}
+
+.trophy-count-section h2 {
+    /* display: none; */ /* If old h2 should be hidden */
+}
+
+.trophy-count-section p {
+    /* display: none; */ /* If old p should be hidden */
+}
+
+/* Remove or adjust old .all-goals-grid and related goal card styles if they conflict */
+.all-goals-grid {
+    display: none; /* Hide the old grid system */
+}
+
+/* Ensure old .goal-card styles don't interfere too much, or be more specific */
+.goal-card {
+    /* Reset some properties if they were specific to the old grid and conflict */
+    /* min-height: auto; */ /* Example reset */
+}
+
+/* Diagnostic Rule: Target .goal-card directly - We can remove or comment this out now
+.goal-card {
+    height: 38px !important;
+    overflow: hidden !important;
+}
+*/
 

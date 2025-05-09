@@ -41,80 +41,68 @@
          </header>
 
         <div class="all-goals-container">
-            <h1>Goal History</h1>
+            <h1 class="trophies-main-title">Trophies</h1>
 
             <!-- Trophy Count -->
-            <div class="trophy-count-section">
-                <h2><i class="fas fa-trophy"></i> Trophies Earned: <span th:text="${totalCompletedGoalCount}">0</span></h2>
-                <p>(All completed goals, including archived)</p>
+            <div class="trophy-count-display">
+                <i class="fas fa-trophy fa-5x"></i> <!-- Larger trophy icon -->
+                <span class="trophy-number" th:text="${totalCompletedGoalCount}">0</span>
             </div>
 
-            <!-- Goals List -->
-            <div class="goals-grid all-goals-grid"> 
-                <div th:if="${#lists.isEmpty(allGoals)}" class="goal-card empty-state">
-                    <h3 class="goal-title">No goals found</h3>
-                    <p>Add a goal from the dashboard!</p>
-                </div>
-
-                <!-- Iterate through ALL goals -->
-                <div th:each="goal : ${allGoals}"
-                     class="goal-card"
-                     th:classappend="(${goal.status == 'COMPLETED'} ? 'goal-completed' : (${goal.status == 'IN_PROGRESS'} ? 'goal-active' : (${goal.status == 'FAILED'} ? 'goal-failed' : ''))) + ' ' + (${goal.archived and goal.status != 'COMPLETED'} ? 'goal-archived' : '')"
-                     th:attr="data-goal-id=${goal.id},
-                              data-goal-name=${goal.description},
-                              data-goal-start-date=${goal.startDate != null ? #temporals.format(goal.startDate, 'MMM dd, yyyy') : 'N/A'},
-                              data-goal-type=${goal.goalType != null ? goal.goalType : 'N/A'},
-                              data-goal-initial-value=${goal.startValue != null ? goal.startValue : 'N/A'},
-                              data-goal-target-value=${goal.targetValue},
-                              data-goal-achieved-value=${goal.currentValue},
-                              data-goal-status=${goal.status},
-                              data-goal-archived=${goal.archived}"
-                     th:onclick="${goal.status == 'COMPLETED' and !goal.archived ? 'openCompletedGoalDetailModal(this)' : null}" >
-
-                    <!-- Title -->
-                    <h3 class="goal-title" th:text="${goal.description}">Goal Description</h3>
-
-                    <!-- Archived Indicator (Only show if archived AND NOT completed) -->
-                    <div th:if="${goal.archived and goal.status != 'COMPLETED'}" class="archived-indicator">
-                        <i class="fas fa-archive"></i> Archived
+            <!-- Completed Goals Section -->
+            <div class="goals-category-section">
+                <h2 class="goals-category-title">Completed</h2>
+                <div class="goals-list completed-goals-list">
+                    <div th:if="${#lists.isEmpty(allGoals.?[status == 'COMPLETED'])}" class="goal-card empty-state">
+                        <p>No completed goals yet.</p>
                     </div>
-                    
-                    <!-- Completed Indicator (Show if completed, regardless of archived status) -->
-                     <div th:if="${goal.status == 'COMPLETED'}" class="completed-indicator">
-                        <i class="fas fa-trophy"></i> Completed <span th:if="${goal.completionDate}" th:text="${#temporals.format(goal.completionDate, 'MMM dd, yyyy')}"></span>
+                    <div th:each="goal : ${allGoals.?[status == 'COMPLETED']}"
+                         class="goal-card goal-completed-layout"
+                         th:attr="data-goal-id=${goal.id}">
+                        <i class="fas fa-trophy goal-card-icon"></i>
+                        <span class="goal-card-status-text">Completed</span>
+                        <span class="goal-card-description" th:text="${goal.description}">My weight journey</span>
+                        <span class="goal-card-date" th:if="${goal.completionDate}" 
+                              th:text="${#temporals.format(goal.completionDate, 'MM/dd/yy')}">08/10/25</span>
                     </div>
-
-                    <!-- Active Goal Progress (Only show if IN_PROGRESS and NOT archived) -->
-                    <div th:if="${goal.status == 'IN_PROGRESS' and !goal.archived}">
-                         <div class="progress-bar">
-                             <div class="progress-fill" 
-                                  th:style="'width: ' + ${goalService.calculateProgress(goal)} + '%;'"></div>
-                         </div>
-                         <div class="progress-labels">
-                             <span th:text="${#numbers.formatDecimal(goal.currentValue, 1, 1)} + ' / ' + ${#numbers.formatDecimal(goal.targetValue, 1, 1)}">Current / Target</span>
-                             <!-- Add unit if available/needed -->
-                         </div>
-                    </div>
-                    
-                    <!-- Failed Indicator -->
-                     <div th:if="${goal.status == 'FAILED' and !goal.archived}" class="failed-indicator">
-                        <i class="fas fa-times-circle"></i> Failed <span th:if="${goal.targetDate}" th:text="'(Target: ' + ${#temporals.format(goal.targetDate, 'MMM dd, yyyy')} + ')'"></span>
-                    </div>
-
-                    <!-- Common Details (Maybe less prominent for archived/failed?) -->
-                     <div class="goal-common-details">
-                         <p>Type: <span th:text="${goal.goalType != null ? goal.goalType.replace('_', ' ') : 'N/A'}"></span></p>
-                         <p th:if="${goal.startValue != null}">Initial: <span th:text="${#numbers.formatDecimal(goal.startValue, 1, 1)}"></span></p>
-                         <p>Target: <span th:text="${#numbers.formatDecimal(goal.targetValue, 1, 1)}"></span></p>
-                         <p>Set: <span th:text="${goal.startDate != null ? #temporals.format(goal.startDate, 'MMM dd') : 'N/A'}"></span></p>
-                     </div>
-
-                     <!-- Action buttons could go here (e.g., Unarchive) -->
-                     <!-- <div th:if="${goal.archived}" class="goal-actions"> -->
-                     <!--    <button>Unarchive</button> -->
-                     <!-- </div> -->
                 </div>
             </div>
+
+            <!-- Ongoing Goals Section -->
+            <div class="goals-category-section">
+                <h2 class="goals-category-title">Ongoing</h2>
+                <div class="goals-list ongoing-goals-list">
+                     <div th:if="${#lists.isEmpty(allGoals.?[status == 'IN_PROGRESS'])}" class="goal-card empty-state">
+                        <p>No ongoing goals. Add a new one!</p>
+                    </div>
+                    <div th:each="goal : ${allGoals.?[status == 'IN_PROGRESS']}"
+                         class="goal-card goal-ongoing-layout"
+                         th:attr="data-goal-id=${goal.id}">
+                        <i class="fas fa-spinner goal-card-icon-ongoing"></i>
+                        <span class="goal-card-description" th:text="${goal.description}">My weight journey</span>
+                        <span class="goal-card-date" th:if="${goal.targetDate}"
+                              th:text="${#temporals.format(goal.targetDate, 'MM/dd/yy')}">08/10/25</span>
+                        <!-- You might want to add progress bar or other details for ongoing goals here if needed -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Failed Goals Section (Optional - Not in image, but good to consider) -->
+            <!-- 
+            <div class="goals-category-section">
+                <h2 class="goals-category-title">Past Attempts</h2>
+                <div class="goals-list failed-goals-list">
+                    <div th:each="goal : ${allGoals.?[status == 'FAILED']}" class="goal-card goal-failed-layout">
+                        <i class="fas fa-times-circle goal-card-icon"></i>
+                        <span class="goal-card-status-text">Failed</span>
+                        <span class="goal-card-description" th:text="${goal.description}"></span>
+                        <span class="goal-card-date" th:if="${goal.targetDate}" 
+                              th:text="'Target: ' + ${#temporals.format(goal.targetDate, 'MM/dd/yy')}"></span>
+                    </div>
+                </div>
+            </div>
+            -->
+
         </div>
     </div>
 

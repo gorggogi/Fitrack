@@ -155,7 +155,7 @@ public class GoalService {
                 case "WEIGHT_LOSS":
                 case "WEIGHT_GAIN":
                     if (latestMeasurement != null) {
-                        completedGoal = updateWeightGoal(goal, latestMeasurement.getWeight());
+                        completedGoal = updateWeightGoal(goal, latestMeasurement);
                     }
                     break;
                 case "EXERCISE":
@@ -172,9 +172,10 @@ public class GoalService {
         return newlyCompletedGoals;
     }
 
-    private Goal updateWeightGoal(Goal goal, Double currentWeight) {
-        if (currentWeight == null) return null;
+    private Goal updateWeightGoal(Goal goal, BodyMeasurement latestMeasurement) {
+        if (latestMeasurement == null || latestMeasurement.getWeight() == null) return null;
         
+        Double currentWeight = latestMeasurement.getWeight();
         boolean justCompleted = false;
         String originalStatus = goal.getStatus();
 
@@ -185,6 +186,7 @@ public class GoalService {
             if (currentWeight <= goal.getTargetValue()) {
                 if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
                     justCompleted = true;
+                    goal.setCompletionDate(latestMeasurement.getDateTime());
                 }
                 goal.setStatus("COMPLETED");
             }
@@ -192,6 +194,7 @@ public class GoalService {
             if (currentWeight >= goal.getTargetValue()) {
                  if (!"COMPLETED".equalsIgnoreCase(originalStatus)) {
                     justCompleted = true;
+                    goal.setCompletionDate(latestMeasurement.getDateTime());
                 }
                 goal.setStatus("COMPLETED");
             }
