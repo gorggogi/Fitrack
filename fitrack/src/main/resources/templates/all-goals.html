@@ -14,26 +14,29 @@
         <!-- Navbar (Assuming you have a navbar fragment) -->
         <!-- If no fragment, copy navbar HTML here and populate fullName -->
         <header class="navbar">
-             <div class="logo-container">
-                 <div class="logo"></div>
-                 <span class="site-name">Fitrack</span>
-             </div>
-             <div class="user-info">
-                 <span th:text="${fullName}" class="user-name"></span>
-                 <div class="user-icon" onclick="toggleDropdown()"></div>
-                 <div class="dropdown-menu" id="dropdownMenu">
-                     <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
-                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                         <input type="submit" value="Logout" />
-                     </form>
-                     <a href="/user/dashboard"><i class="fas fa-home"></i> Dashboard</a>
-                     <a href="/user/analytics"><i class="fas fa-chart-line"></i> Analytics</a>
-                     <a href="/user/goals/all"><i class="fas fa-bullseye"></i> Goals</a>
-                     <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                 </div>
-             </div>
-         </header>
-
+            <div class="logo-container">
+                <div class="logo"></div>
+                <span class="site-name">Fitrack</span>
+            </div>
+            <div class="user-info">
+                <span th:text="${fullName}" class="user-name"></span>
+                <div class="user-icon" onclick="toggleDropdown()">
+                    <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture" alt="Profile Picture">
+                    <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture" alt="Default Profile Picture">
+                </div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <input type="submit" value="Logout" />
+                    </form>
+                    <a href="/user/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="/user/analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                    <a href="/user/goals/all"><i class="fas fa-bullseye"></i> Goals</a>
+                  <!--  <a href="/user/diet">Diet</a> -->
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+            </div>
+        </header>
         <div class="all-goals-container">
             <h1 class="trophies-main-title">Trophies</h1>
 

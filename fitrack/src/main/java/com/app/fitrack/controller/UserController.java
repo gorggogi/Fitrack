@@ -46,7 +46,7 @@ import java.util.UUID;
 @Controller
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/profile-pictures/";
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/fitrack/uploads/profile-pictures/";
 
     @Autowired
     private UserService userService; 
@@ -245,7 +245,7 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                 Path filePath = uploadPath.resolve(newFilename);
                 Files.copy(profilePicture.getInputStream(), filePath);
 
-                // Set profile picture path for static resource
+                // Set profile picture path for resource handler
                 profilePicturePath = "/uploads/profile-pictures/" + newFilename;
             } catch (IOException e) {
                 logger.error("Failed to save profile picture", e);
@@ -255,7 +255,6 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         }
 
         userService.createUserProfile(email, age, gender, height, weight, profilePicturePath);
-        redi.addFlashAttribute("successMessage", "Profile created successfully!");
         return "redirect:/user/dashboard";
     }
 
@@ -376,6 +375,7 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         // Get user's full name
         String fullName = user.getFirstName() + " " + user.getLastName();
         model.addAttribute("fullName", fullName);
+        model.addAttribute("user", user); // Add user to model for profile picture
 
         // Get all scheduled workouts
         List<Workout> allWorkouts = workoutService.getAllUserWorkouts(user);

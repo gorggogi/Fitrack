@@ -51,6 +51,7 @@ public class GoalController {
         model.addAttribute("totalCompletedGoalCount", totalCompletedCount);
         model.addAttribute("goalService", goalService);
         model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
+        model.addAttribute("user", user);
         
         return "all-goals";
     }

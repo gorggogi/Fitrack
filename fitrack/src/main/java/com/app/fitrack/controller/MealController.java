@@ -137,6 +137,7 @@ public class MealController {
     public String getLoggedMeals(Model model, Authentication authentication) {
         User user = userService.findByEmail(authentication.getName());
         model.addAttribute("fullName", user.getFullName());
+        model.addAttribute("user", user);
 
         // Get today's meals
         LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);

@@ -4,33 +4,6 @@
     <meta charset="UTF-8">
     <title>Profile - Fitrack</title>
     <link rel="stylesheet" href="/styles/Fitrack.css">
-    <style>
-        .profile-picture-preview {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 1rem;
-            border: 2px solid #ddd;
-        }
-        .file-input-container {
-            margin-bottom: 1rem;
-        }
-        .file-input-label {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .file-input-label:hover {
-            background-color: #e0e0e0;
-        }
-        #profilePicture {
-            display: none;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -42,7 +15,7 @@
             </div>
 
             <form th:action="@{/user/profile/create}" method="post" enctype="multipart/form-data">
-                <div class="form-group">
+                <div class="form-group profile-picture-center">
                     <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture-preview" alt="Profile Picture">
                     <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture-preview" alt="Default Profile Picture">
                     <div class="file-input-container">

@@ -101,17 +101,15 @@ public class AnalyticsController {
         // Check if DTO is null and log fullName just before adding to model
         if (analyticsData != null) { 
             log.debug("AnalyticsData DTO retrieved. FullName from DTO: {}", analyticsData.getFullName());
-            // The explicit setFullName here is redundant if the service does it, but keep for now if needed.
-            // analyticsData.setFullName(user.getFirstName() + " " + user.getLastName());
         } else {
             log.warn("AnalyticsService returned null DTO for user: {}", email);
-            // Optionally create an empty DTO to avoid null pointer in template, 
-            // or handle this case differently depending on requirements.
             analyticsData = new AnalyticsPageDTO(); 
         }
         
         model.addAttribute("analyticsData", analyticsData);
-        log.debug("Added analyticsData to model for view.");
+        model.addAttribute("user", user); // Add user to model for profile picture
+        model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName()); // Add full name for navbar
+        log.debug("Added analyticsData and user to model for view.");
         
         return "analytics";
     }

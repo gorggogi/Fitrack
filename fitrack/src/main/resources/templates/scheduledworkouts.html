@@ -42,23 +42,22 @@
                 <div class="logo"></div>
                 <span class="site-name">Fitrack</span>
             </div>
-            <ul class="nav-links">
-                <li><a href="/user/dashboard">Fitrack</a></li>
-                <li><a href="#">Workouts</a></li>
-                <li><a href="#">Meals</a></li>
-                <li><a href="#">Goals</a></li>
-            </ul>
             <div class="user-info">
                 <span th:text="${fullName}" class="user-name"></span>
-                <div class="user-icon" onclick="toggleDropdown()"></div>
+                <div class="user-icon" onclick="toggleDropdown()">
+                    <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture" alt="Profile Picture">
+                    <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture" alt="Default Profile Picture">
+                </div>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <input type="submit" value="Logout" />
                     </form>
-                    <a href="/user/analytics">Analytics</a>
+                    <a href="/user/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="/user/analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                    <a href="/user/goals/all"><i class="fas fa-bullseye"></i> Goals</a>
                   <!--  <a href="/user/diet">Diet</a> -->
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();">Logout</a>
+                    <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
             </div>
         </header>
