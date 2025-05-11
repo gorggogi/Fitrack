@@ -181,6 +181,8 @@ public class MealController {
                 Map<String, Object> itemMap = new HashMap<>();
                 itemMap.put("foodItem", item.getFoodItem());
                 itemMap.put("calories", item.getCalories());
+                itemMap.put("quantity", item.getQuantity());
+                itemMap.put("unit", item.getUnit());
                 foodItems.add(itemMap);
             }
             mealMap.put("foodItems", foodItems);

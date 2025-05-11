@@ -19,6 +19,9 @@ public class MealService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private NutritionixService nutritionixService;
+
     public Meal saveMeal(Meal meal) {
         User currentUser = userService.getAuthenticatedUser();
         if (currentUser == null) {
@@ -29,9 +32,26 @@ public class MealService {
             meal.setDateTime(LocalDateTime.now());
         }
 
-        // Ensure bidirectional relationship is set for food items
+        // Ensure bidirectional relationship and populate nutritional info for food items
         if (meal.getFoodItems() != null) {
-            meal.getFoodItems().forEach(item -> item.setMeal(meal));
+            meal.getFoodItems().forEach(item -> {
+                item.setMeal(meal); // Set bidirectional relationship
+                // Call NutritionixService if quantity, unit, and foodItem name are present
+                // and if nutritional details might be missing or need update.
+                // For simplicity, we can call it if key identifiers are there.
+                // The service itself should be idempotent or handle cases where data is already full.
+                if (item.getFoodItem() != null && !item.getFoodItem().isEmpty() &&
+                    item.getQuantity() > 0 && item.getUnit() != null && !item.getUnit().isEmpty()) {
+                    try {
+                        // NutritionixService.getCalories updates the item's calories, protein, carbs, fat
+                        nutritionixService.getCalories(item); 
+                    } catch (Exception e) {
+                        // Log error or handle cases where Nutritionix might fail
+                        // For now, we'll let it proceed with user-entered calories if service fails
+                        System.err.println("Error fetching nutritional data for item: " + item.getFoodItem() + " - " + e.getMessage());
+                    }
+                }
+            });
         }
 
         return mealRepository.save(meal);
