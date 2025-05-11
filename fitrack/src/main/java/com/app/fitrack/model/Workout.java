@@ -23,6 +23,9 @@ public class Workout {
     private String workoutName; 
 
     @Column(nullable = false)
+    private String workoutType;
+
+    @Column(nullable = false)
     private Integer duration; 
 
     @Column(name = "burned_calories", nullable = false)
@@ -64,6 +67,14 @@ public class Workout {
 
     public void setWorkoutName(String workoutName) {
         this.workoutName = workoutName;
+    }
+
+    public String getWorkoutType() {
+        return workoutType;
+    }
+
+    public void setWorkoutType(String workoutType) {
+        this.workoutType = workoutType;
     }
 
     public Integer getDuration() {

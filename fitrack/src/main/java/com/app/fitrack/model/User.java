@@ -50,6 +50,9 @@ public class User {
     @Column(nullable = true)
     private Double weight; // in kilograms
 
+    @Column(nullable = true)
+    private String profilePicture; // Path to stored profile picture
+
     @Transient
     private String confirmPassword;
 
@@ -139,6 +142,14 @@ public class User {
 
     public void setWeight(Double weight) {
         this.weight = weight;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public String getConfirmPassword() {

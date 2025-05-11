@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -78,24 +79,45 @@ public class AnalyticsService {
     }
 
     private void populateWorkoutChartData(AnalyticsPageDTO dto, User user, LocalDateTime startDate, LocalDateTime endDate) {
-        int[] workoutCounts = new int[7];
-        int[] caloriesBurned = new int[7];
         LocalDate today = LocalDate.now();
         List<WorkoutLog> recentLogs = workoutService.getWorkoutLogsForUser(user, startDate, endDate);
-
+        
+        // Create a map to store workout counts by type for each day
+        Map<String, int[]> workoutTypeCounts = new HashMap<>();
+        
+        // Initialize arrays for each workout type
+        for (WorkoutLog log : recentLogs) {
+            String type = log.getWorkoutType() != null ? log.getWorkoutType() : "OTHER";
+            workoutTypeCounts.putIfAbsent(type, new int[7]);
+        }
+        
+        // Initialize array for daily calories burned
+        int[] dailyCaloriesBurned = new int[7];
+        
+        // Count workouts by type and sum calories for each day
         for (WorkoutLog log : recentLogs) {
             LocalDate logDate = log.getCompletedAt().toLocalDate();
             long daysAgo = ChronoUnit.DAYS.between(logDate, today);
             if (daysAgo >= 0 && daysAgo < 7) {
                 int index = 6 - (int) daysAgo;
-                workoutCounts[index]++;
-                if (log.getCaloriesBurned() != null) {
-                    caloriesBurned[index] += log.getCaloriesBurned().intValue();
-                }
+                String type = log.getWorkoutType() != null ? log.getWorkoutType() : "OTHER";
+                workoutTypeCounts.get(type)[index]++;
+                // Add calories burned to the daily total
+                dailyCaloriesBurned[index] += log.getCaloriesBurned() != null ? log.getCaloriesBurned().intValue() : 0;
             }
         }
-        dto.setDailyWorkoutCounts7Days(workoutCounts);
-        dto.setDailyCaloriesBurned7Days(caloriesBurned);
+        
+        // Convert the map to the format needed for the chart
+        List<Map<String, Object>> workoutTypeData = new ArrayList<>();
+        for (Map.Entry<String, int[]> entry : workoutTypeCounts.entrySet()) {
+            Map<String, Object> typeData = new HashMap<>();
+            typeData.put("type", entry.getKey());
+            typeData.put("counts", entry.getValue());
+            workoutTypeData.add(typeData);
+        }
+        
+        dto.setWorkoutTypeData(workoutTypeData);
+        dto.setDailyCaloriesBurned7Days(dailyCaloriesBurned);
     }
 
     private void populateMeasurementChartData(AnalyticsPageDTO dto, User user, List<BodyMeasurement> measurements) {

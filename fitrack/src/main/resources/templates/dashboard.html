@@ -7,6 +7,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="/styles/scripts/dashboard.js"></script>
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <style>
+        /* ... existing styles ... */
+        
+        .user-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        /* ... rest of existing styles ... */
+    </style>
 </head>
 <body>
     <div class="container" style="padding-bottom: 50px;">
@@ -19,20 +44,18 @@
                 <div class="logo"></div>
                 <span class="site-name">Fitrack</span>
             </div>
-            <ul class="nav-links">
-                <li><a href="/user/dashboard">Fitrack</a></li>
-                <li><a href="#">Workouts</a></li>
-                <li><a href="#">Meals</a></li>
-                <li><a href="#">Goals</a></li>
-            </ul>
             <div class="user-info">
                 <span th:text="${fullName}" class="user-name"></span>
-                <div class="user-icon" onclick="toggleDropdown()"></div>
+                <div class="user-icon" onclick="toggleDropdown()">
+                    <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture" alt="Profile Picture">
+                    <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture" alt="Default Profile Picture">
+                </div>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <input type="submit" value="Logout" />
                     </form>
+                    <a href="/user/dashboard"><i class="fas fa-home"></i> Dashboard</a>
                     <a href="/user/analytics"><i class="fas fa-chart-line"></i> Analytics</a>
                     <a href="/user/goals/all"><i class="fas fa-bullseye"></i> Goals</a>
                   <!--  <a href="/user/diet">Diet</a> -->
@@ -157,6 +180,20 @@
                 <input type="text" name="workoutName" id="workoutName" placeholder="Enter workout name" required>
             </div>
             <div class="form-group">
+                <label>Workout Type</label>
+                <select name="workoutType" id="workoutType" required>
+                    <option value="">Select workout type</option>
+                    <option value="CARDIO">Cardio</option>
+                    <option value="STRENGTH">Strength Training</option>
+                    <option value="FLEXIBILITY">Flexibility</option>
+                    <option value="HIIT">HIIT</option>
+                    <option value="BALANCE">Balance & Stability</option>
+                    <option value="FUNCTIONAL">Functional Training</option>
+                    <option value="SPORTS">Sports & Recreation</option>
+                    <option value="OTHER">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Duration (minutes)</label>
                 <input type="number" name="duration" id="duration" placeholder="Duration" required>
             </div>
@@ -266,8 +303,7 @@
                 <select id="goalType" name="goalType" required>
                     <option value="WEIGHT_LOSS">Weight Loss</option>
                     <option value="WEIGHT_GAIN">Weight Gain</option>
-                    <option value="EXERCISE">Exercise</option>
-                    <option value="NUTRITION">Nutrition</option>
+                    <option value="OTHER">Other</option>
                 </select>
             </div>
             <div class="form-group">

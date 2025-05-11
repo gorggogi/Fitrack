@@ -45,6 +45,11 @@ public class WorkoutService {
             workout.setCaloriesBurned(0.0);
         }
 
+        // Set default workout type if not provided
+        if (workout.getWorkoutType() == null || workout.getWorkoutType().trim().isEmpty()) {
+            workout.setWorkoutType("OTHER");
+        }
+
         return workoutRepository.save(workout);
     }
 
@@ -188,6 +193,7 @@ public class WorkoutService {
 
         // Update the fields
         existingWorkout.setWorkoutName(updatedWorkout.getWorkoutName());
+        existingWorkout.setWorkoutType(updatedWorkout.getWorkoutType());
         existingWorkout.setDuration(updatedWorkout.getDuration());
         existingWorkout.setCaloriesBurned(updatedWorkout.getCaloriesBurned());
         existingWorkout.setRepeatDays(updatedWorkout.getRepeatDays());

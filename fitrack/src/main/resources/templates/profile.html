@@ -4,6 +4,33 @@
     <meta charset="UTF-8">
     <title>Profile - Fitrack</title>
     <link rel="stylesheet" href="/styles/Fitrack.css">
+    <style>
+        .profile-picture-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid #ddd;
+        }
+        .file-input-container {
+            margin-bottom: 1rem;
+        }
+        .file-input-label {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .file-input-label:hover {
+            background-color: #e0e0e0;
+        }
+        #profilePicture {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -14,7 +41,16 @@
                 <p th:text="${message}">Message</p>
             </div>
 
-            <form th:action="@{/user/profile/create}" method="post">
+            <form th:action="@{/user/profile/create}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture-preview" alt="Profile Picture">
+                    <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture-preview" alt="Default Profile Picture">
+                    <div class="file-input-container">
+                        <label for="profilePicture" class="file-input-label">Choose Profile Picture</label>
+                        <input type="file" id="profilePicture" name="profilePicture" accept="image/*" onchange="previewImage(this)">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="age">Age</label>
                     <input type="number" id="age" name="age" 
@@ -47,5 +83,18 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.querySelector('.profile-picture-preview');
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 </body>
 </html> 

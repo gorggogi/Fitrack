@@ -92,6 +92,7 @@
                             <div class="workout-details">
                                 <p><strong>Duration:</strong> <span th:text="${workout.duration}"></span> minutes</p>
                                 <p><strong>Calories:</strong> <span th:text="${workout.caloriesBurned}"></span> cal</p>
+                                <p><strong>Type:</strong> <span th:text="${workout.workoutType}"></span></p>
                             </div>
                         </div>
                     </div>
@@ -120,6 +121,7 @@
                             <div class="workout-details">
                                 <p><strong>Duration:</strong> <span th:text="${workout.duration}"></span> minutes</p>
                                 <p><strong>Calories:</strong> <span th:text="${workout.caloriesBurned}"></span> cal</p>
+                                <p><strong>Type:</strong> <span th:text="${workout.workoutType}"></span></p>
                                 <p><strong>Repeat Days:</strong> 
                                     <span th:each="day, iterStat : ${workout.repeatDays}" 
                                           th:text="${day} + (${iterStat.last} ? '' : ', ')"></span>
@@ -143,6 +145,20 @@
                 <div class="form-group">
                     <label>Workout name</label>
                     <input type="text" name="workoutName" id="workoutName" placeholder="Enter workout name" required>
+                </div>
+                <div class="form-group">
+                    <label>Workout Type</label>
+                    <select name="workoutType" id="workoutType" required>
+                        <option value="">Select workout type</option>
+                        <option value="CARDIO">Cardio</option>
+                        <option value="STRENGTH">Strength Training</option>
+                        <option value="FLEXIBILITY">Flexibility</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="BALANCE">Balance & Stability</option>
+                        <option value="FUNCTIONAL">Functional Training</option>
+                        <option value="SPORTS">Sports & Recreation</option>
+                        <option value="OTHER">Other</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Duration (minutes)</label>

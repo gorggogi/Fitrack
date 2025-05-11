@@ -151,7 +151,7 @@ public class UserService {
     }
 
     @Transactional
-    public String createUserProfile(String email, Integer age, String gender, Double height, Double weight) {
+    public String createUserProfile(String email, Integer age, String gender, Double height, Double weight, String profilePicture) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             return "User not found.";
@@ -161,6 +161,7 @@ public class UserService {
         if (gender != null) user.setGender(gender);
         if (height != null) user.setHeight(height);
         if (weight != null) user.setWeight(weight);
+        if (profilePicture != null) user.setProfilePicture(profilePicture);
 
         userRepository.save(user);
 

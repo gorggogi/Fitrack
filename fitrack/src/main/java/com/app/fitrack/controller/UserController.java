@@ -35,11 +35,18 @@ import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 
 @Controller
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/profile-pictures/";
 
     @Autowired
     private UserService userService; 
@@ -164,12 +171,13 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
 
     @GetMapping("/user/dashboard")
     public String showDashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-    String email = userDetails.getUsername();
-    User user = userService.findByEmail(email);
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
 
         // Get user's full name
-    String fullName = user.getFirstName() + " " + user.getLastName();
+        String fullName = user.getFirstName() + " " + user.getLastName();
         model.addAttribute("fullName", fullName);
+        model.addAttribute("user", user);  // Add the entire user object to the model
     
         // Get workouts for today
         List<Workout> workouts = workoutService.getWorkoutsForCurrentDate();
@@ -177,7 +185,7 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         model.addAttribute("workoutPlaceholder", "No workouts scheduled for today. Click + to add one.");
 
         // Get meals for today
-    List<Meal> meals = mealService.getMealsForCurrentDate();
+        List<Meal> meals = mealService.getMealsForCurrentDate();
         model.addAttribute("meals", meals);
         model.addAttribute("placeholderMessage", "No meals logged for today. Click + to add one.");
         
@@ -215,9 +223,38 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                               @RequestParam(required = false) String gender,
                               @RequestParam(required = false) Double height,
                               @RequestParam(required = false) Double weight,
+                              @RequestParam(required = false) MultipartFile profilePicture,
                               RedirectAttributes redi) {
         String email = userDetails.getUsername();
-        userService.createUserProfile(email, age, gender, height, weight);
+        String profilePicturePath = null;
+
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            try {
+                // Create upload directory if it doesn't exist
+                Path uploadPath = Paths.get(UPLOAD_DIR);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                // Generate unique filename
+                String originalFilename = profilePicture.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                String newFilename = UUID.randomUUID().toString() + extension;
+
+                // Save file
+                Path filePath = uploadPath.resolve(newFilename);
+                Files.copy(profilePicture.getInputStream(), filePath);
+
+                // Set profile picture path for static resource
+                profilePicturePath = "/uploads/profile-pictures/" + newFilename;
+            } catch (IOException e) {
+                logger.error("Failed to save profile picture", e);
+                redi.addFlashAttribute("error", "Failed to upload profile picture. Please try again.");
+                return "redirect:/user/profile";
+            }
+        }
+
+        userService.createUserProfile(email, age, gender, height, weight, profilePicturePath);
         redi.addFlashAttribute("successMessage", "Profile created successfully!");
         return "redirect:/user/dashboard";
     }

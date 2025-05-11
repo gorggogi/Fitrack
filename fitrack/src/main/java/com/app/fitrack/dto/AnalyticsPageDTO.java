@@ -36,6 +36,7 @@ public class AnalyticsPageDTO {
     private int[] dailyCaloriesBurned7Days; // Calories burned from workouts per day
     private List<Map<String, Object>> chartMeasurementData; // Historical weight/BMI for charts
     private List<Map<String, Object>> timelineData; // Formatted measurements for a timeline view
+    private List<Map<String, Object>> workoutTypeData; // Workout counts by type for last 7 days
 
     // Constructor (example - can be more detailed or use a builder)
     public AnalyticsPageDTO() {}
@@ -216,5 +217,13 @@ public class AnalyticsPageDTO {
 
     public void setTimelineData(List<Map<String, Object>> timelineData) {
         this.timelineData = timelineData;
+    }
+
+    public List<Map<String, Object>> getWorkoutTypeData() {
+        return workoutTypeData;
+    }
+
+    public void setWorkoutTypeData(List<Map<String, Object>> workoutTypeData) {
+        this.workoutTypeData = workoutTypeData;
     }
 } 
