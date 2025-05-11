@@ -207,66 +207,41 @@
     </div>
 </div>
 
-<!-- Meal Modal -->
+<!-- Meal Modal: Replaced with the standardized structure -->
 <div id="mealModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeMealModal()">&times;</span>
-        <h2>Add New Meal</h2>
-        <form id="mealForm" action="/user/meals/save" method="post">
+        <h2 id="modalTitle">Add New Meal</h2> <!-- JS will set this for add/edit -->
+        <form id="mealForm" action="/user/meals/save" method="post"> <!-- JS will set action for edit -->
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="hidden" name="id" id="mealId"> <!-- Used for editing, hidden for new -->
+
             <div class="form-row">
                 <div class="form-group">
-                    <label>Meal Name</label>
-                    <input type="text" name="mealName" placeholder="Enter meal name" class="form-control" required>
+                    <label for="mealName">Meal Name</label>
+                    <input type="text" name="mealName" id="mealName" placeholder="Enter meal name" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label>Date and Time</label>
-                    <input type="datetime-local" name="dateTime" class="form-control" required>
+                    <label for="dateTime">Date and Time</label>
+                    <input type="datetime-local" name="dateTime" id="dateTime" class="form-control" required>
                 </div>
             </div>
             
-            <div id="food-items-container">
-                <div class="food-item">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Food Item</label>
-                            <input type="text" name="foodItems[0].foodItem" placeholder="Enter food" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Quantity</label>
-                            <input type="number" name="foodItems[0].quantity" placeholder="Quantity" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Unit</label>
-                            <select name="foodItems[0].unit" class="form-control" required>
-                                <option value=" ">None</option>
-                                <option value="g">Grams</option>
-                                <option value="kg">Kilograms</option>
-                                <option value="ml">Milliliters</option>
-                                <option value="l">Liters</option>
-                                <option value="cup">Cups</option>
-                                <option value="tbsp">Tablespoons</option>
-                                <option value="tsp">Teaspoons</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Calories</label>
-                            <input type="number" name="foodItems[0].calories" placeholder="Estimate" class="form-control" required>
-                        </div>
-                        <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
-                    </div>
-                </div>
+            <label>Foods</label>
+            <div id="foodItemsContainer">
+                <!-- Food items will be dynamically added here by JavaScript -->
             </div>
 
-            <div class="form-actions">
-                <button type="button" onclick="estimateCalories()" class="btn btn-warning">Estimate Calories</button>
-                <button type="button" onclick="addFoodItem()" class="btn btn-secondary">Add Item +</button>
+            <div class="form-actions" style="margin-top: 10px;">
+                <button type="button" class="btn btn-secondary" onclick="addFoodItem()">Add Food Item</button>
+                <button type="button" class="btn btn-warning" onclick="estimateAllCaloriesInModal()">Estimate Calories</button>
                 <button type="button" class="btn btn-secondary" onclick="closeMealModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Meal</button>
             </div>
         </form>
     </div>
 </div>
+<!-- End of standardized Meal Modal -->
 
 <!-- Goal Modal -->
 <div id="goalModal" class="modal">
@@ -326,5 +301,204 @@
         </div>
     </div>
 </div>
+
+<script>
+    // CSRF token for AJAX requests
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+    // Standardized Meal Modal Functions (similar to loggedmeals.html)
+    function openMealModal() {
+        document.getElementById('mealModal').style.display = 'flex';
+        document.getElementById('mealForm').reset(); // Reset form for new meal
+        document.getElementById('mealId').value = ''; // Clear meal ID
+        document.getElementById('modalTitle').textContent = 'Add New Meal'; // Set title for new meal
+        document.getElementById('mealForm').action = '/user/meals/save'; // Default action for new meal
+        
+        // Set current date and time for the dateTime input
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // JS months are 0-indexed
+        const day = now.getDate().toString().padStart(2, '0');
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('dateTime').value = currentDateTime;
+
+        const container = document.getElementById('foodItemsContainer');
+        container.innerHTML = ''; // Clear any existing food items from previous modal use
+        addFoodItem(); // Add one initial blank food item row
+    }
+
+    function closeMealModal() {
+        document.getElementById('mealModal').style.display = 'none';
+    }
+
+    function addFoodItem() {
+        const container = document.getElementById('foodItemsContainer');
+        const index = container.children.length;
+        const foodItemDiv = document.createElement('div');
+        // Using 'food-item-input' as the class for the row div for consistency with JS
+        foodItemDiv.className = 'food-item-input'; 
+        foodItemDiv.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Food Item</label>
+                    <input type="text" name="foodItems[${index}].foodItem" placeholder="Enter food" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" name="foodItems[${index}].quantity" placeholder="Quantity" class="form-control" step="any">
+                </div>
+                <div class="form-group">
+                    <label>Unit</label>
+                    <select name="foodItems[${index}].unit" class="form-control">
+                        <option value="">None</option>
+                        <option value="g">Grams</option>
+                        <option value="kg">Kilograms</option>
+                        <option value="ml">Milliliters</option>
+                        <option value="l">Liters</option>
+                        <option value="cup">Cups</option>
+                        <option value="tbsp">Tablespoons</option>
+                        <option value="tsp">Teaspoons</option>
+                        <option value="oz">Ounce (oz)</option>
+                        <option value="serving">Serving</option>
+                        <option value="piece">Piece</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Calories</label>
+                    <input type="number" name="foodItems[${index}].calories" placeholder="Calories" class="form-control" required>
+                </div>
+                <button type="button" class="remove-item" onclick="removeFoodItem(this)" style="align-self: flex-end; margin-bottom: 1rem;">×</button>
+            </div>
+        `;
+        container.appendChild(foodItemDiv);
+    }
+
+    function removeFoodItem(button) {
+        // button is inside a form-group, which is inside a form-row, which is inside food-item-input
+        const foodItemRowDiv = button.closest('.food-item-input'); 
+        if (foodItemRowDiv) {
+            const container = foodItemRowDiv.parentElement;
+            foodItemRowDiv.remove();
+            // Re-index remaining items
+            const items = container.children;
+            for (let i = 0; i < items.length; i++) {
+                const inputs = items[i].querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    const name = input.name;
+                    if (name) {
+                        // Update the index in the name attribute
+                        input.name = name.replace(/foodItems\[\d+\]/, `foodItems[${i}]`);
+                    }
+                });
+            }
+        }
+    }
+    
+    function estimateAllCaloriesInModal() {
+        const foodItemsRows = document.querySelectorAll('#foodItemsContainer .food-item-input');
+        const foodData = [];
+        let allFieldsValid = true;
+
+        foodItemsRows.forEach((itemRow, index) => {
+            const foodNameInput = itemRow.querySelector(`input[name="foodItems[${index}].foodItem"]`);
+            const quantityInput = itemRow.querySelector(`input[name="foodItems[${index}].quantity"]`);
+            const unitInput = itemRow.querySelector(`select[name="foodItems[${index}].unit"]`);
+
+            // Basic validation: ensure all required fields for estimation are present
+            if (!foodNameInput.value || !quantityInput.value || !unitInput.value) {
+                // If it's an empty last row (often the case if user clicks "add" then "estimate" immediately)
+                // and there are other items, or it's the only item but completely empty, it might be invalid.
+                // This logic ensures that partially filled rows are flagged.
+                if (foodItemsRows.length === 1 && !foodNameInput.value && !quantityInput.value && !unitInput.value) {
+                    // Single, completely empty row.
+                     allFieldsValid = false; // Or handle as "nothing to estimate"
+                } else if (!( !foodNameInput.value && !quantityInput.value && !unitInput.value && index === foodItemsRows.length - 1 && foodItemsRows.length > 1)) {
+                    // Not an ignorable empty last row
+                    allFieldsValid = false;
+                }
+            }
+            
+            if (foodNameInput.value && quantityInput.value && unitInput.value) {
+                foodData.push({
+                    foodName: foodNameInput.value,
+                    quantity: parseFloat(quantityInput.value),
+                    unit: unitInput.value,
+                    originalIndex: index // Keep track to map results back
+                });
+            }
+        });
+
+        if (!allFieldsValid && foodData.length < foodItemsRows.length) { // Check if some rows were invalid for estimation
+             alert("Please ensure all food items have a name, quantity, and unit before estimating calories.");
+             return;
+        }
+        if (foodData.length === 0) { // No valid items to estimate
+            alert("No food items to estimate calories for. Please add food items with name, quantity, and unit.");
+            return;
+        }
+
+        const estimateButton = document.querySelector('#mealModal .btn-warning[onclick="estimateAllCaloriesInModal()"]');
+        const originalButtonText = estimateButton.textContent;
+        estimateButton.disabled = true;
+        estimateButton.textContent = 'Estimating...';
+
+        fetch('/meals/estimate-calories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(foodData)
+        })
+        .then(response => {
+            estimateButton.disabled = false;
+            estimateButton.textContent = originalButtonText;
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text || 'Failed to estimate calories'); });
+            }
+            return response.json();
+        })
+        .then(estimatedResults => {
+            estimatedResults.forEach((calories, resultIndex) => {
+                const foodItemData = foodData[resultIndex]; // Get the item this result corresponds to
+                // Query for the Nth food-item-input div (1-based index for :nth-child)
+                const specificItemRow = document.querySelector(`#foodItemsContainer .food-item-input:nth-child(${foodItemData.originalIndex + 1})`);
+                if (specificItemRow) {
+                    const caloriesInput = specificItemRow.querySelector(`input[name="foodItems[${foodItemData.originalIndex}].calories"]`);
+                    if (caloriesInput) {
+                        caloriesInput.value = Math.round(calories);
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            estimateButton.disabled = false;
+            estimateButton.textContent = originalButtonText;
+            console.error('Error estimating calories:', error);
+            alert('Error estimating calories: ' + error.message);
+        });
+    }
+
+    // Ensure the "Add Meal" button in the header calls the correct openMealModal
+    document.addEventListener('DOMContentLoaded', function() {
+        // For the "+" button in the "Your Meals" section header
+        const mealsSection = document.querySelector('.meals-section');
+        if (mealsSection) {
+            const addMealButton = mealsSection.querySelector('.add-button');
+            if (addMealButton) {
+                addMealButton.onclick = function(event) {
+                    event.stopPropagation(); // Prevent card click-through if nested
+                    openMealModal(); // Call the standardized openMealModal
+                };
+            }
+        }
+        
+        // Initialize the first food item row when the modal is first defined
+        // (or when openMealModal is called for a new meal, which is better)
+        // If #foodItemsContainer is empty initially, addFoodItem() in openMealModal handles it.
+    });
+</script>
 </body>
 </html>
