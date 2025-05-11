@@ -7,39 +7,13 @@
     <link rel="stylesheet" th:href="@{/styles/main.css}">
     <link rel="stylesheet" th:href="@{/styles/Fitrack.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        .workout-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .action-icon {
-            color: #666;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            opacity: 0.8;
-        }
-
-        .action-icon:hover {
-            transform: scale(1.1);
-            opacity: 1;
-        }
-
-        .edit-icon:hover {
-            color: #4CAF50;
-        }
-
-        .delete-icon:hover {
-            color: #f44336;
-        }
-    </style>
+    <link rel="icon" type="image/x-icon" href="/images/Fitrack.ico">
 </head>
 <body>
     <div class="container">
         <header class="navbar">
             <div class="logo-container">
-                <div class="logo"></div>
+                <img src="/images/Fitrack.png" alt="Fitrack Logo" class="logo" style="background:none;" />
                 <span class="site-name">Fitrack</span>
             </div>
             <div class="user-info">
