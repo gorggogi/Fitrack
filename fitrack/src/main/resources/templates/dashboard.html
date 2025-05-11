@@ -499,6 +499,69 @@
         // (or when openMealModal is called for a new meal, which is better)
         // If #foodItemsContainer is empty initially, addFoodItem() in openMealModal handles it.
     });
+
+    function openWorkoutModal() {
+        document.getElementById('workoutModal').style.display = 'flex';
+        document.getElementById('workoutForm').reset();
+        document.getElementById('modalTitle').textContent = 'Add New Workout';
+        document.getElementById('workoutDetails').style.display = 'none';
+    }
+
+    function closeWorkoutModal() {
+        document.getElementById('workoutModal').style.display = 'none';
+    }
+
+    function estimateBurnedCalories() {
+        const workoutName = document.getElementById('workoutName').value;
+        const duration = document.getElementById('duration').value;
+        const csrfToken = document.querySelector('input[name="_csrf"]').value; // Ensure CSRF token is available
+
+        if (!workoutName || !duration) {
+            alert('Please enter workout name and duration to estimate calories.');
+            return;
+        }
+
+        const estimateButton = document.querySelector('#workoutForm .btn-warning[onclick="estimateBurnedCalories()"]');
+        const originalButtonText = estimateButton.textContent;
+        estimateButton.disabled = true;
+        estimateButton.textContent = 'Estimating...';
+
+        fetch('/workouts/estimate-calories', { // Assuming this is the correct endpoint from previous context
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ workoutName: workoutName, duration: parseFloat(duration) })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { 
+                    throw new Error(text || 'Failed to estimate burned calories. Status: ' + response.status);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.calories !== undefined) {
+                document.getElementById('caloriesBurned').value = Math.round(data.calories);
+            } else {
+                throw new Error('Invalid response format from calorie estimation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error estimating burned calories:', error);
+            alert('Error estimating burned calories: ' + error.message);
+        })
+        .finally(() => {
+            estimateButton.disabled = false;
+            estimateButton.textContent = originalButtonText;
+        });
+    }
+
+    function openModal(element) {
+        // ... existing code ...
+    }
 </script>
 </body>
 </html>
