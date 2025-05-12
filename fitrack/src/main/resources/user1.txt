@@ -16,7 +16,7 @@ VALUES
 (1, 0, NULL, 69.3, 'My weight journey', 'WEIGHT_LOSS', '2025-05-12 21:08:01.000000', 69.3, 'IN_PROGRESS', '2025-06-06 00:00:00.000000', 50, 1);
 
 -- Update user's current weight to match latest measurement
-UPDATE users SET weight = 69.5 WHERE id = 1;
+UPDATE users SET weight = 69.0 WHERE id = 1;
 
 -- Insert body measurements for user 1 (weekly measurements showing weight loss)
 INSERT INTO body_measurement (id, user_id, date_time, weight, notes)
@@ -31,7 +31,7 @@ VALUES
 (8, 1, '2025-04-28 08:00:00', 70.3, 'Week 7 progress - Increased muscle definition'),
 (9, 1, '2025-05-05 08:00:00', 69.8, 'Week 8 progress - Reached weight loss goal'),
 (10, 1, '2025-05-08 08:00:00', 69.5, 'Week 9 progress - Maintaining goal weight and muscle tone'),
-(11, 1, '2025-05-13 08:00:00', 69.3, 'Week 10 progress - Slight decrease due to increased cardio');
+(11, 1, '2025-05-13 08:00:00', 69.0, 'Week 10 progress - Consistent loss');
 
 -- Insert workouts (one per type with repeat days)
 INSERT INTO workout (id, user_id, date_time, workout_name, duration, burned_calories, workout_type)
@@ -197,26 +197,26 @@ VALUES
 (122, 1, 'Running', 30, 200, '2025-05-06 10:00:00', 'CARDIO'),
 (123, 1, 'Core Workout', 30, 150, '2025-05-06 18:00:00', 'STRENGTH'),
 (124, 1, 'Morning Walk', 30, 150, '2025-05-07 07:00:00', 'CARDIO'),
-(125, 1, 'Full Body Workout', 45, 250, '2025-05-07 10:00:00', 'STRENGTH'),
-(126, 1, 'HIIT Circuit Training', 30, 300, '2025-05-07 18:00:00', 'HIIT'),
+(125, 1, 'Full Body Workout', 45, 180, '2025-05-07 10:00:00', 'STRENGTH'),
+(126, 1, 'HIIT Circuit Training', 30, 220, '2025-05-07 18:00:00', 'HIIT'),
 (127, 1, 'Morning Walk', 30, 150, '2025-05-08 07:00:00', 'CARDIO'),
-(128, 1, 'Running', 30, 200, '2025-05-08 10:00:00', 'CARDIO'),
+(128, 1, 'Running', 30, 160, '2025-05-08 10:00:00', 'CARDIO'),
 (129, 1, 'Core Workout', 30, 150, '2025-05-08 18:00:00', 'STRENGTH'),
 
 -- Additional workout logs from May 9 to May 13, 2025
 (130, 1, 'Morning Walk', 30, 150, '2025-05-09 07:00:00', 'CARDIO'),
-(131, 1, 'Full Body Workout', 45, 250, '2025-05-09 10:00:00', 'STRENGTH'),
-(132, 1, 'HIIT Circuit Training', 30, 300, '2025-05-09 18:00:00', 'HIIT'),
+(131, 1, 'Full Body Workout', 45, 180, '2025-05-09 10:00:00', 'STRENGTH'),
+(132, 1, 'HIIT Circuit Training', 30, 220, '2025-05-09 18:00:00', 'HIIT'),
 (133, 1, 'Morning Walk', 30, 150, '2025-05-10 07:00:00', 'CARDIO'),
-(134, 1, 'Running', 30, 200, '2025-05-10 10:00:00', 'CARDIO'),
+(134, 1, 'Running', 30, 160, '2025-05-10 10:00:00', 'CARDIO'),
 (135, 1, 'Core Workout', 30, 150, '2025-05-10 18:00:00', 'STRENGTH'),
 (136, 1, 'Morning Walk', 30, 150, '2025-05-11 07:00:00', 'CARDIO'),
 (137, 1, 'Yoga', 30, 120, '2025-05-11 10:00:00', 'FLEXIBILITY'),
 (138, 1, 'Morning Walk', 30, 150, '2025-05-12 07:00:00', 'CARDIO'),
-(139, 1, 'Full Body Workout', 45, 250, '2025-05-12 10:00:00', 'STRENGTH'),
-(140, 1, 'HIIT Circuit Training', 30, 300, '2025-05-12 18:00:00', 'HIIT'),
+(139, 1, 'Full Body Workout', 45, 180, '2025-05-12 10:00:00', 'STRENGTH'),
+(140, 1, 'HIIT Circuit Training', 30, 220, '2025-05-12 18:00:00', 'HIIT'),
 (141, 1, 'Morning Walk', 30, 150, '2025-05-13 07:00:00', 'CARDIO'),
-(142, 1, 'Running', 30, 200, '2025-05-13 10:00:00', 'CARDIO'),
+(142, 1, 'Running', 30, 160, '2025-05-13 10:00:00', 'CARDIO'),
 (143, 1, 'Core Workout', 30, 150, '2025-05-13 18:00:00', 'STRENGTH');
 
 -- Insert meals for the extended period (sample days)
@@ -722,150 +722,150 @@ VALUES
 (225, 96, 'Almonds', 160, 30, 'g', 6, 6, 14),
 
 -- May 1
-(226, 97, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(226, 97, 'Scrambled Eggs', 350, 2, 'large', 24, 2, 20),
 (227, 97, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
 (228, 97, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
-(229, 98, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(229, 98, 'Turkey Wrap', 470, 1, 'serving', 30, 40, 15),
 (230, 98, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
-(231, 99, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(231, 99, 'Grilled Chicken', 370, 150, 'g', 45, 0, 15),
 (232, 99, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
-(233, 100, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(233, 100, 'Greek Yogurt', 220, 1, 'cup', 15, 8, 5),
 (234, 100, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
 
 -- May 2
-(235, 101, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(235, 101, 'Protein Pancakes', 420, 2, 'medium', 20, 40, 10),
 (236, 101, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
 (237, 101, 'Banana', 105, 1, 'medium', 1, 27, 0),
-(238, 102, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(238, 102, 'Chicken Caesar Salad', 520, 1, 'serving', 35, 20, 25),
 (239, 102, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
-(240, 103, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(240, 103, 'Baked Fish', 370, 150, 'g', 40, 0, 15),
 (241, 103, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
-(242, 104, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(242, 104, 'Protein Bar', 270, 1, 'bar', 20, 25, 5),
 (243, 104, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
 
 -- May 3
-(244, 105, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(244, 105, 'Oatmeal with Protein', 420, 1, 'cup', 15, 54, 8),
 (245, 105, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
 (246, 105, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
-(247, 106, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(247, 106, 'Grilled Chicken Salad', 470, 1, 'serving', 35, 15, 20),
 (248, 106, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
-(249, 107, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(249, 107, 'Baked Salmon', 420, 150, 'g', 40, 0, 20),
 (250, 107, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
 (251, 107, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
-(252, 108, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(252, 108, 'Apple', 165, 1, 'medium', 0, 25, 0),
 (253, 108, 'Almonds', 160, 30, 'g', 6, 6, 14),
 
 -- May 4
-(254, 109, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(254, 109, 'Scrambled Eggs', 350, 2, 'large', 24, 2, 20),
 (255, 109, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
 (256, 109, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
-(257, 110, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(257, 110, 'Turkey Wrap', 470, 1, 'serving', 30, 40, 15),
 (258, 110, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
-(259, 111, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(259, 111, 'Grilled Chicken', 370, 150, 'g', 45, 0, 15),
 (260, 111, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
-(261, 112, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(261, 112, 'Greek Yogurt', 220, 1, 'cup', 15, 8, 5),
 (262, 112, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
 
 -- May 5
-(263, 113, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(263, 113, 'Protein Pancakes', 420, 2, 'medium', 20, 40, 10),
 (264, 113, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
 (265, 113, 'Banana', 105, 1, 'medium', 1, 27, 0),
-(266, 114, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(266, 114, 'Chicken Caesar Salad', 520, 1, 'serving', 35, 20, 25),
 (267, 114, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
-(268, 115, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(268, 115, 'Baked Fish', 370, 150, 'g', 40, 0, 15),
 (269, 115, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
-(270, 116, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(270, 116, 'Protein Bar', 270, 1, 'bar', 20, 25, 5),
 (271, 116, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
 
 -- May 6
-(272, 117, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(272, 117, 'Oatmeal with Protein', 420, 1, 'cup', 15, 54, 8),
 (273, 117, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
 (274, 117, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
-(275, 118, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(275, 118, 'Grilled Chicken Salad', 470, 1, 'serving', 35, 15, 20),
 (276, 118, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
-(277, 119, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(277, 119, 'Baked Salmon', 420, 150, 'g', 40, 0, 20),
 (278, 119, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
 (279, 119, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
-(280, 120, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(280, 120, 'Apple', 165, 1, 'medium', 0, 25, 0),
 (281, 120, 'Almonds', 160, 30, 'g', 6, 6, 14),
 
 -- May 7
-(282, 121, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(282, 121, 'Scrambled Eggs', 350, 2, 'large', 24, 2, 20),
 (283, 121, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
 (284, 121, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
-(285, 122, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(285, 122, 'Turkey Wrap', 470, 1, 'serving', 30, 40, 15),
 (286, 122, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
-(287, 123, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(287, 123, 'Grilled Chicken', 370, 150, 'g', 45, 0, 15),
 (288, 123, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
-(289, 124, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(289, 124, 'Greek Yogurt', 220, 1, 'cup', 15, 8, 5),
 (290, 124, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
 
 -- May 8
-(291, 125, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(291, 125, 'Protein Pancakes', 420, 2, 'medium', 20, 40, 10),
 (292, 125, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
 (293, 125, 'Banana', 105, 1, 'medium', 1, 27, 0),
-(294, 126, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(294, 126, 'Chicken Caesar Salad', 520, 1, 'serving', 35, 20, 25),
 (295, 126, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
-(296, 127, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(296, 127, 'Baked Fish', 370, 150, 'g', 40, 0, 15),
 (297, 127, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
-(298, 128, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(298, 128, 'Protein Bar', 270, 1, 'bar', 20, 25, 5),
 (299, 128, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
 
 -- May 9
-(300, 129, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(300, 129, 'Oatmeal with Protein', 420, 1, 'cup', 15, 54, 8),
 (301, 129, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
 (302, 129, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
-(303, 130, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(303, 130, 'Grilled Chicken Salad', 470, 1, 'serving', 35, 15, 20),
 (304, 130, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
-(305, 131, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(305, 131, 'Baked Salmon', 420, 150, 'g', 40, 0, 20),
 (306, 131, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
 (307, 131, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
-(308, 132, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(308, 132, 'Apple', 165, 1, 'medium', 0, 25, 0),
 (309, 132, 'Almonds', 160, 30, 'g', 6, 6, 14),
 
 -- May 10
-(310, 133, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(310, 133, 'Scrambled Eggs', 350, 2, 'large', 24, 2, 20),
 (311, 133, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
 (312, 133, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
-(313, 134, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(313, 134, 'Turkey Wrap', 470, 1, 'serving', 30, 40, 15),
 (314, 134, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
-(315, 135, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(315, 135, 'Grilled Chicken', 370, 150, 'g', 45, 0, 15),
 (316, 135, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
-(317, 136, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(317, 136, 'Greek Yogurt', 220, 1, 'cup', 15, 8, 5),
 (318, 136, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
 
 -- May 11
-(319, 137, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(319, 137, 'Protein Pancakes', 420, 2, 'medium', 20, 40, 10),
 (320, 137, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
 (321, 137, 'Banana', 105, 1, 'medium', 1, 27, 0),
-(322, 138, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(322, 138, 'Chicken Caesar Salad', 520, 1, 'serving', 35, 20, 25),
 (323, 138, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
-(324, 139, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(324, 139, 'Baked Fish', 370, 150, 'g', 40, 0, 15),
 (325, 139, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
-(326, 140, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(326, 140, 'Protein Bar', 270, 1, 'bar', 20, 25, 5),
 (327, 140, 'Almond Milk', 100, 1, 'cup', 1, 2, 9),
 
 -- May 12
-(328, 141, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(328, 141, 'Oatmeal with Protein', 420, 1, 'cup', 15, 54, 8),
 (329, 141, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
 (330, 141, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
-(331, 142, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(331, 142, 'Grilled Chicken Salad', 470, 1, 'serving', 35, 15, 20),
 (332, 142, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
-(333, 143, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(333, 143, 'Baked Salmon', 420, 150, 'g', 40, 0, 20),
 (334, 143, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
 (335, 143, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
-(336, 144, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(336, 144, 'Apple', 165, 1, 'medium', 0, 25, 0),
 (337, 144, 'Almonds', 160, 30, 'g', 6, 6, 14),
 
 -- May 13
-(338, 145, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(338, 145, 'Scrambled Eggs', 350, 2, 'large', 24, 2, 20),
 (339, 145, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
 (340, 145, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
-(341, 146, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(341, 146, 'Turkey Wrap', 470, 1, 'serving', 30, 40, 15),
 (342, 146, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
-(343, 147, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(343, 147, 'Grilled Chicken', 370, 150, 'g', 45, 0, 15),
 (344, 147, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
-(345, 148, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(345, 148, 'Greek Yogurt', 220, 1, 'cup', 15, 8, 5),
 (346, 148, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0);
 
 
