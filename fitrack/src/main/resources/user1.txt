@@ -7,7 +7,13 @@ TRUNCATE TABLE workout_log;
 TRUNCATE TABLE meal;
 TRUNCATE TABLE meal_food_item;
 TRUNCATE TABLE goals;
+DELETE FROM users WHERE id = 8;
+DELETE FROM verification_token WHERE id = 8; 
 SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO goals (id, archived, completion_date, current_value, description, goal_type, start_date, start_value, status, target_date, target_value, user_id)
+VALUES
+(1, 0, NULL, 69.3, 'My weight journey', 'WEIGHT_LOSS', '2025-05-12 21:08:01.000000', 69.3, 'IN_PROGRESS', '2025-06-06 00:00:00.000000', 50, 1);
 
 -- Update user's current weight to match latest measurement
 UPDATE users SET weight = 69.5 WHERE id = 1;
@@ -211,7 +217,7 @@ VALUES
 (140, 1, 'HIIT Circuit Training', 30, 300, '2025-05-12 18:00:00', 'HIIT'),
 (141, 1, 'Morning Walk', 30, 150, '2025-05-13 07:00:00', 'CARDIO'),
 (142, 1, 'Running', 30, 200, '2025-05-13 10:00:00', 'CARDIO'),
-(143, 1, 'Core Workout', 30, 150, '2025-05-13 18:00:00', 'STRENGTH'),
+(143, 1, 'Core Workout', 30, 150, '2025-05-13 18:00:00', 'STRENGTH');
 
 -- Insert meals for the extended period (sample days)
 INSERT INTO meal (id, user_id, date_time, meal_name)
@@ -861,4 +867,6 @@ VALUES
 (344, 147, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
 (345, 148, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
 (346, 148, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0);
+
+
 

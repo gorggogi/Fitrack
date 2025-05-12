@@ -1,0 +1,874 @@
+    -- Clear existing data *specifically for user_id 9*
+    SET SQL_SAFE_UPDATES = 0; -- Disable safe updates temporarily
+    SET FOREIGN_KEY_CHECKS = 0; -- Temporarily disable checks to simplify deletion order
+    DELETE FROM verification_token WHERE user_id = 9; -- Assuming user_id field exists
+    DELETE FROM goals WHERE user_id = 9;
+    DELETE FROM body_measurement WHERE user_id = 9;
+    DELETE FROM workout_log WHERE user_id = 9;
+    DELETE FROM workout_repeat_days WHERE workout_id IN (SELECT id FROM workout WHERE user_id = 9); -- Delete dependent records first
+    DELETE FROM workout WHERE user_id = 9;
+    DELETE FROM meal_food_item WHERE meal_id IN (SELECT id FROM meal WHERE user_id = 9); -- Delete dependent records first
+    DELETE FROM meal WHERE user_id = 9;
+    -- DO NOT DELETE FROM users table
+SET FOREIGN_KEY_CHECKS = 1;
+    SET SQL_SAFE_UPDATES = 1; -- Re-enable safe updates
+
+INSERT INTO goals (id, archived, completion_date, current_value, description, goal_type, start_date, start_value, status, target_date, target_value, user_id)
+VALUES
+    (2, 0, NULL, 68.0, 'My weight gain journey', 'WEIGHT_GAIN', '2025-03-10 08:00:00.000000', 60.0, 'IN_PROGRESS', '2025-06-06 00:00:00.000000', 70.0, 9); -- Renumbered ID from 1 to 2
+
+-- Update user's current weight to match latest measurement
+    UPDATE users SET weight = 68.0 WHERE id = 9;
+
+    -- Insert body measurements for user 9 (weekly measurements showing weight gain) - Renumbered IDs from 1-11 to 12-22
+INSERT INTO body_measurement (id, user_id, date_time, weight, notes)
+VALUES 
+    (12, 9, '2025-03-10 08:00:00', 60.0, 'Starting weight - Beginning weight gain journey'),
+    (13, 9, '2025-03-17 08:00:00', 60.8, 'Week 1 progress - Increasing calorie intake'),
+    (14, 9, '2025-03-24 08:00:00', 61.5, 'Week 2 progress - Added protein shakes'),
+    (15, 9, '2025-03-31 08:00:00', 62.3, 'Week 3 progress - Consistent with lifting'),
+    (16, 9, '2025-04-07 08:00:00', 63.1, 'Week 4 progress - Feeling stronger'),
+    (17, 9, '2025-04-14 08:00:00', 63.9, 'Week 5 progress - Increased meal frequency'),
+    (18, 9, '2025-04-21 08:00:00', 64.7, 'Week 6 progress - Maintaining good habits'),
+    (19, 9, '2025-04-28 08:00:00', 65.5, 'Week 7 progress - Seeing muscle growth'),
+    (20, 9, '2025-05-05 08:00:00', 66.3, 'Week 8 progress - Getting closer to goal'),
+    (21, 9, '2025-05-08 08:00:00', 67.1, 'Week 9 progress - Focused on surplus calories'),
+    (22, 9, '2025-05-13 08:00:00', 68.0, 'Week 10 progress - Steady gain, feeling good');
+
+    -- Insert workouts (one per type with repeat days) - Renumbered IDs from 1-6 to 7-12
+INSERT INTO workout (id, user_id, date_time, workout_name, duration, burned_calories, workout_type)
+VALUES
+    (7, 9, '2025-03-10 07:00:00', 'Morning Walk', 30, 150, 'CARDIO'),
+    (8, 9, '2025-03-10 10:00:00', 'Full Body Workout', 45, 350, 'STRENGTH'), -- Increased calories burned slightly for strength
+    (9, 9, '2025-03-10 18:00:00', 'Yoga', 30, 120, 'FLEXIBILITY'),
+    (10, 9, '2025-03-10 10:00:00', 'Running', 30, 200, 'CARDIO'),
+    (11, 9, '2025-03-10 18:00:00', 'Core Workout', 30, 200, 'STRENGTH'), -- Increased calories burned slightly
+    (12, 9, '2025-03-10 10:00:00', 'HIIT Circuit Training', 30, 300, 'HIIT');
+
+    -- Insert workout repeat days - Updated workout_id references
+-- Morning Walk (Daily)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+    (7, 'Daily');
+
+-- Full Body Workout (Mon, Wed, Fri)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+    (8, 'Monday'), (8, 'Wednesday'), (8, 'Friday');
+
+-- Yoga (Sat, Sun)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+    (9, 'Saturday'), (9, 'Sunday');
+
+-- Cardio (Tue, Thu)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+    (10, 'Tuesday'), (10, 'Thursday');
+
+-- Core Workout (Tue, Thu)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+    (11, 'Tuesday'), (11, 'Thursday');
+
+-- HIIT (Mon, Wed)
+INSERT INTO workout_repeat_days (workout_id, repeat_day) VALUES
+    (12, 'Monday'), (12, 'Wednesday');
+
+    -- Insert workout logs (sample logs for the first week) - Renumbered IDs from 1-143 to 144-286
+INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at, workout_type)
+VALUES
+    (144, 9, 'Morning Walk', 30, 150, '2025-03-10 07:00:00', 'CARDIO'),
+    (145, 9, 'Full Body Workout', 45, 350, '2025-03-10 10:00:00', 'STRENGTH'),
+    (146, 9, 'Yoga', 30, 120, '2025-03-10 18:00:00', 'FLEXIBILITY'),
+    (147, 9, 'Running', 30, 200, '2025-03-11 10:00:00', 'CARDIO'),
+    (148, 9, 'Core Workout', 30, 200, '2025-03-11 18:00:00', 'STRENGTH'),
+    (149, 9, 'HIIT', 30, 300, '2025-03-12 10:00:00', 'HIIT'),
+    (150, 9, 'Morning Walk', 30, 150, '2025-03-13 07:00:00', 'CARDIO'),
+    (151, 9, 'Full Body Workout', 45, 350, '2025-03-13 10:00:00', 'STRENGTH'),
+    (152, 9, 'Morning Walk', 30, 150, '2025-03-14 07:00:00', 'CARDIO'),
+    (153, 9, 'Running', 30, 200, '2025-03-15 10:00:00', 'CARDIO'),
+    (154, 9, 'Yoga', 30, 120, '2025-03-15 18:00:00', 'FLEXIBILITY'),
+
+-- Additional workout logs from March 16 to May 8, 2025
+    (155, 9, 'Morning Walk', 30, 150, '2025-03-16 07:00:00', 'CARDIO'),
+    (156, 9, 'Morning Walk', 30, 150, '2025-03-17 07:00:00', 'CARDIO'),
+    (157, 9, 'Full Body Workout', 45, 350, '2025-03-17 10:00:00', 'STRENGTH'),
+    (158, 9, 'HIIT Circuit Training', 30, 300, '2025-03-17 18:00:00', 'HIIT'),
+    (159, 9, 'Morning Walk', 30, 150, '2025-03-18 07:00:00', 'CARDIO'),
+    (160, 9, 'Running', 30, 200, '2025-03-18 10:00:00', 'CARDIO'),
+    (161, 9, 'Core Workout', 30, 200, '2025-03-18 18:00:00', 'STRENGTH'),
+    (162, 9, 'Morning Walk', 30, 150, '2025-03-19 07:00:00', 'CARDIO'),
+    (163, 9, 'Full Body Workout', 45, 350, '2025-03-19 10:00:00', 'STRENGTH'),
+    (164, 9, 'HIIT Circuit Training', 30, 300, '2025-03-19 18:00:00', 'HIIT'),
+    (165, 9, 'Morning Walk', 30, 150, '2025-03-20 07:00:00', 'CARDIO'),
+    (166, 9, 'Running', 30, 200, '2025-03-20 10:00:00', 'CARDIO'),
+    (167, 9, 'Core Workout', 30, 200, '2025-03-20 18:00:00', 'STRENGTH'),
+    (168, 9, 'Morning Walk', 30, 150, '2025-03-21 07:00:00', 'CARDIO'),
+    (169, 9, 'Yoga', 30, 120, '2025-03-22 10:00:00', 'FLEXIBILITY'),
+    (170, 9, 'Morning Walk', 30, 150, '2025-03-23 07:00:00', 'CARDIO'),
+    (171, 9, 'Morning Walk', 30, 150, '2025-03-24 07:00:00', 'CARDIO'),
+    (172, 9, 'Full Body Workout', 45, 350, '2025-03-24 10:00:00', 'STRENGTH'),
+    (173, 9, 'HIIT Circuit Training', 30, 300, '2025-03-24 18:00:00', 'HIIT'),
+    (174, 9, 'Morning Walk', 30, 150, '2025-03-25 07:00:00', 'CARDIO'),
+    (175, 9, 'Running', 30, 200, '2025-03-25 10:00:00', 'CARDIO'),
+    (176, 9, 'Core Workout', 30, 200, '2025-03-25 18:00:00', 'STRENGTH'),
+    (177, 9, 'Morning Walk', 30, 150, '2025-03-26 07:00:00', 'CARDIO'),
+    (178, 9, 'Full Body Workout', 45, 350, '2025-03-26 10:00:00', 'STRENGTH'),
+    (179, 9, 'HIIT Circuit Training', 30, 300, '2025-03-26 18:00:00', 'HIIT'),
+    (180, 9, 'Morning Walk', 30, 150, '2025-03-27 07:00:00', 'CARDIO'),
+    (181, 9, 'Running', 30, 200, '2025-03-27 10:00:00', 'CARDIO'),
+    (182, 9, 'Core Workout', 30, 200, '2025-03-27 18:00:00', 'STRENGTH'),
+    (183, 9, 'Morning Walk', 30, 150, '2025-03-28 07:00:00', 'CARDIO'),
+    (184, 9, 'Yoga', 30, 120, '2025-03-29 10:00:00', 'FLEXIBILITY'),
+    (185, 9, 'Morning Walk', 30, 150, '2025-03-30 07:00:00', 'CARDIO'),
+    (186, 9, 'Morning Walk', 30, 150, '2025-03-31 07:00:00', 'CARDIO'),
+    (187, 9, 'Full Body Workout', 45, 350, '2025-03-31 10:00:00', 'STRENGTH'),
+    (188, 9, 'HIIT Circuit Training', 30, 300, '2025-03-31 18:00:00', 'HIIT'),
+    (189, 9, 'Morning Walk', 30, 150, '2025-04-01 07:00:00', 'CARDIO'),
+    (190, 9, 'Running', 30, 200, '2025-04-01 10:00:00', 'CARDIO'),
+    (191, 9, 'Core Workout', 30, 200, '2025-04-01 18:00:00', 'STRENGTH'),
+    (192, 9, 'Morning Walk', 30, 150, '2025-04-02 07:00:00', 'CARDIO'),
+    (193, 9, 'Full Body Workout', 45, 350, '2025-04-02 10:00:00', 'STRENGTH'),
+    (194, 9, 'HIIT Circuit Training', 30, 300, '2025-04-02 18:00:00', 'HIIT'),
+    (195, 9, 'Morning Walk', 30, 150, '2025-04-03 07:00:00', 'CARDIO'),
+    (196, 9, 'Running', 30, 200, '2025-04-03 10:00:00', 'CARDIO'),
+    (197, 9, 'Core Workout', 30, 200, '2025-04-03 18:00:00', 'STRENGTH'),
+    (198, 9, 'Morning Walk', 30, 150, '2025-04-04 07:00:00', 'CARDIO'),
+    (199, 9, 'Yoga', 30, 120, '2025-04-05 10:00:00', 'FLEXIBILITY'),
+    (200, 9, 'Morning Walk', 30, 150, '2025-04-06 07:00:00', 'CARDIO'),
+    (201, 9, 'Morning Walk', 30, 150, '2025-04-07 07:00:00', 'CARDIO'),
+    (202, 9, 'Full Body Workout', 45, 350, '2025-04-07 10:00:00', 'STRENGTH'),
+    (203, 9, 'HIIT Circuit Training', 30, 300, '2025-04-07 18:00:00', 'HIIT'),
+    (204, 9, 'Morning Walk', 30, 150, '2025-04-08 07:00:00', 'CARDIO'),
+    (205, 9, 'Running', 30, 200, '2025-04-08 10:00:00', 'CARDIO'),
+    (206, 9, 'Core Workout', 30, 200, '2025-04-08 18:00:00', 'STRENGTH'),
+    (207, 9, 'Morning Walk', 30, 150, '2025-04-09 07:00:00', 'CARDIO'),
+    (208, 9, 'Full Body Workout', 45, 350, '2025-04-09 10:00:00', 'STRENGTH'),
+    (209, 9, 'HIIT Circuit Training', 30, 300, '2025-04-09 18:00:00', 'HIIT'),
+    (210, 9, 'Morning Walk', 30, 150, '2025-04-10 07:00:00', 'CARDIO'),
+    (211, 9, 'Running', 30, 200, '2025-04-10 10:00:00', 'CARDIO'),
+    (212, 9, 'Core Workout', 30, 200, '2025-04-10 18:00:00', 'STRENGTH'),
+    (213, 9, 'Morning Walk', 30, 150, '2025-04-11 07:00:00', 'CARDIO'),
+    (214, 9, 'Yoga', 30, 120, '2025-04-12 10:00:00', 'FLEXIBILITY'),
+    (215, 9, 'Morning Walk', 30, 150, '2025-04-13 07:00:00', 'CARDIO'),
+    (216, 9, 'Morning Walk', 30, 150, '2025-04-14 07:00:00', 'CARDIO'),
+    (217, 9, 'Full Body Workout', 45, 350, '2025-04-14 10:00:00', 'STRENGTH'),
+    (218, 9, 'HIIT Circuit Training', 30, 300, '2025-04-14 18:00:00', 'HIIT'),
+    (219, 9, 'Morning Walk', 30, 150, '2025-04-15 07:00:00', 'CARDIO'),
+    (220, 9, 'Running', 30, 200, '2025-04-15 10:00:00', 'CARDIO'),
+    (221, 9, 'Core Workout', 30, 200, '2025-04-15 18:00:00', 'STRENGTH'),
+    (222, 9, 'Morning Walk', 30, 150, '2025-04-16 07:00:00', 'CARDIO'),
+    (223, 9, 'Full Body Workout', 45, 350, '2025-04-16 10:00:00', 'STRENGTH'),
+    (224, 9, 'HIIT Circuit Training', 30, 300, '2025-04-16 18:00:00', 'HIIT'),
+    (225, 9, 'Morning Walk', 30, 150, '2025-04-17 07:00:00', 'CARDIO'),
+    (226, 9, 'Running', 30, 200, '2025-04-17 10:00:00', 'CARDIO'),
+    (227, 9, 'Core Workout', 30, 200, '2025-04-17 18:00:00', 'STRENGTH'),
+    (228, 9, 'Morning Walk', 30, 150, '2025-04-18 07:00:00', 'CARDIO'),
+    (229, 9, 'Yoga', 30, 120, '2025-04-19 10:00:00', 'FLEXIBILITY'),
+    (230, 9, 'Morning Walk', 30, 150, '2025-04-20 07:00:00', 'CARDIO'),
+    (231, 9, 'Morning Walk', 30, 150, '2025-04-21 07:00:00', 'CARDIO'),
+    (232, 9, 'Full Body Workout', 45, 350, '2025-04-21 10:00:00', 'STRENGTH'),
+    (233, 9, 'HIIT Circuit Training', 30, 300, '2025-04-21 18:00:00', 'HIIT'),
+    (234, 9, 'Morning Walk', 30, 150, '2025-04-22 07:00:00', 'CARDIO'),
+    (235, 9, 'Running', 30, 200, '2025-04-22 10:00:00', 'CARDIO'),
+    (236, 9, 'Core Workout', 30, 200, '2025-04-22 18:00:00', 'STRENGTH'),
+    (237, 9, 'Morning Walk', 30, 150, '2025-04-23 07:00:00', 'CARDIO'),
+    (238, 9, 'Full Body Workout', 45, 350, '2025-04-23 10:00:00', 'STRENGTH'),
+    (239, 9, 'HIIT Circuit Training', 30, 300, '2025-04-23 18:00:00', 'HIIT'),
+    (240, 9, 'Morning Walk', 30, 150, '2025-04-24 07:00:00', 'CARDIO'),
+    (241, 9, 'Running', 30, 200, '2025-04-24 10:00:00', 'CARDIO'),
+    (242, 9, 'Core Workout', 30, 200, '2025-04-24 18:00:00', 'STRENGTH'),
+    (243, 9, 'Morning Walk', 30, 150, '2025-04-25 07:00:00', 'CARDIO'),
+    (244, 9, 'Yoga', 30, 120, '2025-04-26 10:00:00', 'FLEXIBILITY'),
+    (245, 9, 'Morning Walk', 30, 150, '2025-04-27 07:00:00', 'CARDIO'),
+    (246, 9, 'Morning Walk', 30, 150, '2025-04-28 07:00:00', 'CARDIO'),
+    (247, 9, 'Full Body Workout', 45, 350, '2025-04-28 10:00:00', 'STRENGTH'),
+    (248, 9, 'HIIT Circuit Training', 30, 300, '2025-04-28 18:00:00', 'HIIT'),
+    (249, 9, 'Morning Walk', 30, 150, '2025-04-29 07:00:00', 'CARDIO'),
+    (250, 9, 'Running', 30, 200, '2025-04-29 10:00:00', 'CARDIO'),
+    (251, 9, 'Core Workout', 30, 200, '2025-04-29 18:00:00', 'STRENGTH'),
+    (252, 9, 'Morning Walk', 30, 150, '2025-04-30 07:00:00', 'CARDIO'),
+    (253, 9, 'Full Body Workout', 45, 350, '2025-04-30 10:00:00', 'STRENGTH'),
+    (254, 9, 'HIIT Circuit Training', 30, 300, '2025-04-30 18:00:00', 'HIIT'),
+    (255, 9, 'Morning Walk', 30, 150, '2025-05-01 07:00:00', 'CARDIO'),
+    (256, 9, 'Running', 30, 200, '2025-05-01 10:00:00', 'CARDIO'),
+    (257, 9, 'Core Workout', 30, 200, '2025-05-01 18:00:00', 'STRENGTH'),
+    (258, 9, 'Morning Walk', 30, 150, '2025-05-02 07:00:00', 'CARDIO'),
+    (259, 9, 'Yoga', 30, 120, '2025-05-03 10:00:00', 'FLEXIBILITY'),
+    (260, 9, 'Morning Walk', 30, 150, '2025-05-04 07:00:00', 'CARDIO'),
+    (261, 9, 'Morning Walk', 30, 150, '2025-05-05 07:00:00', 'CARDIO'),
+    (262, 9, 'Full Body Workout', 45, 350, '2025-05-05 10:00:00', 'STRENGTH'),
+    (263, 9, 'HIIT Circuit Training', 30, 300, '2025-05-05 18:00:00', 'HIIT'),
+    (264, 9, 'Morning Walk', 30, 150, '2025-05-06 07:00:00', 'CARDIO'),
+    (265, 9, 'Running', 30, 200, '2025-05-06 10:00:00', 'CARDIO'),
+    (266, 9, 'Core Workout', 30, 200, '2025-05-06 18:00:00', 'STRENGTH'),
+    (267, 9, 'Morning Walk', 30, 150, '2025-05-07 07:00:00', 'CARDIO'),
+    (268, 9, 'Full Body Workout', 45, 350, '2025-05-07 10:00:00', 'STRENGTH'),
+    (269, 9, 'HIIT Circuit Training', 30, 300, '2025-05-07 18:00:00', 'HIIT'),
+    (270, 9, 'Morning Walk', 30, 150, '2025-05-08 07:00:00', 'CARDIO'),
+    (271, 9, 'Running', 30, 200, '2025-05-08 10:00:00', 'CARDIO'),
+    (272, 9, 'Core Workout', 30, 200, '2025-05-08 18:00:00', 'STRENGTH'),
+
+-- Additional workout logs from May 9 to May 13, 2025
+    (273, 9, 'Morning Walk', 30, 150, '2025-05-09 07:00:00', 'CARDIO'),
+    (274, 9, 'Full Body Workout', 45, 350, '2025-05-09 10:00:00', 'STRENGTH'),
+    (275, 9, 'HIIT Circuit Training', 30, 300, '2025-05-09 18:00:00', 'HIIT'),
+    (276, 9, 'Morning Walk', 30, 150, '2025-05-10 07:00:00', 'CARDIO'),
+    (277, 9, 'Running', 30, 200, '2025-05-10 10:00:00', 'CARDIO'),
+    (278, 9, 'Core Workout', 30, 200, '2025-05-10 18:00:00', 'STRENGTH'),
+    (279, 9, 'Morning Walk', 30, 150, '2025-05-11 07:00:00', 'CARDIO'),
+    (280, 9, 'Yoga', 30, 120, '2025-05-11 10:00:00', 'FLEXIBILITY'),
+    (281, 9, 'Morning Walk', 30, 150, '2025-05-12 07:00:00', 'CARDIO'),
+    (282, 9, 'Full Body Workout', 45, 350, '2025-05-12 10:00:00', 'STRENGTH'),
+    (283, 9, 'HIIT Circuit Training', 30, 300, '2025-05-12 18:00:00', 'HIIT'),
+    (284, 9, 'Morning Walk', 30, 150, '2025-05-13 07:00:00', 'CARDIO'),
+    (285, 9, 'Running', 30, 200, '2025-05-13 10:00:00', 'CARDIO'),
+    (286, 9, 'Core Workout', 30, 200, '2025-05-13 18:00:00', 'STRENGTH');
+
+    -- Insert meals for the extended period (sample days) - Renumbered IDs by adding offset 148
+INSERT INTO meal (id, user_id, date_time, meal_name)
+VALUES
+
+-- Sample day 3 (April 7)
+    (157, 9, '2025-04-07 08:00:00', 'Breakfast'), -- old id 9 + 148 = 157
+    (158, 9, '2025-04-07 12:00:00', 'Lunch'), -- old id 10 + 148 = 158
+    (159, 9, '2025-04-07 18:00:00', 'Dinner'), -- old id 11 + 148 = 159
+    (160, 9, '2025-04-07 21:00:00', 'Snack'), -- old id 12 + 148 = 160
+
+-- Sample day 2 (April 8)
+    (153, 9, '2025-04-08 08:00:00', 'Breakfast'), -- old id 5 + 148 = 153
+    (154, 9, '2025-04-08 12:00:00', 'Lunch'), -- old id 6 + 148 = 154
+    (155, 9, '2025-04-08 18:00:00', 'Dinner'), -- old id 7 + 148 = 155
+    (156, 9, '2025-04-08 21:00:00', 'Snack'), -- old id 8 + 148 = 156
+
+-- Sample day 1 (April 9)
+    (149, 9, '2025-04-09 08:00:00', 'Breakfast'), -- old id 1 + 148 = 149
+    (150, 9, '2025-04-09 12:00:00', 'Lunch'), -- old id 2 + 148 = 150
+    (151, 9, '2025-04-09 18:00:00', 'Dinner'), -- old id 3 + 148 = 151
+    (152, 9, '2025-04-09 21:00:00', 'Snack'), -- old id 4 + 148 = 152
+
+-- April 10
+    (173, 9, '2025-04-10 08:00:00', 'Breakfast'), -- old id 25 + 148 = 173
+    (174, 9, '2025-04-10 12:00:00', 'Lunch'), -- old id 26 + 148 = 174
+    (175, 9, '2025-04-10 18:00:00', 'Dinner'), -- old id 27 + 148 = 175
+    (176, 9, '2025-04-10 21:00:00', 'Snack'), -- old id 28 + 148 = 176
+
+-- April 11
+    (177, 9, '2025-04-11 08:00:00', 'Breakfast'), -- old id 29 + 148 = 177
+    (178, 9, '2025-04-11 12:00:00', 'Lunch'), -- old id 30 + 148 = 178
+    (179, 9, '2025-04-11 18:00:00', 'Dinner'), -- old id 31 + 148 = 179
+    (180, 9, '2025-04-11 21:00:00', 'Snack'), -- old id 32 + 148 = 180
+
+-- April 12
+    (181, 9, '2025-04-12 08:00:00', 'Breakfast'), -- old id 33 + 148 = 181
+    (182, 9, '2025-04-12 12:00:00', 'Lunch'), -- old id 34 + 148 = 182
+    (183, 9, '2025-04-12 18:00:00', 'Dinner'), -- old id 35 + 148 = 183
+    (184, 9, '2025-04-12 21:00:00', 'Snack'), -- old id 36 + 148 = 184
+
+-- April 13
+    (185, 9, '2025-04-13 08:00:00', 'Breakfast'), -- old id 37 + 148 = 185
+    (186, 9, '2025-04-13 12:00:00', 'Lunch'), -- old id 38 + 148 = 186
+    (187, 9, '2025-04-13 18:00:00', 'Dinner'), -- old id 39 + 148 = 187
+    (188, 9, '2025-04-13 21:00:00', 'Snack'), -- old id 40 + 148 = 188
+
+-- April 14
+    (189, 9, '2025-04-14 08:00:00', 'Breakfast'), -- old id 41 + 148 = 189
+    (190, 9, '2025-04-14 12:00:00', 'Lunch'), -- old id 42 + 148 = 190
+    (191, 9, '2025-04-14 18:00:00', 'Dinner'), -- old id 43 + 148 = 191
+    (192, 9, '2025-04-14 21:00:00', 'Snack'), -- old id 44 + 148 = 192
+
+-- April 15
+    (193, 9, '2025-04-15 08:00:00', 'Breakfast'), -- old id 45 + 148 = 193
+    (194, 9, '2025-04-15 12:00:00', 'Lunch'), -- old id 46 + 148 = 194
+    (195, 9, '2025-04-15 18:00:00', 'Dinner'), -- old id 47 + 148 = 195
+    (196, 9, '2025-04-15 21:00:00', 'Snack'), -- old id 48 + 148 = 196
+
+-- April 16
+    (197, 9, '2025-04-16 08:00:00', 'Breakfast'), -- old id 49 + 148 = 197
+    (198, 9, '2025-04-16 12:00:00', 'Lunch'), -- old id 50 + 148 = 198
+    (199, 9, '2025-04-16 18:00:00', 'Dinner'), -- old id 51 + 148 = 199
+    (200, 9, '2025-04-16 21:00:00', 'Snack'), -- old id 52 + 148 = 200
+
+-- April 17
+    (201, 9, '2025-04-17 08:00:00', 'Breakfast'), -- old id 53 + 148 = 201
+    (202, 9, '2025-04-17 12:00:00', 'Lunch'), -- old id 54 + 148 = 202
+    (203, 9, '2025-04-17 18:00:00', 'Dinner'), -- old id 55 + 148 = 203
+    (204, 9, '2025-04-17 21:00:00', 'Snack'), -- old id 56 + 148 = 204
+
+-- April 18
+    (205, 9, '2025-04-18 08:00:00', 'Breakfast'), -- old id 57 + 148 = 205
+    (206, 9, '2025-04-18 12:00:00', 'Lunch'), -- old id 58 + 148 = 206
+    (207, 9, '2025-04-18 18:00:00', 'Dinner'), -- old id 59 + 148 = 207
+    (208, 9, '2025-04-18 21:00:00', 'Snack'), -- old id 60 + 148 = 208
+
+-- April 19
+    (209, 9, '2025-04-19 08:00:00', 'Breakfast'), -- old id 61 + 148 = 209
+    (210, 9, '2025-04-19 12:00:00', 'Lunch'), -- old id 62 + 148 = 210
+    (211, 9, '2025-04-19 18:00:00', 'Dinner'), -- old id 63 + 148 = 211
+    (212, 9, '2025-04-19 21:00:00', 'Snack'), -- old id 64 + 148 = 212
+
+-- April 20
+    (213, 9, '2025-04-20 08:00:00', 'Breakfast'), -- old id 65 + 148 = 213
+    (214, 9, '2025-04-20 12:00:00', 'Lunch'), -- old id 66 + 148 = 214
+    (215, 9, '2025-04-20 18:00:00', 'Dinner'), -- old id 67 + 148 = 215
+    (216, 9, '2025-04-20 21:00:00', 'Snack'), -- old id 68 + 148 = 216
+
+-- Sample day 6 (April 21)
+    (169, 9, '2025-04-21 08:00:00', 'Breakfast'), -- old id 21 + 148 = 169
+    (170, 9, '2025-04-21 12:00:00', 'Lunch'), -- old id 22 + 148 = 170
+    (171, 9, '2025-04-21 18:00:00', 'Dinner'), -- old id 23 + 148 = 171
+    (172, 9, '2025-04-21 21:00:00', 'Snack'), -- old id 24 + 148 = 172
+
+-- Sample day 5 (April 22)
+    (165, 9, '2025-04-22 08:00:00', 'Breakfast'), -- old id 17 + 148 = 165
+    (166, 9, '2025-04-22 12:00:00', 'Lunch'), -- old id 18 + 148 = 166
+    (167, 9, '2025-04-22 18:00:00', 'Dinner'), -- old id 19 + 148 = 167
+    (168, 9, '2025-04-22 21:00:00', 'Snack'), -- old id 20 + 148 = 168
+
+-- Sample day 4 (April 23)
+    (161, 9, '2025-04-23 08:00:00', 'Breakfast'), -- old id 13 + 148 = 161
+    (162, 9, '2025-04-23 12:00:00', 'Lunch'), -- old id 14 + 148 = 162
+    (163, 9, '2025-04-23 18:00:00', 'Dinner'), -- old id 15 + 148 = 163
+    (164, 9, '2025-04-23 21:00:00', 'Snack'), -- old id 16 + 148 = 164
+
+-- April 24
+    (217, 9, '2025-04-24 08:00:00', 'Breakfast'), -- old id 69 + 148 = 217
+    (218, 9, '2025-04-24 12:00:00', 'Lunch'), -- old id 70 + 148 = 218
+    (219, 9, '2025-04-24 18:00:00', 'Dinner'), -- old id 71 + 148 = 219
+    (220, 9, '2025-04-24 21:00:00', 'Snack'), -- old id 72 + 148 = 220
+
+-- April 25
+    (221, 9, '2025-04-25 08:00:00', 'Breakfast'), -- old id 73 + 148 = 221
+    (222, 9, '2025-04-25 12:00:00', 'Lunch'), -- old id 74 + 148 = 222
+    (223, 9, '2025-04-25 18:00:00', 'Dinner'), -- old id 75 + 148 = 223
+    (224, 9, '2025-04-25 21:00:00', 'Snack'), -- old id 76 + 148 = 224
+
+-- April 26
+    (225, 9, '2025-04-26 08:00:00', 'Breakfast'), -- old id 77 + 148 = 225
+    (226, 9, '2025-04-26 12:00:00', 'Lunch'), -- old id 78 + 148 = 226
+    (227, 9, '2025-04-26 18:00:00', 'Dinner'), -- old id 79 + 148 = 227
+    (228, 9, '2025-04-26 21:00:00', 'Snack'), -- old id 80 + 148 = 228
+
+-- April 27
+    (229, 9, '2025-04-27 08:00:00', 'Breakfast'), -- old id 81 + 148 = 229
+    (230, 9, '2025-04-27 12:00:00', 'Lunch'), -- old id 82 + 148 = 230
+    (231, 9, '2025-04-27 18:00:00', 'Dinner'), -- old id 83 + 148 = 231
+    (232, 9, '2025-04-27 21:00:00', 'Snack'), -- old id 84 + 148 = 232
+
+-- April 28
+    (233, 9, '2025-04-28 08:00:00', 'Breakfast'), -- old id 85 + 148 = 233
+    (234, 9, '2025-04-28 12:00:00', 'Lunch'), -- old id 86 + 148 = 234
+    (235, 9, '2025-04-28 18:00:00', 'Dinner'), -- old id 87 + 148 = 235
+    (236, 9, '2025-04-28 21:00:00', 'Snack'), -- old id 88 + 148 = 236
+
+-- April 29
+    (237, 9, '2025-04-29 08:00:00', 'Breakfast'), -- old id 89 + 148 = 237
+    (238, 9, '2025-04-29 12:00:00', 'Lunch'), -- old id 90 + 148 = 238
+    (239, 9, '2025-04-29 18:00:00', 'Dinner'), -- old id 91 + 148 = 239
+    (240, 9, '2025-04-29 21:00:00', 'Snack'), -- old id 92 + 148 = 240
+
+-- April 30
+    (241, 9, '2025-04-30 08:00:00', 'Breakfast'), -- old id 93 + 148 = 241
+    (242, 9, '2025-04-30 12:00:00', 'Lunch'), -- old id 94 + 148 = 242
+    (243, 9, '2025-04-30 18:00:00', 'Dinner'), -- old id 95 + 148 = 243
+    (244, 9, '2025-04-30 21:00:00', 'Snack'), -- old id 96 + 148 = 244
+
+-- May 1
+    (245, 9, '2025-05-01 08:00:00', 'Breakfast'), -- old id 97 + 148 = 245
+    (246, 9, '2025-05-01 12:00:00', 'Lunch'), -- old id 98 + 148 = 246
+    (247, 9, '2025-05-01 18:00:00', 'Dinner'), -- old id 99 + 148 = 247
+    (248, 9, '2025-05-01 21:00:00', 'Snack'), -- old id 100 + 148 = 248
+
+-- May 2
+    (249, 9, '2025-05-02 08:00:00', 'Breakfast'), -- old id 101 + 148 = 249
+    (250, 9, '2025-05-02 12:00:00', 'Lunch'), -- old id 102 + 148 = 250
+    (251, 9, '2025-05-02 18:00:00', 'Dinner'), -- old id 103 + 148 = 251
+    (252, 9, '2025-05-02 21:00:00', 'Snack'), -- old id 104 + 148 = 252
+
+-- May 3
+    (253, 9, '2025-05-03 08:00:00', 'Breakfast'), -- old id 105 + 148 = 253
+    (254, 9, '2025-05-03 12:00:00', 'Lunch'), -- old id 106 + 148 = 254
+    (255, 9, '2025-05-03 18:00:00', 'Dinner'), -- old id 107 + 148 = 255
+    (256, 9, '2025-05-03 21:00:00', 'Snack'), -- old id 108 + 148 = 256
+
+-- May 4
+    (257, 9, '2025-05-04 08:00:00', 'Breakfast'), -- old id 109 + 148 = 257
+    (258, 9, '2025-05-04 12:00:00', 'Lunch'), -- old id 110 + 148 = 258
+    (259, 9, '2025-05-04 18:00:00', 'Dinner'), -- old id 111 + 148 = 259
+    (260, 9, '2025-05-04 21:00:00', 'Snack'), -- old id 112 + 148 = 260
+
+-- May 5
+    (261, 9, '2025-05-05 08:00:00', 'Breakfast'), -- old id 113 + 148 = 261
+    (262, 9, '2025-05-05 12:00:00', 'Lunch'), -- old id 114 + 148 = 262
+    (263, 9, '2025-05-05 18:00:00', 'Dinner'), -- old id 115 + 148 = 263
+    (264, 9, '2025-05-05 21:00:00', 'Snack'), -- old id 116 + 148 = 264
+
+-- May 6
+    (265, 9, '2025-05-06 08:00:00', 'Breakfast'), -- old id 117 + 148 = 265
+    (266, 9, '2025-05-06 12:00:00', 'Lunch'), -- old id 118 + 148 = 266
+    (267, 9, '2025-05-06 18:00:00', 'Dinner'), -- old id 119 + 148 = 267
+    (268, 9, '2025-05-06 21:00:00', 'Snack'), -- old id 120 + 148 = 268
+
+-- May 7
+    (269, 9, '2025-05-07 08:00:00', 'Breakfast'), -- old id 121 + 148 = 269
+    (270, 9, '2025-05-07 12:00:00', 'Lunch'), -- old id 122 + 148 = 270
+    (271, 9, '2025-05-07 18:00:00', 'Dinner'), -- old id 123 + 148 = 271
+    (272, 9, '2025-05-07 21:00:00', 'Snack'), -- old id 124 + 148 = 272
+
+-- May 8
+    (273, 9, '2025-05-08 08:00:00', 'Breakfast'), -- old id 125 + 148 = 273
+    (274, 9, '2025-05-08 12:00:00', 'Lunch'), -- old id 126 + 148 = 274
+    (275, 9, '2025-05-08 18:00:00', 'Dinner'), -- old id 127 + 148 = 275
+    (276, 9, '2025-05-08 21:00:00', 'Snack'), -- old id 128 + 148 = 276
+
+-- May 9
+    (277, 9, '2025-05-09 08:00:00', 'Breakfast'), -- old id 129 + 148 = 277
+    (278, 9, '2025-05-09 12:00:00', 'Lunch'), -- old id 130 + 148 = 278
+    (279, 9, '2025-05-09 18:00:00', 'Dinner'), -- old id 131 + 148 = 279
+    (280, 9, '2025-05-09 21:00:00', 'Snack'), -- old id 132 + 148 = 280
+
+-- May 10
+    (281, 9, '2025-05-10 08:00:00', 'Breakfast'), -- old id 133 + 148 = 281
+    (282, 9, '2025-05-10 12:00:00', 'Lunch'), -- old id 134 + 148 = 282
+    (283, 9, '2025-05-10 18:00:00', 'Dinner'), -- old id 135 + 148 = 283
+    (284, 9, '2025-05-10 21:00:00', 'Snack'), -- old id 136 + 148 = 284
+
+-- May 11
+    (285, 9, '2025-05-11 08:00:00', 'Breakfast'), -- old id 137 + 148 = 285
+    (286, 9, '2025-05-11 12:00:00', 'Lunch'), -- old id 138 + 148 = 286
+    (287, 9, '2025-05-11 18:00:00', 'Dinner'), -- old id 139 + 148 = 287
+    (288, 9, '2025-05-11 21:00:00', 'Snack'), -- old id 140 + 148 = 288
+
+-- May 12
+    (289, 9, '2025-05-12 08:00:00', 'Breakfast'), -- old id 141 + 148 = 289
+    (290, 9, '2025-05-12 12:00:00', 'Lunch'), -- old id 142 + 148 = 290
+    (291, 9, '2025-05-12 18:00:00', 'Dinner'), -- old id 143 + 148 = 291
+    (292, 9, '2025-05-12 21:00:00', 'Snack'), -- old id 144 + 148 = 292
+
+-- May 13
+    (293, 9, '2025-05-13 08:00:00', 'Breakfast'), -- old id 145 + 148 = 293
+    (294, 9, '2025-05-13 12:00:00', 'Lunch'), -- old id 146 + 148 = 294
+    (295, 9, '2025-05-13 18:00:00', 'Dinner'), -- old id 147 + 148 = 295
+    (296, 9, '2025-05-13 21:00:00', 'Snack'); -- old id 148 + 148 = 296
+
+    -- Insert meal food items for the extended period (Increased Calories/Macros for Weight Gain) - Renumbered IDs from 1-346 to 347-692, updated meal_id references (+148 offset)
+INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
+VALUES
+    -- April 7 (Meal IDs: 157, 158, 159, 160)
+    (347, 157, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 1, meal_id 9->157 (+50 kcal)
+    (348, 157, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 2, meal_id 9->157 (+50 kcal)
+    (349, 157, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 3, meal_id 9->157 (+50 kcal)
+    (350, 158, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 4, meal_id 10->158 (+50 kcal)
+    (351, 158, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 5, meal_id 10->158 (+50 kcal)
+    (352, 159, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 6, meal_id 11->159 (+50 kcal)
+    (353, 159, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 7, meal_id 11->159 (+50 kcal)
+    (354, 159, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 8, meal_id 11->159 (+50 kcal)
+    (355, 160, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 9, meal_id 12->160 (+50 kcal)
+    (356, 160, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 10, meal_id 12->160 (+50 kcal)
+
+    -- April 8 (Meal IDs: 153, 154, 155, 156)
+    (357, 153, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 11, meal_id 5->153 (+50 kcal)
+    (358, 153, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 12, meal_id 5->153 (+50 kcal)
+    (359, 153, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 13, meal_id 5->153 (+50 kcal)
+    (360, 154, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 14, meal_id 6->154 (+50 kcal)
+    (361, 154, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 15, meal_id 6->154 (+50 kcal)
+    (362, 155, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 16, meal_id 7->155 (+50 kcal)
+    (363, 155, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 17, meal_id 7->155 (+50 kcal)
+    (364, 156, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 18, meal_id 8->156 (+50 kcal)
+    (365, 156, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 19, meal_id 8->156 (+50 kcal)
+
+    -- April 9 (Meal IDs: 149, 150, 151, 152)
+    (366, 149, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 20, meal_id 1->149 (+50 kcal)
+    (367, 149, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 21, meal_id 1->149 (+50 kcal)
+    (368, 149, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 22, meal_id 1->149 (+50 kcal)
+    (369, 150, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 23, meal_id 2->150 (+50 kcal)
+    (370, 150, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 24, meal_id 2->150 (+50 kcal)
+    (371, 151, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 25, meal_id 3->151 (+50 kcal)
+    (372, 151, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 26, meal_id 3->151 (+50 kcal)
+    (373, 152, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 27, meal_id 4->152 (+50 kcal)
+    (374, 152, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 28, meal_id 4->152 (+50 kcal)
+
+    -- April 10 (Meal IDs: 173, 174, 175, 176)
+    (375, 173, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 29, meal_id 25->173 (+50 kcal)
+    (376, 173, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 30, meal_id 25->173 (+50 kcal)
+    (377, 173, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 31, meal_id 25->173 (+50 kcal)
+    (378, 174, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 32, meal_id 26->174 (+50 kcal)
+    (379, 174, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 33, meal_id 26->174 (+50 kcal)
+    (380, 175, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 34, meal_id 27->175 (+50 kcal)
+    (381, 175, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 35, meal_id 27->175 (+50 kcal)
+    (382, 175, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 36, meal_id 27->175 (+50 kcal)
+    (383, 176, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 37, meal_id 28->176 (+50 kcal)
+    (384, 176, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 38, meal_id 28->176 (+50 kcal)
+
+    -- April 11 (Meal IDs: 177, 178, 179, 180)
+    (385, 177, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 39, meal_id 29->177 (+50 kcal)
+    (386, 177, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 40, meal_id 29->177 (+50 kcal)
+    (387, 177, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 41, meal_id 29->177 (+50 kcal)
+    (388, 178, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 42, meal_id 30->178 (+50 kcal)
+    (389, 178, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 43, meal_id 30->178 (+50 kcal)
+    (390, 179, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 44, meal_id 31->179 (+50 kcal)
+    (391, 179, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 45, meal_id 31->179 (+50 kcal)
+    (392, 180, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 46, meal_id 32->180 (+50 kcal)
+    (393, 180, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 47, meal_id 32->180 (+50 kcal)
+
+    -- April 12 (Meal IDs: 181, 182, 183, 184)
+    (394, 181, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 48, meal_id 33->181 (+50 kcal)
+    (395, 181, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 49, meal_id 33->181 (+50 kcal)
+    (396, 181, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 50, meal_id 33->181 (+50 kcal)
+    (397, 182, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 51, meal_id 34->182 (+50 kcal)
+    (398, 182, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 52, meal_id 34->182 (+50 kcal)
+    (399, 183, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 53, meal_id 35->183 (+50 kcal)
+    (400, 183, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 54, meal_id 35->183 (+50 kcal)
+    (401, 184, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 55, meal_id 36->184 (+50 kcal)
+    (402, 184, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 56, meal_id 36->184 (+50 kcal)
+
+    -- April 13 (Meal IDs: 185, 186, 187, 188)
+    (403, 185, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 57, meal_id 37->185 (+50 kcal)
+    (404, 185, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 58, meal_id 37->185 (+50 kcal)
+    (405, 185, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 59, meal_id 37->185 (+50 kcal)
+    (406, 186, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 60, meal_id 38->186 (+50 kcal)
+    (407, 186, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 61, meal_id 38->186 (+50 kcal)
+    (408, 187, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 62, meal_id 39->187 (+50 kcal)
+    (409, 187, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 63, meal_id 39->187 (+50 kcal)
+    (410, 187, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 64, meal_id 39->187 (+50 kcal)
+    (411, 188, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 65, meal_id 40->188 (+50 kcal)
+    (412, 188, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 66, meal_id 40->188 (+50 kcal)
+
+    -- April 14 (Meal IDs: 189, 190, 191, 192)
+    (413, 189, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 67, meal_id 41->189 (+50 kcal)
+    (414, 189, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 68, meal_id 41->189 (+50 kcal)
+    (415, 189, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 69, meal_id 41->189 (+50 kcal)
+    (416, 190, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 70, meal_id 42->190 (+50 kcal)
+    (417, 190, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 71, meal_id 42->190 (+50 kcal)
+    (418, 191, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 72, meal_id 43->191 (+50 kcal)
+    (419, 191, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 73, meal_id 43->191 (+50 kcal)
+    (420, 192, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 74, meal_id 44->192 (+50 kcal)
+    (421, 192, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 75, meal_id 44->192 (+50 kcal)
+
+    -- April 15 (Meal IDs: 193, 194, 195, 196)
+    (422, 193, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 76, meal_id 45->193 (+50 kcal)
+    (423, 193, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 77, meal_id 45->193 (+50 kcal)
+    (424, 193, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 78, meal_id 45->193 (+50 kcal)
+    (425, 194, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 79, meal_id 46->194 (+50 kcal)
+    (426, 194, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 80, meal_id 46->194 (+50 kcal)
+    (427, 195, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 81, meal_id 47->195 (+50 kcal)
+    (428, 195, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 82, meal_id 47->195 (+50 kcal)
+    (429, 196, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 83, meal_id 48->196 (+50 kcal)
+    (430, 196, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 84, meal_id 48->196 (+50 kcal)
+
+    -- April 16 (Meal IDs: 197, 198, 199, 200)
+    (431, 197, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 85, meal_id 49->197 (+50 kcal)
+    (432, 197, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 86, meal_id 49->197 (+50 kcal)
+    (433, 197, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 87, meal_id 49->197 (+50 kcal)
+    (434, 198, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 88, meal_id 50->198 (+50 kcal)
+    (435, 198, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 89, meal_id 50->198 (+50 kcal)
+    (436, 199, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 90, meal_id 51->199 (+50 kcal)
+    (437, 199, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 91, meal_id 51->199 (+50 kcal)
+    (438, 199, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 92, meal_id 51->199 (+50 kcal)
+    (439, 200, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 93, meal_id 52->200 (+50 kcal)
+    (440, 200, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 94, meal_id 52->200 (+50 kcal)
+
+    -- April 17 (Meal IDs: 201, 202, 203, 204)
+    (441, 201, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 95, meal_id 53->201 (+50 kcal)
+    (442, 201, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 96, meal_id 53->201 (+50 kcal)
+    (443, 201, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 97, meal_id 53->201 (+50 kcal)
+    (444, 202, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 98, meal_id 54->202 (+50 kcal)
+    (445, 202, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 99, meal_id 54->202 (+50 kcal)
+    (446, 203, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 100, meal_id 55->203 (+50 kcal)
+    (447, 203, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 101, meal_id 55->203 (+50 kcal)
+    (448, 204, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 102, meal_id 56->204 (+50 kcal)
+    (449, 204, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 103, meal_id 56->204 (+50 kcal)
+
+    -- April 18 (Meal IDs: 205, 206, 207, 208)
+    (450, 205, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 104, meal_id 57->205 (+50 kcal)
+    (451, 205, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 105, meal_id 57->205 (+50 kcal)
+    (452, 205, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 106, meal_id 57->205 (+50 kcal)
+    (453, 206, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 107, meal_id 58->206 (+50 kcal)
+    (454, 206, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 108, meal_id 58->206 (+50 kcal)
+    (455, 207, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 109, meal_id 59->207 (+50 kcal)
+    (456, 207, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 110, meal_id 59->207 (+50 kcal)
+    (457, 208, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 111, meal_id 60->208 (+50 kcal)
+    (458, 208, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 112, meal_id 60->208 (+50 kcal)
+
+    -- April 19 (Meal IDs: 209, 210, 211, 212)
+    (459, 209, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 113, meal_id 61->209 (+50 kcal)
+    (460, 209, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 114, meal_id 61->209 (+50 kcal)
+    (461, 209, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 115, meal_id 61->209 (+50 kcal)
+    (462, 210, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 116, meal_id 62->210 (+50 kcal)
+    (463, 210, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 117, meal_id 62->210 (+50 kcal)
+    (464, 211, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 118, meal_id 63->211 (+50 kcal)
+    (465, 211, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 119, meal_id 63->211 (+50 kcal)
+    (466, 211, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 120, meal_id 63->211 (+50 kcal)
+    (467, 212, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 121, meal_id 64->212 (+50 kcal)
+    (468, 212, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 122, meal_id 64->212 (+50 kcal)
+
+    -- April 20 (Meal IDs: 213, 214, 215, 216)
+    (469, 213, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 123, meal_id 65->213 (+50 kcal)
+    (470, 213, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 124, meal_id 65->213 (+50 kcal)
+    (471, 213, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 125, meal_id 65->213 (+50 kcal)
+    (472, 214, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 126, meal_id 66->214 (+50 kcal)
+    (473, 214, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 127, meal_id 66->214 (+50 kcal)
+    (474, 215, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 128, meal_id 67->215 (+50 kcal)
+    (475, 215, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 129, meal_id 67->215 (+50 kcal)
+    (476, 216, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 130, meal_id 68->216 (+50 kcal)
+    (477, 216, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 131, meal_id 68->216 (+50 kcal)
+
+    -- April 21 (Meal IDs: 169, 170, 171, 172)
+    (478, 169, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 132, meal_id 21->169 (+50 kcal)
+    (479, 169, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 133, meal_id 21->169 (+50 kcal)
+    (480, 169, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 134, meal_id 21->169 (+50 kcal)
+    (481, 170, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 135, meal_id 22->170 (+50 kcal)
+    (482, 170, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 136, meal_id 22->170 (+50 kcal)
+    (483, 171, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 137, meal_id 23->171 (+50 kcal)
+    (484, 171, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 138, meal_id 23->171 (+50 kcal)
+    (485, 172, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 139, meal_id 24->172 (+50 kcal)
+    (486, 172, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 140, meal_id 24->172 (+50 kcal)
+
+    -- April 22 (Meal IDs: 165, 166, 167, 168)
+    (487, 165, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 141, meal_id 17->165 (+50 kcal)
+    (488, 165, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 142, meal_id 17->165 (+50 kcal)
+    (489, 165, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 143, meal_id 17->165 (+50 kcal)
+    (490, 166, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 144, meal_id 18->166 (+50 kcal)
+    (491, 166, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 145, meal_id 18->166 (+50 kcal)
+    (492, 167, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 146, meal_id 19->167 (+50 kcal)
+    (493, 167, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 147, meal_id 19->167 (+50 kcal)
+    (494, 167, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 148, meal_id 19->167 (+50 kcal)
+    (495, 168, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 149, meal_id 20->168 (+50 kcal)
+    (496, 168, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 150, meal_id 20->168 (+50 kcal)
+
+    -- April 23 (Meal IDs: 161, 162, 163, 164)
+    (497, 161, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 151, meal_id 13->161 (+50 kcal)
+    (498, 161, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 152, meal_id 13->161 (+50 kcal)
+    (499, 161, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 153, meal_id 13->161 (+50 kcal)
+    (500, 162, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 154, meal_id 14->162 (+50 kcal)
+    (501, 162, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 155, meal_id 14->162 (+50 kcal)
+    (502, 163, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 156, meal_id 15->163 (+50 kcal)
+    (503, 163, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 157, meal_id 15->163 (+50 kcal)
+    (504, 164, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 158, meal_id 16->164 (+50 kcal)
+    (505, 164, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 159, meal_id 16->164 (+50 kcal)
+
+    -- April 24 (Meal IDs: 217, 218, 219, 220)
+    (506, 217, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 160, meal_id 69->217 (+50 kcal)
+    (507, 217, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 161, meal_id 69->217 (+50 kcal)
+    (508, 217, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 162, meal_id 69->217 (+50 kcal)
+    (509, 218, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 163, meal_id 70->218 (+50 kcal)
+    (510, 218, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 164, meal_id 70->218 (+50 kcal)
+    (511, 219, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 165, meal_id 71->219 (+50 kcal)
+    (512, 219, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 166, meal_id 71->219 (+50 kcal)
+    (513, 219, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 167, meal_id 71->219 (+50 kcal)
+    (514, 220, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 168, meal_id 72->220 (+50 kcal)
+    (515, 220, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 169, meal_id 72->220 (+50 kcal)
+
+    -- April 25 (Meal IDs: 221, 222, 223, 224)
+    (516, 221, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 170, meal_id 73->221 (+50 kcal)
+    (517, 221, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 171, meal_id 73->221 (+50 kcal)
+    (518, 221, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 172, meal_id 73->221 (+50 kcal)
+    (519, 222, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 173, meal_id 74->222 (+50 kcal)
+    (520, 222, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 174, meal_id 74->222 (+50 kcal)
+    (521, 223, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 175, meal_id 75->223 (+50 kcal)
+    (522, 223, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 176, meal_id 75->223 (+50 kcal)
+    (523, 224, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 177, meal_id 76->224 (+50 kcal)
+    (524, 224, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 178, meal_id 76->224 (+50 kcal)
+
+    -- April 26 (Meal IDs: 225, 226, 227, 228)
+    (525, 225, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 179, meal_id 77->225 (+50 kcal)
+    (526, 225, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 180, meal_id 77->225 (+50 kcal)
+    (527, 225, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 181, meal_id 77->225 (+50 kcal)
+    (528, 226, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 182, meal_id 78->226 (+50 kcal)
+    (529, 226, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 183, meal_id 78->226 (+50 kcal)
+    (530, 227, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 184, meal_id 79->227 (+50 kcal)
+    (531, 227, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 185, meal_id 79->227 (+50 kcal)
+    (532, 228, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 186, meal_id 80->228 (+50 kcal)
+    (533, 228, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 187, meal_id 80->228 (+50 kcal)
+
+    -- April 27 (Meal IDs: 229, 230, 231, 232)
+    (534, 229, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 188, meal_id 81->229 (+50 kcal)
+    (535, 229, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 189, meal_id 81->229 (+50 kcal)
+    (536, 229, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 190, meal_id 81->229 (+50 kcal)
+    (537, 230, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 191, meal_id 82->230 (+50 kcal)
+    (538, 230, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 192, meal_id 82->230 (+50 kcal)
+    (539, 231, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 193, meal_id 83->231 (+50 kcal)
+    (540, 231, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 194, meal_id 83->231 (+50 kcal)
+    (541, 231, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 195, meal_id 83->231 (+50 kcal)
+    (542, 232, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 196, meal_id 84->232 (+50 kcal)
+    (543, 232, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 197, meal_id 84->232 (+50 kcal)
+
+    -- April 28 (Meal IDs: 233, 234, 235, 236)
+    (544, 233, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 198, meal_id 85->233 (+50 kcal)
+    (545, 233, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 199, meal_id 85->233 (+50 kcal)
+    (546, 233, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 200, meal_id 85->233 (+50 kcal)
+    (547, 234, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 201, meal_id 86->234 (+50 kcal)
+    (548, 234, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 202, meal_id 86->234 (+50 kcal)
+    (549, 235, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 203, meal_id 87->235 (+50 kcal)
+    (550, 235, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 204, meal_id 87->235 (+50 kcal)
+    (551, 236, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 205, meal_id 88->236 (+50 kcal)
+    (552, 236, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 206, meal_id 88->236 (+50 kcal)
+
+    -- April 29 (Meal IDs: 237, 238, 239, 240)
+    (553, 237, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 207, meal_id 89->237 (+50 kcal)
+    (554, 237, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 208, meal_id 89->237 (+50 kcal)
+    (555, 237, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 209, meal_id 89->237 (+50 kcal)
+    (556, 238, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 210, meal_id 90->238 (+50 kcal)
+    (557, 238, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 211, meal_id 90->238 (+50 kcal)
+    (558, 239, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 212, meal_id 91->239 (+50 kcal)
+    (559, 239, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 213, meal_id 91->239 (+50 kcal)
+    (560, 240, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 214, meal_id 92->240 (+50 kcal)
+    (561, 240, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 215, meal_id 92->240 (+50 kcal)
+
+    -- April 30 (Meal IDs: 241, 242, 243, 244)
+    (562, 241, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 216, meal_id 93->241 (+50 kcal)
+    (563, 241, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 217, meal_id 93->241 (+50 kcal)
+    (564, 241, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 218, meal_id 93->241 (+50 kcal)
+    (565, 242, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 219, meal_id 94->242 (+50 kcal)
+    (566, 242, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 220, meal_id 94->242 (+50 kcal)
+    (567, 243, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 221, meal_id 95->243 (+50 kcal)
+    (568, 243, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 222, meal_id 95->243 (+50 kcal)
+    (569, 243, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 223, meal_id 95->243 (+50 kcal)
+    (570, 244, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 224, meal_id 96->244 (+50 kcal)
+    (571, 244, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 225, meal_id 96->244 (+50 kcal)
+
+    -- May 1 (Meal IDs: 245, 246, 247, 248)
+    (572, 245, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 226, meal_id 97->245 (+50 kcal)
+    (573, 245, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 227, meal_id 97->245 (+50 kcal)
+    (574, 245, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 228, meal_id 97->245 (+50 kcal)
+    (575, 246, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 229, meal_id 98->246 (+50 kcal)
+    (576, 246, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 230, meal_id 98->246 (+50 kcal)
+    (577, 247, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 231, meal_id 99->247 (+50 kcal)
+    (578, 247, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 232, meal_id 99->247 (+50 kcal)
+    (579, 248, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 233, meal_id 100->248 (+50 kcal)
+    (580, 248, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 234, meal_id 100->248 (+50 kcal)
+
+    -- May 2 (Meal IDs: 249, 250, 251, 252)
+    (581, 249, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 235, meal_id 101->249 (+50 kcal)
+    (582, 249, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 236, meal_id 101->249 (+50 kcal)
+    (583, 249, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 237, meal_id 101->249 (+50 kcal)
+    (584, 250, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 238, meal_id 102->250 (+50 kcal)
+    (585, 250, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 239, meal_id 102->250 (+50 kcal)
+    (586, 251, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 240, meal_id 103->251 (+50 kcal)
+    (587, 251, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 241, meal_id 103->251 (+50 kcal)
+    (588, 252, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 242, meal_id 104->252 (+50 kcal)
+    (589, 252, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 243, meal_id 104->252 (+50 kcal)
+
+    -- May 3 (Meal IDs: 253, 254, 255, 256)
+    (590, 253, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 244, meal_id 105->253 (+50 kcal)
+    (591, 253, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 245, meal_id 105->253 (+50 kcal)
+    (592, 253, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 246, meal_id 105->253 (+50 kcal)
+    (593, 254, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 247, meal_id 106->254 (+50 kcal)
+    (594, 254, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 248, meal_id 106->254 (+50 kcal)
+    (595, 255, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 249, meal_id 107->255 (+50 kcal)
+    (596, 255, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 250, meal_id 107->255 (+50 kcal)
+    (597, 255, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 251, meal_id 107->255 (+50 kcal)
+    (598, 256, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 252, meal_id 108->256 (+50 kcal)
+    (599, 256, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 253, meal_id 108->256 (+50 kcal)
+
+    -- May 4 (Meal IDs: 257, 258, 259, 260)
+    (600, 257, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 254, meal_id 109->257 (+50 kcal)
+    (601, 257, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 255, meal_id 109->257 (+50 kcal)
+    (602, 257, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 256, meal_id 109->257 (+50 kcal)
+    (603, 258, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 257, meal_id 110->258 (+50 kcal)
+    (604, 258, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 258, meal_id 110->258 (+50 kcal)
+    (605, 259, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 259, meal_id 111->259 (+50 kcal)
+    (606, 259, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 260, meal_id 111->259 (+50 kcal)
+    (607, 260, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 261, meal_id 112->260 (+50 kcal)
+    (608, 260, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 262, meal_id 112->260 (+50 kcal)
+
+    -- May 5 (Meal IDs: 261, 262, 263, 264)
+    (609, 261, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 263, meal_id 113->261 (+50 kcal)
+    (610, 261, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 264, meal_id 113->261 (+50 kcal)
+    (611, 261, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 265, meal_id 113->261 (+50 kcal)
+    (612, 262, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 266, meal_id 114->262 (+50 kcal)
+    (613, 262, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 267, meal_id 114->262 (+50 kcal)
+    (614, 263, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 268, meal_id 115->263 (+50 kcal)
+    (615, 263, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 269, meal_id 115->263 (+50 kcal)
+    (616, 264, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 270, meal_id 116->264 (+50 kcal)
+    (617, 264, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 271, meal_id 116->264 (+50 kcal)
+
+    -- May 6 (Meal IDs: 265, 266, 267, 268)
+    (618, 265, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 272, meal_id 117->265 (+50 kcal)
+    (619, 265, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 273, meal_id 117->265 (+50 kcal)
+    (620, 265, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 274, meal_id 117->265 (+50 kcal)
+    (621, 266, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 275, meal_id 118->266 (+50 kcal)
+    (622, 266, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 276, meal_id 118->266 (+50 kcal)
+    (623, 267, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 277, meal_id 119->267 (+50 kcal)
+    (624, 267, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 278, meal_id 119->267 (+50 kcal)
+    (625, 267, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 279, meal_id 119->267 (+50 kcal)
+    (626, 268, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 280, meal_id 120->268 (+50 kcal)
+    (627, 268, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 281, meal_id 120->268 (+50 kcal)
+
+    -- May 7 (Meal IDs: 269, 270, 271, 272)
+    (628, 269, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 282, meal_id 121->269 (+50 kcal)
+    (629, 269, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 283, meal_id 121->269 (+50 kcal)
+    (630, 269, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 284, meal_id 121->269 (+50 kcal)
+    (631, 270, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 285, meal_id 122->270 (+50 kcal)
+    (632, 270, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 286, meal_id 122->270 (+50 kcal)
+    (633, 271, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 287, meal_id 123->271 (+50 kcal)
+    (634, 271, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 288, meal_id 123->271 (+50 kcal)
+    (635, 272, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 289, meal_id 124->272 (+50 kcal)
+    (636, 272, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 290, meal_id 124->272 (+50 kcal)
+
+    -- May 8 (Meal IDs: 273, 274, 275, 276)
+    (637, 273, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 291, meal_id 125->273 (+50 kcal)
+    (638, 273, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 292, meal_id 125->273 (+50 kcal)
+    (639, 273, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 293, meal_id 125->273 (+50 kcal)
+    (640, 274, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 294, meal_id 126->274 (+50 kcal)
+    (641, 274, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 295, meal_id 126->274 (+50 kcal)
+    (642, 275, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 296, meal_id 127->275 (+50 kcal)
+    (643, 275, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 297, meal_id 127->275 (+50 kcal)
+    (644, 276, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 298, meal_id 128->276 (+50 kcal)
+    (645, 276, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 299, meal_id 128->276 (+50 kcal)
+
+    -- May 9 (Meal IDs: 277, 278, 279, 280)
+    (646, 277, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 300, meal_id 129->277 (+50 kcal)
+    (647, 277, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 301, meal_id 129->277 (+50 kcal)
+    (648, 277, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 302, meal_id 129->277 (+50 kcal)
+    (649, 278, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 303, meal_id 130->278 (+50 kcal)
+    (650, 278, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 304, meal_id 130->278 (+50 kcal)
+    (651, 279, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 305, meal_id 131->279 (+50 kcal)
+    (652, 279, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 306, meal_id 131->279 (+50 kcal)
+    (653, 279, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 307, meal_id 131->279 (+50 kcal)
+    (654, 280, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 308, meal_id 132->280 (+50 kcal)
+    (655, 280, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 309, meal_id 132->280 (+50 kcal)
+
+    -- May 10 (Meal IDs: 281, 282, 283, 284)
+    (656, 281, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 310, meal_id 133->281 (+50 kcal)
+    (657, 281, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 311, meal_id 133->281 (+50 kcal)
+    (658, 281, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 312, meal_id 133->281 (+50 kcal)
+    (659, 282, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 313, meal_id 134->282 (+50 kcal)
+    (660, 282, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 314, meal_id 134->282 (+50 kcal)
+    (661, 283, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 315, meal_id 135->283 (+50 kcal)
+    (662, 283, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 316, meal_id 135->283 (+50 kcal)
+    (663, 284, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 317, meal_id 136->284 (+50 kcal)
+    (664, 284, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 318, meal_id 136->284 (+50 kcal)
+
+    -- May 11 (Meal IDs: 285, 286, 287, 288)
+    (665, 285, 'Protein Pancakes', 575, 3, 'medium', 30, 60, 15), -- old id 319, meal_id 137->285 (+50 kcal)
+    (666, 285, 'Maple Syrup', 150, 2, 'tbsp', 0, 26, 0), -- old id 320, meal_id 137->285 (+50 kcal)
+    (667, 285, 'Banana', 210, 1.5, 'medium', 2, 40, 1), -- old id 321, meal_id 137->285 (+50 kcal)
+    (668, 286, 'Chicken Caesar Salad', 725, 1.5, 'serving', 52, 30, 38), -- old id 322, meal_id 138->286 (+50 kcal)
+    (669, 286, 'Whole Grain Bread', 290, 3, 'slices', 12, 45, 3), -- old id 323, meal_id 138->286 (+50 kcal)
+    (670, 287, 'Baked Fish', 450, 200, 'g', 53, 0, 20), -- old id 324, meal_id 139->287 (+50 kcal)
+    (671, 287, 'Sweet Potato', 320, 1.5, 'medium', 3, 61, 0), -- old id 325, meal_id 139->287 (+50 kcal)
+    (672, 288, 'Protein Bar', 450, 2, 'bar', 40, 50, 10), -- old id 326, meal_id 140->288 (+50 kcal)
+    (673, 288, 'Almond Milk with Protein Powder', 300, 1, 'cup', 26, 5, 11), -- old id 327, meal_id 140->288 (+50 kcal)
+
+    -- May 12 (Meal IDs: 289, 290, 291, 292)
+    (674, 289, 'Oatmeal with Protein', 575, 1.5, 'cup', 22, 81, 12), -- old id 328, meal_id 141->289 (+50 kcal)
+    (675, 289, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 329, meal_id 141->289 (+50 kcal)
+    (676, 289, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0), -- old id 330, meal_id 141->289 (+50 kcal)
+    (677, 290, 'Grilled Chicken Salad', 650, 1.5, 'serving', 52, 22, 30), -- old id 331, meal_id 142->290 (+50 kcal)
+    (678, 290, 'Quinoa', 380, 1.5, 'cup', 12, 58, 6), -- old id 332, meal_id 142->290 (+50 kcal)
+    (679, 291, 'Baked Salmon', 515, 200, 'g', 53, 0, 27), -- old id 333, meal_id 143->291 (+50 kcal)
+    (680, 291, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 334, meal_id 143->291 (+50 kcal)
+    (681, 291, 'Steamed Vegetables with Olive Oil', 270, 2, 'cup', 4, 20, 14), -- old id 335, meal_id 143->291 (+50 kcal)
+    (682, 292, 'Apple with Peanut Butter', 435, 1, 'medium', 8, 32, 26), -- old id 336, meal_id 144->292 (+50 kcal)
+    (683, 292, 'Almonds', 290, 45, 'g', 9, 9, 21), -- old id 337, meal_id 144->292 (+50 kcal)
+
+    -- May 13 (Meal IDs: 293, 294, 295, 296)
+    (684, 293, 'Scrambled Eggs', 470, 3, 'large', 36, 3, 30), -- old id 338, meal_id 145->293 (+50 kcal)
+    (685, 293, 'Whole Wheat Toast', 290, 3, 'slices', 12, 45, 3), -- old id 339, meal_id 145->293 (+50 kcal)
+    (686, 293, 'Avocado', 290, 1, 'medium', 2, 12, 22), -- old id 340, meal_id 145->293 (+50 kcal)
+    (687, 294, 'Turkey Wrap', 650, 1.5, 'serving', 45, 60, 22), -- old id 341, meal_id 146->294 (+50 kcal)
+    (688, 294, 'Mixed Vegetables with Nuts', 300, 1, 'cup', 8, 25, 15), -- old id 342, meal_id 146->294 (+50 kcal)
+    (689, 295, 'Grilled Chicken', 500, 225, 'g', 67, 0, 22), -- old id 343, meal_id 147->295 (+50 kcal)
+    (690, 295, 'Brown Rice', 380, 1.5, 'cup', 7, 67, 3), -- old id 344, meal_id 147->295 (+50 kcal)
+    (691, 296, 'Greek Yogurt', 275, 1.5, 'cup', 22, 12, 8), -- old id 345, meal_id 148->296 (+50 kcal)
+    (692, 296, 'Mixed Berries', 200, 1.5, 'cup', 2, 37, 0); -- old id 346, meal_id 148->296 (+50 kcal)
+
+
+
