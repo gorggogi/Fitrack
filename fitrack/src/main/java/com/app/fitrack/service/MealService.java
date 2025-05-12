@@ -36,12 +36,16 @@ public class MealService {
         if (meal.getFoodItems() != null) {
             meal.getFoodItems().forEach(item -> {
                 item.setMeal(meal); // Set bidirectional relationship
-                // Call NutritionixService if quantity, unit, and foodItem name are present
-                // and if nutritional details might be missing or need update.
-                // For simplicity, we can call it if key identifiers are there.
-                // The service itself should be idempotent or handle cases where data is already full.
-                if (item.getFoodItem() != null && !item.getFoodItem().isEmpty() &&
-                    item.getQuantity() > 0 && item.getUnit() != null && !item.getUnit().isEmpty()) {
+                
+                // Condition to check if a Nutritionix lookup is needed
+                boolean needsNutritionixLookup = (item.getCalories() == 0);
+                // Potentially add more conditions, e.g., if protein/carbs/fat are also null/zero
+
+                // Call NutritionixService only if data seems missing and key fields are present
+                if (needsNutritionixLookup && 
+                    item.getFoodItem() != null && !item.getFoodItem().isEmpty() &&
+                    item.getQuantity() > 0 && // quantity > 0 check is sufficient for primitive double
+                    item.getUnit() != null && !item.getUnit().isEmpty()) {
                     try {
                         // NutritionixService.getCalories updates the item's calories, protein, carbs, fat
                         nutritionixService.getCalories(item); 

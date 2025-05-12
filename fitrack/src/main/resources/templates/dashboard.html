@@ -93,7 +93,7 @@
             <div class="section-card workouts-section" onclick="window.location.href='/user/scheduledworkouts'" style="cursor: pointer;">
                 <div class="section-header">
                     <h3 class="section-title">Your Workouts</h3>
-                    <button type="button" class="add-button" onclick="event.stopPropagation(); openWorkoutModal()">+</button>
+                    <button type="button" class="add-button" onclick="event.stopPropagation(); openModal()">+</button>
                 </div>
             
                 <div th:if="${#lists.isEmpty(workouts)}" class="placeholder-message">
@@ -104,8 +104,7 @@
                      th:attr="data-id=${workout.id}, 
                             data-name=${workout.workoutName}, 
                             data-duration=${workout.duration}, 
-                            data-calories=${workout.caloriesBurned}"
-                     onclick="event.stopPropagation(); openModal(this)">
+                            data-calories=${workout.caloriesBurned}">
                     <span th:text="${workout.workoutName}"></span>
                     <span th:text="${workout.duration} + ' mins'"></span>
                     <span class="status">Pending</span>
@@ -234,7 +233,7 @@
 
             <div class="form-actions" style="margin-top: 10px;">
                 <button type="button" class="btn btn-secondary" onclick="addFoodItem()">Add Food Item</button>
-                <button type="button" class="btn btn-warning" onclick="estimateAllCaloriesInModal()">Estimate Calories</button>
+                <button type="button" class="btn btn-warning" onclick="estimateCalories()">Estimate Calories</button>
                 <button type="button" class="btn btn-secondary" onclick="closeMealModal()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Meal</button>
             </div>
@@ -302,266 +301,5 @@
     </div>
 </div>
 
-<script>
-    // CSRF token for AJAX requests
-    const csrfToken = document.querySelector('input[name="_csrf"]').value;
-
-    // Standardized Meal Modal Functions (similar to loggedmeals.html)
-    function openMealModal() {
-        document.getElementById('mealModal').style.display = 'flex';
-        document.getElementById('mealForm').reset(); // Reset form for new meal
-        document.getElementById('mealId').value = ''; // Clear meal ID
-        document.getElementById('modalTitle').textContent = 'Add New Meal'; // Set title for new meal
-        document.getElementById('mealForm').action = '/user/meals/save'; // Default action for new meal
-        
-        // Set current date and time for the dateTime input
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // JS months are 0-indexed
-        const day = now.getDate().toString().padStart(2, '0');
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-        document.getElementById('dateTime').value = currentDateTime;
-
-        const container = document.getElementById('foodItemsContainer');
-        container.innerHTML = ''; // Clear any existing food items from previous modal use
-        addFoodItem(); // Add one initial blank food item row
-    }
-
-    function closeMealModal() {
-        document.getElementById('mealModal').style.display = 'none';
-    }
-
-    function addFoodItem() {
-        const container = document.getElementById('foodItemsContainer');
-        const index = container.children.length;
-        const foodItemDiv = document.createElement('div');
-        // Using 'food-item-input' as the class for the row div for consistency with JS
-        foodItemDiv.className = 'food-item-input'; 
-        foodItemDiv.innerHTML = `
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Food Item</label>
-                    <input type="text" name="foodItems[${index}].foodItem" placeholder="Enter food" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Quantity</label>
-                    <input type="number" name="foodItems[${index}].quantity" placeholder="Quantity" class="form-control" step="any">
-                </div>
-                <div class="form-group">
-                    <label>Unit</label>
-                    <select name="foodItems[${index}].unit" class="form-control">
-                        <option value="">None</option>
-                        <option value="g">Grams</option>
-                        <option value="kg">Kilograms</option>
-                        <option value="ml">Milliliters</option>
-                        <option value="l">Liters</option>
-                        <option value="cup">Cups</option>
-                        <option value="tbsp">Tablespoons</option>
-                        <option value="tsp">Teaspoons</option>
-                        <option value="oz">Ounce (oz)</option>
-                        <option value="serving">Serving</option>
-                        <option value="piece">Piece</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Calories</label>
-                    <input type="number" name="foodItems[${index}].calories" placeholder="Calories" class="form-control" required>
-                </div>
-                <button type="button" class="remove-item" onclick="removeFoodItem(this)" style="align-self: flex-end; margin-bottom: 1rem;">×</button>
-            </div>
-        `;
-        container.appendChild(foodItemDiv);
-    }
-
-    function removeFoodItem(button) {
-        // button is inside a form-group, which is inside a form-row, which is inside food-item-input
-        const foodItemRowDiv = button.closest('.food-item-input'); 
-        if (foodItemRowDiv) {
-            const container = foodItemRowDiv.parentElement;
-            foodItemRowDiv.remove();
-            // Re-index remaining items
-            const items = container.children;
-            for (let i = 0; i < items.length; i++) {
-                const inputs = items[i].querySelectorAll('input, select');
-                inputs.forEach(input => {
-                    const name = input.name;
-                    if (name) {
-                        // Update the index in the name attribute
-                        input.name = name.replace(/foodItems\[\d+\]/, `foodItems[${i}]`);
-                    }
-                });
-            }
-        }
-    }
-    
-    function estimateAllCaloriesInModal() {
-        const foodItemsRows = document.querySelectorAll('#foodItemsContainer .food-item-input');
-        const foodData = [];
-        let allFieldsValid = true;
-
-        foodItemsRows.forEach((itemRow, index) => {
-            const foodNameInput = itemRow.querySelector(`input[name="foodItems[${index}].foodItem"]`);
-            const quantityInput = itemRow.querySelector(`input[name="foodItems[${index}].quantity"]`);
-            const unitInput = itemRow.querySelector(`select[name="foodItems[${index}].unit"]`);
-
-            // Basic validation: ensure all required fields for estimation are present
-            if (!foodNameInput.value || !quantityInput.value || !unitInput.value) {
-                // If it's an empty last row (often the case if user clicks "add" then "estimate" immediately)
-                // and there are other items, or it's the only item but completely empty, it might be invalid.
-                // This logic ensures that partially filled rows are flagged.
-                if (foodItemsRows.length === 1 && !foodNameInput.value && !quantityInput.value && !unitInput.value) {
-                    // Single, completely empty row.
-                     allFieldsValid = false; // Or handle as "nothing to estimate"
-                } else if (!( !foodNameInput.value && !quantityInput.value && !unitInput.value && index === foodItemsRows.length - 1 && foodItemsRows.length > 1)) {
-                    // Not an ignorable empty last row
-                    allFieldsValid = false;
-                }
-            }
-            
-            if (foodNameInput.value && quantityInput.value && unitInput.value) {
-                foodData.push({
-                    foodName: foodNameInput.value,
-                    quantity: parseFloat(quantityInput.value),
-                    unit: unitInput.value,
-                    originalIndex: index // Keep track to map results back
-                });
-            }
-        });
-
-        if (!allFieldsValid && foodData.length < foodItemsRows.length) { // Check if some rows were invalid for estimation
-             alert("Please ensure all food items have a name, quantity, and unit before estimating calories.");
-             return;
-        }
-        if (foodData.length === 0) { // No valid items to estimate
-            alert("No food items to estimate calories for. Please add food items with name, quantity, and unit.");
-            return;
-        }
-
-        const estimateButton = document.querySelector('#mealModal .btn-warning[onclick="estimateAllCaloriesInModal()"]');
-        const originalButtonText = estimateButton.textContent;
-        estimateButton.disabled = true;
-        estimateButton.textContent = 'Estimating...';
-
-        fetch('/meals/estimate-calories', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify(foodData)
-        })
-        .then(response => {
-            estimateButton.disabled = false;
-            estimateButton.textContent = originalButtonText;
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text || 'Failed to estimate calories'); });
-            }
-            return response.json();
-        })
-        .then(estimatedResults => {
-            estimatedResults.forEach((calories, resultIndex) => {
-                const foodItemData = foodData[resultIndex]; // Get the item this result corresponds to
-                // Query for the Nth food-item-input div (1-based index for :nth-child)
-                const specificItemRow = document.querySelector(`#foodItemsContainer .food-item-input:nth-child(${foodItemData.originalIndex + 1})`);
-                if (specificItemRow) {
-                    const caloriesInput = specificItemRow.querySelector(`input[name="foodItems[${foodItemData.originalIndex}].calories"]`);
-                    if (caloriesInput) {
-                        caloriesInput.value = Math.round(calories);
-                    }
-                }
-            });
-        })
-        .catch(error => {
-            estimateButton.disabled = false;
-            estimateButton.textContent = originalButtonText;
-            console.error('Error estimating calories:', error);
-            alert('Error estimating calories: ' + error.message);
-        });
-    }
-
-    // Ensure the "Add Meal" button in the header calls the correct openMealModal
-    document.addEventListener('DOMContentLoaded', function() {
-        // For the "+" button in the "Your Meals" section header
-        const mealsSection = document.querySelector('.meals-section');
-        if (mealsSection) {
-            const addMealButton = mealsSection.querySelector('.add-button');
-            if (addMealButton) {
-                addMealButton.onclick = function(event) {
-                    event.stopPropagation(); // Prevent card click-through if nested
-                    openMealModal(); // Call the standardized openMealModal
-                };
-            }
-        }
-        
-        // Initialize the first food item row when the modal is first defined
-        // (or when openMealModal is called for a new meal, which is better)
-        // If #foodItemsContainer is empty initially, addFoodItem() in openMealModal handles it.
-    });
-
-    function openWorkoutModal() {
-        document.getElementById('workoutModal').style.display = 'flex';
-        document.getElementById('workoutForm').reset();
-        document.getElementById('modalTitle').textContent = 'Add New Workout';
-        document.getElementById('workoutDetails').style.display = 'none';
-    }
-
-    function closeWorkoutModal() {
-        document.getElementById('workoutModal').style.display = 'none';
-    }
-
-    function estimateBurnedCalories() {
-        const workoutName = document.getElementById('workoutName').value;
-        const duration = document.getElementById('duration').value;
-        const csrfToken = document.querySelector('input[name="_csrf"]').value; // Ensure CSRF token is available
-
-        if (!workoutName || !duration) {
-            alert('Please enter workout name and duration to estimate calories.');
-            return;
-        }
-
-        const estimateButton = document.querySelector('#workoutForm .btn-warning[onclick="estimateBurnedCalories()"]');
-        const originalButtonText = estimateButton.textContent;
-        estimateButton.disabled = true;
-        estimateButton.textContent = 'Estimating...';
-
-        fetch('/workouts/estimate-calories', { // Assuming this is the correct endpoint from previous context
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({ workoutName: workoutName, duration: parseFloat(duration) })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { 
-                    throw new Error(text || 'Failed to estimate burned calories. Status: ' + response.status);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.calories !== undefined) {
-                document.getElementById('caloriesBurned').value = Math.round(data.calories);
-            } else {
-                throw new Error('Invalid response format from calorie estimation.');
-            }
-        })
-        .catch(error => {
-            console.error('Error estimating burned calories:', error);
-            alert('Error estimating burned calories: ' + error.message);
-        })
-        .finally(() => {
-            estimateButton.disabled = false;
-            estimateButton.textContent = originalButtonText;
-        });
-    }
-
-    function openModal(element) {
-        // ... existing code ...
-    }
-</script>
 </body>
 </html>

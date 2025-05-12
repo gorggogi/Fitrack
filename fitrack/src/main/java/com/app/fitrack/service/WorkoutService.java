@@ -98,7 +98,7 @@ public class WorkoutService {
         log.setWorkoutName(workout.getWorkoutName());
         log.setDuration(workout.getDuration());
         log.setCaloriesBurned(workout.getCaloriesBurned() != null ? workout.getCaloriesBurned() : 0.0);
-        log.setWorkoutType("GENERAL");
+        log.setWorkoutType(workout.getWorkoutType());
         log.setCompletedAt(LocalDateTime.now());
 
         try {

@@ -13,16 +13,19 @@ document.addEventListener("click", function(event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("workoutModal");
+    const workoutModal = document.getElementById("workoutModal");
     const markAsDoneButton = document.getElementById("markAsDoneButton");
 
-    if (!modal) {
+    if (!workoutModal) {
         console.error("⚠️ Workout modal not found.");
-        return;
     }
 
     document.querySelectorAll(".workout-item").forEach(item => {
-        item.addEventListener("click", () => openModal(item));
+        console.log("Attaching listener to:", item); // Debug log
+        item.addEventListener("click", (event) => { // Pass event
+            event.stopPropagation(); // Keep stopPropagation if needed
+            openModal(item);
+        });
     });
 
     if (markAsDoneButton) {
@@ -30,11 +33,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const workoutId = this.getAttribute("data-id");
             if (!workoutId) return console.error("⚠️ Workout ID not found!");
 
-            const csrfToken = document.querySelector('input[name="_csrf"]').value;
-            if (!csrfToken) {
-                console.error("⚠️ CSRF token not found!");
+            const csrfTokenElement = document.querySelector('input[name="_csrf"]');
+            if (!csrfTokenElement || !csrfTokenElement.value) {
+                console.error("⚠️ CSRF token not found or empty!");
                 return;
             }
+            const csrfToken = csrfTokenElement.value;
 
             fetch(`/user/workouts/${workoutId}/mark-done`, {
                 method: "POST",
@@ -53,9 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                // Close the modal
                 closeWorkoutModal();
-                // Reload the page to update the summary board
                 window.location.reload();
             })
             .catch(error => {
@@ -66,36 +68,201 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     window.addEventListener("click", event => {
-        if (event.target === modal) modal.style.display = "none";
+        if (workoutModal && event.target === workoutModal) {
+            closeWorkoutModal();
+        }
+        const mealModal = document.getElementById('mealModal');
+        if (mealModal && event.target === mealModal) {
+            closeMealModal();
+        }
+        const goalModal = document.getElementById('goalModal');
+        if (goalModal && event.target === goalModal) {
+            closeGoalModal();
+        }
+        const completedGoalModal = document.getElementById('completedGoalDetailModal');
+        if (completedGoalModal && event.target == completedGoalModal) {
+            closeCompletedGoalDetailModal();
+        }
     });
+
+    let goalNameFromSession = null;
+    try {
+        goalNameFromSession = sessionStorage.getItem('fitrackShowToastGoal');
+        if (goalNameFromSession) {
+            sessionStorage.removeItem('fitrackShowToastGoal');
+        }
+    } catch (e) {
+        console.error("Failed to read from sessionStorage", e);
+    }
+
+    if (goalNameFromSession) {
+        showGoalCompletedToast(goalNameFromSession, false);
+    } else if (typeof completedGoalNameFromBackend !== 'undefined' && completedGoalNameFromBackend) {
+        showGoalCompletedToast(completedGoalNameFromBackend, false);
+    }
+
+    const completedGoalCards = document.querySelectorAll('.goal-card.completed-goal');
+    completedGoalCards.forEach(card => {
+        card.addEventListener('click', function() {
+            openCompletedGoalDetailModal(this);
+        });
+    });
+    
+    const workoutForm = document.getElementById('workoutForm');
+    if (workoutForm) {
+        workoutForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const csrfTokenElement = document.querySelector('input[name="_csrf"]');
+            if (!csrfTokenElement || !csrfTokenElement.value) {
+                console.error("⚠️ CSRF token not found for workout form!");
+                alert('Security token missing. Please refresh and try again.');
+                return;
+            }
+
+            fetch('/user/saveworkout', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    closeWorkoutModal();
+                    this.reset();
+                    window.location.reload();
+                } else {
+                    response.text().then(text => {
+                        console.error('Error response:', text);
+                        alert('Error adding workout. Please try again.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding workout. Please try again.');
+            });
+        });
+    }
+
+    const goalForm = document.getElementById('goalForm');
+    if (goalForm) {
+        goalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/user/goals/add', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    closeGoalModal();
+                    this.reset();
+                    window.location.reload();
+                } else {
+                    response.text().then(text => {
+                        console.error('Error response:', text);
+                        alert('Error adding goal. Please try again.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding goal. Please try again.');
+            });
+        });
+    }
+
+    const mealForm = document.getElementById('mealForm');
+    if (mealForm) {
+        mealForm.addEventListener('submit', function(e) {
+            // Only handle via AJAX if the action is for the dashboard's default save action
+            // Otherwise, allow default submission (e.g., for loggedmeals.html edit)
+            if (this.getAttribute('action') !== '/user/meals/save') {
+                return; // Allow default browser submission
+            }
+
+            e.preventDefault(); 
+            const formData = new FormData(this);
+            const csrfTokenElement = document.querySelector('input[name="_csrf"]');
+            if (!csrfTokenElement || !csrfTokenElement.value) {
+                console.error("⚠️ CSRF token not found for meal form!");
+                alert('Security token missing. Please refresh and try again.');
+                return;
+            }
+            const csrfToken = csrfTokenElement.value;
+            
+            fetch('/user/meals/save', { 
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json' 
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); 
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Failed to save meal'); 
+                    });
+                }
+            })
+            .then(todayMealDTOs => {
+                console.log("Received updated meals:", todayMealDTOs);
+                updateDashboardMeals(todayMealDTOs); 
+                closeMealModal(); 
+            })
+            .catch(error => {
+                console.error('Error saving meal:', error);
+                alert('Error saving meal: ' + error.message); 
+            });
+        });
+    }
+
+    const mealsSection = document.querySelector('.meals-section');
+    if (mealsSection) {
+        const addMealButton = mealsSection.querySelector('.add-button');
+        if (addMealButton) {
+            addMealButton.addEventListener('click', function(event) {
+                event.stopPropagation(); 
+                openMealModal(); 
+            });
+        }
+    }
 });
 
-
 function openModal(workoutElement) {
+    console.log("openModal called. workoutElement:", workoutElement);
     const modal = document.getElementById("workoutModal");
     const workoutForm = document.getElementById("workoutForm");
     const workoutDetails = document.getElementById("workoutDetails");
     const modalTitle = document.getElementById("modalTitle");
     
-    if (!modal) return console.error("⚠️ Workout modal not found.");
+    if (!modal) return console.error("⚠️ Workout modal not found globally.");
+    if (!modalTitle) console.warn("⚠️ modalTitle element not found in current modal.");
 
-    if (workoutElement) {
-        // Viewing existing workout
-        modalTitle.textContent = "Workout Details";
-        workoutForm.style.display = "none";
-        workoutDetails.style.display = "block";
+    if (workoutElement) { // For viewing details of a workout item from the dashboard
+        if (modalTitle) modalTitle.textContent = "Workout Details";
+        if (workoutForm) workoutForm.style.display = "none"; else console.warn("⚠️ workoutForm not found in modal for workoutElement branch.");
+        if (workoutDetails) workoutDetails.style.display = "block"; else console.warn("⚠️ workoutDetails not found in modal for workoutElement branch.");
         
-        document.getElementById("modalWorkoutName").textContent = workoutElement.getAttribute("data-name");
-        document.getElementById("modalWorkoutDuration").textContent = workoutElement.getAttribute("data-duration") + " mins";
-        document.getElementById("modalWorkoutCalories").textContent = workoutElement.getAttribute("data-calories") + " cal";
+        if (workoutDetails) { // Only populate if workoutDetails exists
+            const modalWorkoutName = document.getElementById("modalWorkoutName");
+            const modalWorkoutDuration = document.getElementById("modalWorkoutDuration");
+            const modalWorkoutCalories = document.getElementById("modalWorkoutCalories");
+            const markAsDoneButton = document.getElementById("markAsDoneButton");
 
-        const markAsDoneButton = document.getElementById("markAsDoneButton");
-        markAsDoneButton.setAttribute("data-id", workoutElement.getAttribute("data-id"));
-    } else {
-        // Adding new workout
-        modalTitle.textContent = "Add New Workout";
-        workoutForm.style.display = "block";
-        workoutDetails.style.display = "none";
+            if (modalWorkoutName) modalWorkoutName.textContent = workoutElement.getAttribute("data-name");
+            if (modalWorkoutDuration) modalWorkoutDuration.textContent = workoutElement.getAttribute("data-duration") + " mins";
+            if (modalWorkoutCalories) modalWorkoutCalories.textContent = workoutElement.getAttribute("data-calories") + " cal";
+            if (markAsDoneButton) markAsDoneButton.setAttribute("data-id", workoutElement.getAttribute("data-id"));
+        } else {
+            console.warn("Cannot populate workout details because #workoutDetails element is missing.");
+        }
+    } else { // For adding a new workout (or when called by scheduledworkouts.js)
+        if (modalTitle) modalTitle.textContent = "Add New Workout";
+        if (workoutForm) workoutForm.style.display = "block"; else console.warn("⚠️ workoutForm not found in modal for new/scheduled branch.");
+        if (workoutDetails) workoutDetails.style.display = "none"; // Still hide if it exists, but don't error if not
     }
 
     modal.style.display = "flex";
@@ -104,18 +271,17 @@ function openModal(workoutElement) {
 function closeWorkoutModal() {
     const modal = document.getElementById("workoutModal");
     const workoutForm = document.getElementById("workoutForm");
-    const workoutDetails = document.getElementById("workoutDetails");
+    const workoutDetails = document.getElementById("workoutDetails"); // This ID is specific to dashboard.html modal
     
     if (modal) {
         modal.style.display = "none";
-        // Reset form if it exists
-        if (workoutForm) workoutForm.reset();
-        // Hide workout details if they exist
-        if (workoutDetails) workoutDetails.style.display = "none";
+        // Reset form only if it exists
+        if (workoutForm) workoutForm.reset(); 
+        // Hide details section only if it exists
+        if (workoutDetails) workoutDetails.style.display = "none"; 
     }
 }
 
-// Modal functions
 function openGoalModal() {
     document.getElementById('goalModal').style.display = 'flex';
 }
@@ -124,35 +290,57 @@ function closeGoalModal() {
     document.getElementById('goalModal').style.display = 'none';
 }
 
-function openWorkoutModal() {
-    document.getElementById('workoutModal').style.display = 'flex';
-}
-
 function openMealModal() {
-    document.getElementById('mealModal').style.display = 'flex';
+    const mealModal = document.getElementById('mealModal');
+    if (!mealModal) {
+        console.error("Meal modal not found!");
+        return;
+    }
+    mealModal.style.display = 'flex';
+
+    const mealForm = document.getElementById('mealForm');
+    if (mealForm) mealForm.reset(); 
+
+    const mealIdInput = document.getElementById('mealId');
+    if (mealIdInput) mealIdInput.value = ''; 
+
+    const mealModalTitle = mealModal.querySelector('#modalTitle') || mealModal.querySelector('h2');
+    if (mealModalTitle) mealModalTitle.textContent = 'Add New Meal';
     
-    // Set current date and time
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    
-    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-    document.querySelector('#mealModal input[name="dateTime"]').value = formattedDateTime;
+    if (mealForm) mealForm.action = '/user/meals/save'; 
+
+    const dateTimeInput = document.getElementById('dateTime');
+    if (dateTimeInput) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        dateTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    const container = document.getElementById('foodItemsContainer');
+    if (container) {
+        container.innerHTML = ''; 
+        addFoodItem();
+    } else {
+        console.error("foodItemsContainer not found in meal modal!");
+    }
 }
 
 function closeMealModal() {
-    document.getElementById('mealModal').style.display = 'none';
+    const modal = document.getElementById('mealModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
-// Functions for Completed Goal Detail Modal
 function openCompletedGoalDetailModal(goalCardElement) {
     const modal = document.getElementById('completedGoalDetailModal');
     if (!modal) return;
 
-    const goalId = goalCardElement.getAttribute('data-goal-id'); // Get the goal ID
+    const goalId = goalCardElement.getAttribute('data-goal-id');
     const goalName = goalCardElement.getAttribute('data-goal-name');
     const goalStartDate = goalCardElement.getAttribute('data-goal-start-date');
     const goalType = goalCardElement.getAttribute('data-goal-type');
@@ -178,7 +366,6 @@ function openCompletedGoalDetailModal(goalCardElement) {
     document.getElementById('completedGoalAchievedModalText').textContent = `Achieved: ${goalAchievedValue}${unitSuffix}`;
     document.getElementById('completedGoalSetDateText').textContent = `You set this goal on ${goalStartDate}.`;
 
-    // Archive button functionality
     const archiveButton = document.getElementById('archiveGoalButton');
     archiveButton.onclick = function() {
         if (!goalId) {
@@ -187,7 +374,7 @@ function openCompletedGoalDetailModal(goalCardElement) {
         }
         
         if (!confirm(`Are you sure you want to archive the goal "${goalName}"?`)) {
-            return; // User cancelled
+            return;
         }
 
         const csrfToken = document.querySelector('input[name="_csrf"]').value;
@@ -196,36 +383,33 @@ function openCompletedGoalDetailModal(goalCardElement) {
             return;
         }
 
-        // Disable button while processing
         archiveButton.disabled = true;
         archiveButton.textContent = 'archiving...';
 
         fetch(`/user/goals/archive/${goalId}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Even if no body, good practice
+                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken
             },
-            credentials: 'same-origin' // Important for CSRF
+            credentials: 'same-origin'
         })
         .then(response => {
             if (!response.ok) {
-                // Try to get error text from response
                 return response.text().then(text => { 
                     throw new Error(text || `Failed to archive goal. Status: ${response.status}`); 
                 });
             }
-            return response.text(); // Or response.json() if backend sends JSON confirmation
+            return response.text();
         })
         .then(message => {
-            console.log(message); // Log success message from backend
+            console.log(message);
             closeCompletedGoalDetailModal();
-            window.location.reload(); // Reload page to reflect changes
+            window.location.reload();
         })
         .catch(error => {
             console.error('Error archiving goal:', error);
             alert('Error archiving goal: ' + error.message);
-            // Re-enable button on error
             archiveButton.disabled = false;
             archiveButton.textContent = 'archive goal';
         });
@@ -241,187 +425,7 @@ function closeCompletedGoalDetailModal() {
     }
 }
 
-// Initialize modals when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // --- Check sessionStorage for toast FIRST --- 
-    let goalNameFromSession = null;
-    try {
-        goalNameFromSession = sessionStorage.getItem('fitrackShowToastGoal');
-        if (goalNameFromSession) {
-            sessionStorage.removeItem('fitrackShowToastGoal'); // Remove immediately after reading
-        }
-    } catch (e) {
-        console.error("Failed to read from sessionStorage", e);
-    }
-
-    if (goalNameFromSession) {
-        showGoalCompletedToast(goalNameFromSession, false); // Show toast from session, don't re-store
-    } else if (typeof completedGoalNameFromBackend !== 'undefined' && completedGoalNameFromBackend) {
-        // --- Else, check flash attribute from backend --- 
-        showGoalCompletedToast(completedGoalNameFromBackend, false); // Show toast from flash, don't store
-    }
-
-    // Add click listener for completed goals to open detail modal
-    const completedGoalCards = document.querySelectorAll('.goal-card.completed-goal');
-    completedGoalCards.forEach(card => {
-        card.addEventListener('click', function() {
-            openCompletedGoalDetailModal(this);
-        });
-    });
-    
-    // Close modals when clicking outside
-    window.onclick = function(event) {
-        const goalModal = document.getElementById('goalModal');
-        const workoutModal = document.getElementById('workoutModal');
-        const mealModal = document.getElementById('mealModal');
-        
-        if (event.target == goalModal) {
-            closeGoalModal();
-        }
-        if (event.target == workoutModal) {
-            closeWorkoutModal();
-        }
-        if (event.target == mealModal) {
-            closeMealModal();
-        }
-        // Close toast if clicking outside of it (optional, good UX)
-        const toast = document.getElementById('goalCompletedToast');
-        if (toast && toast.style.display !== 'none' && !toast.contains(event.target)) {
-            // This part is tricky because the toast might be clicked to view/close.
-            // A more robust way would be if the click is on the body directly.
-            // For simplicity, we'll rely on the auto-dismiss and close button for now.
-        }
-        
-        // Close Completed Goal Detail Modal if clicking outside
-        const completedGoalModal = document.getElementById('completedGoalDetailModal');
-        if (event.target == completedGoalModal) {
-            closeCompletedGoalDetailModal();
-        }
-    }
-
-    // Handle workout form submission
-    const workoutForm = document.getElementById('workoutForm');
-    if (workoutForm) {
-        workoutForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            fetch('/user/saveworkout', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    closeWorkoutModal();
-                    // Clear the form
-                    this.reset();
-                    // Reload the page to show the new workout
-                    window.location.reload();
-                } else {
-                    response.text().then(text => {
-                        console.error('Error response:', text);
-                        alert('Error adding workout. Please try again.');
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error adding workout. Please try again.');
-            });
-        });
-    }
-
-    // Handle goal form submission
-    const goalForm = document.getElementById('goalForm');
-    if (goalForm) {
-        goalForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            fetch('/user/goals/add', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    closeGoalModal();
-                    // Clear the form
-                    this.reset();
-                    // Reload the page to show the new goal
-                    window.location.reload();
-                } else {
-                    response.text().then(text => {
-                        console.error('Error response:', text);
-                        alert('Error adding goal. Please try again.');
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error adding goal. Please try again.');
-            });
-        });
-    }
-
-    // Handle meal form submission (NEW)
-    const mealForm = document.getElementById('mealForm');
-    if (mealForm) {
-        mealForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent traditional form submission
-
-            const formData = new FormData(this);
-            const csrfToken = document.querySelector('input[name="_csrf"]').value;
-
-            // Show loading state maybe?
-            // const saveButton = mealForm.querySelector('button[type="submit"]');
-            // saveButton.disabled = true;
-            // saveButton.textContent = 'Saving...';
-
-            fetch('/user/meals/save', { 
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json' 
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                // Restore button state
-                // saveButton.disabled = false;
-                // saveButton.textContent = 'Save Meal';
-                
-                if (response.ok) {
-                    return response.json(); // Parse the JSON body which contains List<MealDTO>
-                } else {
-                    // Handle errors
-                    return response.text().then(text => {
-                        throw new Error(text || 'Failed to save meal'); // Throw error to be caught below
-                    });
-                }
-            })
-            .then(todayMealDTOs => {
-                // --- Success: Update UI dynamically --- 
-                console.log("Received updated meals:", todayMealDTOs);
-                updateDashboardMeals(todayMealDTOs); // Call function to update UI
-                closeMealModal(); 
-                // alert('Meal saved!'); // Optional: Replace with a less intrusive notification
-            })
-            .catch(error => {
-                // Restore button state on error too
-                // saveButton.disabled = false;
-                // saveButton.textContent = 'Save Meal';
-
-                console.error('Error saving meal:', error);
-                alert('Error saving meal: ' + error.message); // Show error to user
-            });
-        });
-    }
-});
-
-let toastTimeout; // Variable to hold the timeout ID
+let toastTimeout;
 
 function showGoalCompletedToast(goalName, storeInSession = false) {
     const toast = document.getElementById('goalCompletedToast');
@@ -429,19 +433,16 @@ function showGoalCompletedToast(goalName, storeInSession = false) {
 
     if (toast && toastMessageSpan) {
         toastMessageSpan.textContent = 'You have completed your goal! "' + goalName + '"';
-        toast.style.display = 'flex'; // Show the toast
+        toast.style.display = 'flex';
 
-        // Clear any existing timeout to prevent multiple auto-dismiss timers
         if (toastTimeout) {
             clearTimeout(toastTimeout);
         }
 
-        // Auto-dismiss after 15 seconds (15000 milliseconds)
         toastTimeout = setTimeout(function() {
             toast.style.display = 'none';
         }, 15000);
 
-        // If triggered by an action expected to reload page, store it
         if (storeInSession) {
             try {
                 sessionStorage.setItem('fitrackShowToastGoal', goalName);
@@ -452,13 +453,11 @@ function showGoalCompletedToast(goalName, storeInSession = false) {
     }
 }
 
-// --- NEW Function to update dashboard UI --- 
 function updateDashboardMeals(mealDTOs) {
-    const mealsSection = document.querySelector('.meals-section'); // Container for meal items + placeholder
+    const mealsSection = document.querySelector('.meals-section');
     const placeholder = mealsSection ? mealsSection.querySelector('.placeholder-message') : null;
-    const mealItemsContainer = mealsSection; // Assuming meals are direct children or find specific inner div if needed
+    const mealItemsContainer = mealsSection;
     
-    // Find summary cards (adjust selectors if needed)
     const summaryCards = document.querySelectorAll('.summary-card');
     let calorieSummaryEl = null;
     let mealCountSummaryEl = null;
@@ -468,13 +467,7 @@ function updateDashboardMeals(mealDTOs) {
             calorieSummaryEl = card.querySelector('h2');
         }
         if (titleEl && titleEl.textContent.includes('Workouts Completed')) {
-             // Need the meals count summary. Let's assume it's the 3rd card or needs a specific ID/class.
-             // For now, let's target based on text if possible, or add IDs later.
-             // This selector needs verification based on actual HTML structure for meal count.
-             // Let's assume the 3rd card is 'Meals Logged' or similar, or find by text 'Meals'
-             // Placeholder: Targeting the *Workouts Completed* one for now, needs correction
             mealCountSummaryEl = card.querySelector('h2'); 
-            // TODO: Fix selector for meal count summary element
         }
     });
 
@@ -483,7 +476,6 @@ function updateDashboardMeals(mealDTOs) {
         return;
     }
 
-    // Clear existing meal items (excluding the header and add button)
     mealItemsContainer.querySelectorAll('.meal-item').forEach(item => item.remove());
 
     let totalCaloriesToday = 0;
@@ -496,16 +488,14 @@ function updateDashboardMeals(mealDTOs) {
             const mealElement = document.createElement('div');
             mealElement.className = 'meal-item';
 
-            // Format time (handle potential errors)
             let formattedTime = 'N/A';
             try {
                 formattedTime = new Date(meal.dateTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
             } catch (e) { console.error("Error formatting date:", e); }
 
-            // Create food item list string
             const foodListHtml = meal.foodItems
                                     .map(fi => `<span class="food-item-name">${escapeHtml(fi.foodItem)}</span>`)
-                                    .join(', '); // Join with comma and space
+                                    .join(', ');
 
             mealElement.innerHTML =
                 `<div>
@@ -522,31 +512,25 @@ function updateDashboardMeals(mealDTOs) {
             mealItemsContainer.appendChild(mealElement);
         });
 
-        // Hide placeholder if it exists
         if (placeholder) {
             placeholder.style.display = 'none';
         }
     } else {
-        // Show placeholder if it exists and there are no meals
         if (placeholder) {
             placeholder.style.display = 'block';
         }
     }
 
-    // Update summary cards
     if (calorieSummaryEl) {
-        calorieSummaryEl.textContent = totalCaloriesToday + ' cal'; // Assuming format is just value + ' cal'
+        calorieSummaryEl.textContent = totalCaloriesToday + ' cal';
     }
     if (mealCountSummaryEl) {
-        // TODO: Update this once the correct element selector is found
-        // mealCountSummaryEl.textContent = mealCountToday;
         console.warn("Selector for meal count summary needs verification. Update skipped.");
     } else {
         console.warn("Could not find summary element for meal count.");
     }
 }
 
-// Helper function to escape HTML characters (basic)
 function escapeHtml(unsafe) {
     if (typeof unsafe !== 'string') return unsafe;
     return unsafe
@@ -557,93 +541,118 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "&#039;");
  }
 
-// Meal-related functions
-let itemCount = 1;
-
 function addFoodItem() {
-    const container = document.getElementById('food-items-container');
-    const newItem = document.createElement('div');
-    newItem.className = 'food-item';
-    newItem.innerHTML = `
+    const container = document.getElementById('foodItemsContainer');
+    if (!container) {
+        console.error("foodItemsContainer for addFoodItem not found!");
+        return;
+    }
+    const index = container.children.length;
+    const foodItemDiv = document.createElement('div');
+    foodItemDiv.className = 'food-item-row';
+    foodItemDiv.innerHTML = `
         <div class="form-row">
             <div class="form-group">
                 <label>Food Item</label>
-                <input type="text" name="foodItems[${itemCount}].foodItem" placeholder="Enter food" class="form-control" required>
+                <input type="text" name="foodItems[${index}].foodItem" placeholder="Enter food" class="form-control" required>
             </div>
             <div class="form-group">
                 <label>Quantity</label>
-                <input type="number" name="foodItems[${itemCount}].quantity" placeholder="Quantity" class="form-control" required>
+                <input type="number" name="foodItems[${index}].quantity" placeholder="Quantity" class="form-control" step="any">
             </div>
             <div class="form-group">
                 <label>Unit</label>
-                <select name="foodItems[${itemCount}].unit" class="form-control" required>
-                    <option value="">Select unit</option>
-                    <option value="g">Grams (g)</option>
-                    <option value="cup">Cup</option>
+                <select name="foodItems[${index}].unit" class="form-control">
+                    <option value="">None</option>
+                    <option value="g">Grams</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="ml">Milliliters</option>
+                    <option value="l">Liters</option>
+                    <option value="cup">Cups</option>
+                    <option value="tbsp">Tablespoons</option>
+                    <option value="tsp">Teaspoons</option>
                     <option value="oz">Ounce (oz)</option>
                     <option value="serving">Serving</option>
-                    <option value="tbsp">Tablespoon</option>
-                    <option value="tsp">Teaspoon</option>
                     <option value="piece">Piece</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>Calories</label>
-                <input type="number" name="foodItems[${itemCount}].calories" placeholder="Estimate" class="form-control" required>
+                <input type="number" name="foodItems[${index}].calories" placeholder="Calories" class="form-control" required>
             </div>
-            <button type="button" class="remove-item" onclick="removeFoodItem(this)">×</button>
+            <button type="button" class="remove-item" onclick="removeFoodItem(this)" style="align-self: flex-end; margin-bottom: 1rem;">×</button>
         </div>
     `;
-    container.appendChild(newItem);
-    itemCount++;
+    container.appendChild(foodItemDiv);
 }
 
 function removeFoodItem(button) {
-    const item = button.closest('.food-item');
-    item.remove();
-    itemCount--;
+    const foodItemRow = button.closest('.food-item-row');
+    if (foodItemRow) {
+        const container = foodItemRow.parentElement;
+        foodItemRow.remove();
+        const items = container.querySelectorAll('.food-item-row');
+        items.forEach((item, newIndex) => {
+            const inputs = item.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    input.setAttribute('name', name.replace(/foodItems\\[\\d+\\]/, `foodItems[${newIndex}]`));
+                }
+            });
+        });
+    }
 }
 
 function estimateCalories() {
-    let foodItems = [];
-    let hasEmptyFields = false;
+    let foodItemsData = [];
+    let hasEmptyFieldsForEstimation = false;
 
-    document.querySelectorAll("#food-items-container .food-item").forEach(item => {
-        let foodName = item.querySelector('input[name$=".foodItem"]').value.trim();
-        let quantity = item.querySelector('input[name$=".quantity"]').value.trim();
-        let unit = item.querySelector('select[name$=".unit"]').value.trim();
+    document.querySelectorAll("#foodItemsContainer .food-item-row").forEach((itemRow, index) => {
+        let foodNameInput = itemRow.querySelector(`input[name="foodItems[${index}].foodItem"]`);
+        let quantityInput = itemRow.querySelector(`input[name="foodItems[${index}].quantity"]`);
+        let unitInput = itemRow.querySelector(`select[name="foodItems[${index}].unit"]`);
+
+        let foodName = foodNameInput ? foodNameInput.value.trim() : "";
+        let quantity = quantityInput ? quantityInput.value.trim() : "";
+        let unit = unitInput ? unitInput.value.trim() : "";
 
         if (!foodName || !quantity || !unit) {
-            hasEmptyFields = true;
-            return;
+            hasEmptyFieldsForEstimation = true;
+        } else {
+             foodItemsData.push({
+                foodName: foodName,
+                quantity: parseFloat(quantity),
+                unit: unit,
+                originalIndex: index
+            });
         }
-
-        foodItems.push({
-            foodName: foodName,
-            quantity: parseFloat(quantity),
-            unit: unit
-        });
     });
 
-    if (hasEmptyFields) {
-        alert("Please fill in all fields (Food Item, Quantity, and Unit) before estimating calories.");
+    if (hasEmptyFieldsForEstimation && foodItemsData.length === 0) {
+        alert("Please fill in all fields (Food Item, Quantity, and Unit) for at least one item before estimating calories.");
         return;
     }
-
-    if (foodItems.length === 0) {
-        alert("Please add at least one food item.");
+    if (foodItemsData.length === 0) {
+        alert("Please add at least one food item with all details (Food Item, Quantity, Unit).");
         return;
     }
-
-    // Get CSRF token
-    const csrfToken = document.querySelector('input[name="_csrf"]').value;
-    if (!csrfToken) {
+    
+    const csrfTokenElement = document.querySelector('input[name="_csrf"]');
+    if (!csrfTokenElement || !csrfTokenElement.value) {
         console.error("CSRF token not found");
         alert("Security token missing. Please refresh the page and try again.");
         return;
     }
+    const csrfToken = csrfTokenElement.value;
 
-    console.log("Sending calorie estimation request:", JSON.stringify(foodItems));
+    console.log("Sending calorie estimation request:", JSON.stringify(foodItemsData));
+    const estimateButton = document.querySelector('#mealModal .btn-warning[onclick="estimateCalories()"]');
+    const originalButtonText = estimateButton ? estimateButton.textContent : 'Estimate Calories';
+    if(estimateButton) {
+        estimateButton.disabled = true;
+        estimateButton.textContent = 'Estimating...';
+    }
 
     fetch("/meals/estimate-calories", {
         method: "POST",
@@ -651,63 +660,73 @@ function estimateCalories() {
             "Content-Type": "application/json",
             "X-CSRF-TOKEN": csrfToken
         },
-        body: JSON.stringify(foodItems),
+        body: JSON.stringify(foodItemsData),
         credentials: 'same-origin'
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+             return response.text().then(text => { throw new Error(text || `HTTP error! status: ${response.status}`); });
         }
         return response.json();
     })
     .then(data => {
         console.log("Received calorie estimation:", data);
-        if (Array.isArray(data)) {
-            document.querySelectorAll("#food-items-container .food-item").forEach((item, index) => {
-                if (data[index] !== undefined) {
-                    const calorieField = item.querySelector('input[name$=".calories"]');
+        if (Array.isArray(data) && data.length === foodItemsData.length) {
+            foodItemsData.forEach((foodItemDetail, i) => {
+                const itemRowToUpdate = document.querySelectorAll("#foodItemsContainer .food-item-row")[foodItemDetail.originalIndex];
+                if (itemRowToUpdate) {
+                    const calorieField = itemRowToUpdate.querySelector(`input[name="foodItems[${foodItemDetail.originalIndex}].calories"]`);
                     if (calorieField) {
-                        calorieField.value = Math.round(data[index]);
+                        calorieField.value = Math.round(data[i]);
                     }
                 }
             });
         } else {
-            throw new Error("Invalid response format");
+            console.error("Mismatch in estimated data length or invalid format", data);
+            throw new Error("Invalid response format from calorie estimation service.");
         }
     })
     .catch(error => {
         console.error("Error estimating calories:", error);
-        alert("Failed to estimate calories. Please try again or enter calories manually.");
-    });
-} 
-
-function removeFoodItem(button) {
-    const foodItem = button.closest('.food-item');
-    foodItem.remove();
-    
-    // Update the indices of remaining food items
-    const container = document.getElementById('food-items-container');
-    const foodItems = container.querySelectorAll('.food-item');
-    foodItems.forEach((item, index) => {
-        const inputs = item.querySelectorAll('input, select');
-        inputs.forEach(input => {
-            const name = input.getAttribute('name');
-            if (name) {
-                input.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
-            }
-        });
+        alert("Failed to estimate calories. " + error.message);
+    })
+    .finally(() => {
+        if(estimateButton) {
+            estimateButton.disabled = false;
+            estimateButton.textContent = originalButtonText;
+        }
     });
 }
 
-// Workout-related functions
 function estimateBurnedCalories() {
-    const duration = parseFloat(document.getElementById('duration').value);
-    const workoutName = document.getElementById('workoutName').value;
-    
-    if (!duration || !workoutName || isNaN(duration)) {
-        alert('Please enter both workout name and a valid duration');
+    const durationInput = document.getElementById('duration');
+    const workoutNameInput = document.getElementById('workoutName');
+    const caloriesBurnedInput = document.getElementById('caloriesBurned');
+
+    // Ensure the elements exist before trying to access their properties
+    if (!durationInput || !workoutNameInput || !caloriesBurnedInput) {
+        console.error("One or more form elements for calorie estimation are missing.");
+        alert('Error: Form elements are missing. Cannot estimate calories.');
         return;
     }
+
+    const duration = parseFloat(durationInput.value);
+    const workoutName = workoutNameInput.value;
+    
+    if (!duration || !workoutName || isNaN(duration) || duration <= 0) {
+        alert('Please enter both a valid workout name and a positive duration.');
+        return;
+    }
+
+    // --- UI Feedback Logic ---
+    const estimateButton = document.querySelector('#workoutModal .btn-warning[onclick="estimateBurnedCalories()"]');
+    let originalButtonText = 'Estimate Calories'; // Default
+    if (estimateButton) {
+        originalButtonText = estimateButton.textContent;
+        estimateButton.disabled = true;
+        estimateButton.textContent = 'Estimating...';
+    }
+    // --- End UI Feedback Logic ---
 
     fetch('/workouts/estimate-calories', {
         method: 'POST',
@@ -722,20 +741,29 @@ function estimateBurnedCalories() {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            return response.text().then(text => { throw new Error(text || 'Network response was not ok'); });
         }
         return response.json();
     })
     .then(data => {
         if (data && typeof data.calories === 'number') {
-            document.getElementById('caloriesBurned').value = data.calories;
+            caloriesBurnedInput.value = data.calories.toFixed(0); // Display as whole number
         } else {
-            throw new Error('Invalid response format');
+            throw new Error('Invalid response format from calorie estimation service.');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to estimate calories. Please try again.');
+        console.error('Error estimating burned calories:', error);
+        alert('Failed to estimate calories: ' + error.message);
+    })
+    .finally(() => {
+        // --- UI Feedback Revert Logic ---
+        if (estimateButton) {
+            estimateButton.disabled = false;
+            estimateButton.textContent = originalButtonText;
+        }
+        // --- End UI Feedback Revert Logic ---
     });
 }
+
 
