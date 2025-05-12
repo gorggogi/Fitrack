@@ -139,22 +139,18 @@ public class MealController {
         model.addAttribute("fullName", user.getFullName());
         model.addAttribute("user", user);
 
-        // Get today's meals
-        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime endOfDay = startOfDay.plusDays(1);
-        List<Meal> todayMeals = mealService.findByUserAndDateTimeBetween(user, startOfDay, endOfDay);
-        model.addAttribute("todayMeals", todayMeals);
+        // Fetch all meals for the user, sorted by date/time descending
+        List<Meal> allMeals = mealService.findAllMealsByUserSorted(user); // Assuming this method exists or will be created in MealService
 
-        // Get past meals and group them by date
-        List<Meal> pastMeals = mealService.findByUserAndDateTimeBefore(user, startOfDay);
-        Map<LocalDate, List<Meal>> pastMealsByDate = pastMeals.stream()
-            .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate()));
+        // Group meals by date
+        Map<LocalDate, List<Meal>> groupedMeals = allMeals.stream()
+            .collect(Collectors.groupingBy(
+                meal -> meal.getDateTime().toLocalDate(),
+                LinkedHashMap::new, // Use LinkedHashMap to preserve insertion order (date order)
+                Collectors.toList()
+            ));
         
-        // Sort the map by date in descending order
-        Map<LocalDate, List<Meal>> sortedPastMealsByDate = new TreeMap<>(Collections.reverseOrder());
-        sortedPastMealsByDate.putAll(pastMealsByDate);
-        
-        model.addAttribute("pastMealsByDate", sortedPastMealsByDate);
+        model.addAttribute("groupedMeals", groupedMeals);
 
         return "loggedmeals";
     }

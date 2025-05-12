@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/main.css}">
+    <link rel="stylesheet" th:href="@{/styles/Fitrack.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/x-icon" th:href="@{/images/Fitrack.ico}">
+    <script th:src="@{/styles/scripts/dashboard.js}" defer></script> <!-- For dropdown if needed -->
+    <title>Activity</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <div th:replace="~{header :: navbar}"></div>
+
+        <!-- Main Content -->
+        <main>
+            <div class="page-header">
+                <h2>Activity Log</h2>
+                <button type="button" th:onclick="'window.location.href=\'' + @{/user/scheduledworkouts} + ' \''" class="btn btn-info" style="margin-left: auto;"><i class="fas fa-calendar-alt"></i> View Schedule</button>
+            </div>
+
+            <div class="log-container">
+                <div th:if="${groupedLogs == null or groupedLogs.isEmpty()}" class="empty-state">
+                    <h3>No workout logs found.</h3>
+                    <p>Complete scheduled workouts from the dashboard or schedule page to see logs here.</p>
+                </div>
+
+                <div th:unless="${groupedLogs == null or groupedLogs.isEmpty()}" class="timeline">
+                    <!-- Iterate through map entries (Date -> List<WorkoutLog>) -->
+                    <div th:each="entry : ${groupedLogs}" class="timeline-group">
+                        <h3 class="timeline-date-header" 
+                            th:text="${#temporals.format(entry.key, 'EEEE, MMMM dd, yyyy')}">
+                            Date Header
+                        </h3>
+                        <ul class="timeline-entries">
+                            <!-- Iterate through logs for that specific date -->
+                            <li th:each="log : ${entry.value}" class="timeline-entry">
+                                <div class="timeline-time" th:text="${#temporals.format(log.completedAt, 'h:mm a')}">Time</div>
+                                <div class="timeline-content">
+                                    <h4 class="timeline-title" th:text="${log.workoutName}">Workout Name</h4>
+                                    <div class="timeline-details">
+                                        <span><i class="fas fa-stopwatch"></i> <span th:text="${log.duration}"></span> min</span>
+                                        <span><i class="fas fa-fire"></i> <span th:text="${log.caloriesBurned != null ? #numbers.formatDecimal(log.caloriesBurned, 0, 0) : '0'}"></span> kcal</span>
+                                        <span><i class="fas fa-tag"></i> <span th:text="${log.workoutType ?: 'Other'}"></span></span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html> 

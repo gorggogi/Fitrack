@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -46,6 +47,8 @@ import jakarta.validation.ConstraintViolation;
 import java.util.Set;
 import org.springframework.validation.BindingResult;
 import org.springframework.security.core.context.SecurityContextHolder;
+import java.time.LocalDate;
+import com.app.fitrack.model.WorkoutLog;
 
 
 @Controller
@@ -614,6 +617,31 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
             logger.error("Error updating workout", e);
             return "redirect:/user/scheduledworkouts?error=" + e.getMessage();
         }
+    }
+
+    @GetMapping("/user/workout-log")
+    public String showWorkoutLogPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        if (user == null) {
+            return "redirect:/user/login?error=UserNotFound";
+        }
+
+        List<WorkoutLog> logs = workoutService.getAllWorkoutLogsSorted(user);
+
+        // Group logs by date
+        Map<LocalDate, List<WorkoutLog>> groupedLogs = logs.stream()
+            .collect(Collectors.groupingBy(
+                log -> log.getCompletedAt().toLocalDate(),
+                LinkedHashMap::new, // Preserve insertion order (effectively date order)
+                Collectors.toList()
+            ));
+
+        model.addAttribute("user", user);
+        model.addAttribute("fullName", user.getFirstName() + " " + user.getLastName());
+        model.addAttribute("groupedLogs", groupedLogs);
+        // model.addAttribute("pageTitle", "Workout Log"); // For consistency if you use a common layout
+
+        return "workout-log"; // Name of the new Thymeleaf template
     }
 }
     

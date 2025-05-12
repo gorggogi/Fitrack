@@ -171,8 +171,9 @@ public class UserService {
 
         userRepository.save(user);
 
-        // Create initial body measurement record
+        // Create initial body measurement record only if weight is provided
         if (weight != null) {
+            logger.info("Creating initial body measurement record for user {} with weight {}", email, weight);
             BodyMeasurement initialMeasurement = new BodyMeasurement();
             initialMeasurement.setUser(user);
             initialMeasurement.setWeight(weight);
@@ -196,37 +197,60 @@ public class UserService {
             throw new IllegalArgumentException("User not found with email: " + currentEmail);
         }
 
-        // Check if email is being changed
-        boolean emailChanged = !currentEmail.equalsIgnoreCase(updatedUserData.getEmail());
+        Double originalWeight = user.getWeight(); // Store original weight for comparison
+        boolean weightChanged = false;
 
+        // Check if email is being changed (handled by separate verification flow)
+        boolean emailChanged = !currentEmail.equalsIgnoreCase(updatedUserData.getEmail());
         if (emailChanged) {
-            // Email change is handled separately via verification flow.
-            // We only update other fields here.
             logger.info("Email change detected for user {}. Deferring email update to verification flow.", currentEmail);
         } else {
-            // If email is NOT changing, update it (in case casing changed etc.)
-             user.setEmail(updatedUserData.getEmail());
+            user.setEmail(updatedUserData.getEmail()); // Update email if not changing (e.g., case change)
         }
 
-        // Update other fields (excluding email if changed)
+        // Update other fields
         user.setFirstName(updatedUserData.getFirstName());
         user.setLastName(updatedUserData.getLastName());
         user.setAge(updatedUserData.getAge());
         user.setGender(updatedUserData.getGender());
         user.setHeight(updatedUserData.getHeight());
-        user.setWeight(updatedUserData.getWeight());
+        
+        // Update weight and check if it changed
+        if (updatedUserData.getWeight() != null) {
+            if (originalWeight == null || !originalWeight.equals(updatedUserData.getWeight())) {
+                user.setWeight(updatedUserData.getWeight());
+                weightChanged = true;
+                 logger.info("User {} weight updated via profile edit to: {}", currentEmail, updatedUserData.getWeight());
+            } else {
+                logger.debug("User {} weight ({}) unchanged in profile edit.", currentEmail, originalWeight);
+            }
+        } else {
+            // Handle case where weight is explicitly set to null?
+             if (originalWeight != null) {
+                 user.setWeight(null);
+                 weightChanged = true; // Technically changed from value to null
+                  logger.info("User {} weight removed via profile edit.", currentEmail);
+             }
+        }
         
         // Update profile picture path if a new one was provided
         if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
             user.setProfilePicture(profilePicturePath);
-            // logger.info("UserService: Setting profile picture path to: {}", profilePicturePath); // Removed log
-        } else {
-            // logger.info("UserService: No new profile picture path provided, retaining existing: {}", user.getProfilePicture()); // Removed log
         }
 
-        // Save the updated user
+        // Save the updated user object first
         User savedUser = userRepository.save(user);
-        // logger.info("UserService: Saved user. Profile picture path on savedUser: {}", savedUser.getProfilePicture()); // Removed log
+
+        // If weight changed during profile update, create a corresponding measurement record
+        if (weightChanged && savedUser.getWeight() != null) { // Check savedUser weight isn't null
+            logger.info("Weight changed via profile edit for user {}, creating BodyMeasurement record.", currentEmail);
+            BodyMeasurement profileUpdateMeasurement = new BodyMeasurement();
+            profileUpdateMeasurement.setUser(savedUser);
+            profileUpdateMeasurement.setWeight(savedUser.getWeight());
+            profileUpdateMeasurement.setDateTime(LocalDateTime.now());
+            profileUpdateMeasurement.setNotes("Weight updated via profile edit.");
+            bodyMeasurementService.saveMeasurement(profileUpdateMeasurement);
+        }
         
         if (emailChanged) {
             return "Profile updated. Please verify your new email address to complete the change.";

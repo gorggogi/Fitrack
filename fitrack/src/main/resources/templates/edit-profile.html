@@ -14,152 +14,144 @@
     <script th:src="@{/styles/scripts/edit-profile.js}" defer></script> 
 </head>
 <body>
-    <!-- Store original email in a data attribute for JS comparison -->
-    <div class="container" th:attr="data-original-email=*{email}">
-        <!-- Replace the th:replace with the actual navbar HTML -->
-        <header class="navbar">
-            <div class="logo-container">
-                <img th:src="@{/images/Fitrack.png}" alt="Fitrack Logo" class="logo" style="background:none;" />
-                <span class="site-name">Fitrack</span>
-            </div>
-            <div class="user-info">
-                <!-- Assuming user and fullName are available in the model for edit-profile -->
-                <span th:text="${user.firstName} + ' ' + ${user.lastName}" class="user-name"></span> 
-                <div class="user-icon" onclick="toggleDropdown()">
-                    <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture" alt="Profile Picture">
-                    <img th:unless="${user.profilePicture}" th:src="@{/images/default-profile.png}" class="profile-picture" alt="Default Profile Picture">
-                </div>
-                <div class="dropdown-menu" id="dropdownMenu">
-                    <form id="logoutForm" th:action="@{/user/logout}" method="post" style="display: none;">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <input type="submit" value="Logout" />
-                    </form>
-                    <a th:href="@{/user/dashboard}"><i class="fas fa-home"></i> Dashboard</a>
-                    <a th:href="@{/user/analytics}"><i class="fas fa-chart-line"></i> Analytics</a>
-                    <a th:href="@{/user/goals/all}"><i class="fas fa-bullseye"></i> Goals</a>
-                    <a th:href="@{/user/profile/edit}"><i class="fas fa-user-edit"></i> Edit Profile</a>
-                    <!--  <a href="/user/diet">Diet</a> -->
-                    <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </div>
-            </div>
-        </header>
+    <div class="container">
+        <div th:replace="~{header :: navbar}"></div>
 
-        <main>
-            <div class="page-header">
+        <!-- Modal Structure -->
+        <div id="editProfileModal" class="modal active">
+            <div class="modal-content">
+                <!-- Modal Close Button -->
+                <span class="close" onclick="window.location.href='/user/dashboard'">&times;</span>
+
+                <!-- Modal Header -->
                 <h2>Edit Profile</h2>
+
+                <!-- Display success/error messages -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${successMessage}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <!-- Moved Form (removed form-centered class) -->
+                <form id="editProfileForm" th:action="@{/user/profile/update}" th:object="${user}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="profile-picture-edit">
+                        <img id="profilePicturePreview" th:src="*{profilePicture ?: '/images/default-profile.png'}" alt="Profile Picture" class="profile-picture-large">
+                        <div class="form-group">
+                            <label for="profilePicture" class="btn btn-secondary">Change Profile Picture</label>
+                            <input type="file" id="profilePicture" name="profilePicture" class="form-control-file" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required>
+                        <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required>
+                        <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group email-group">
+                        <label for="email">Email</label>
+                        <div class="input-group">
+                             <input type="email" id="email" th:field="*{email}" class="form-control" required>
+                             <button type="button" id="sendVerificationBtn" class="btn btn-secondary btn-sm" style="margin-left: 0px; margin-top: 25px; display: none;">Send Code</button>
+                        </div>
+                        <span id="emailVerificationStatus" class="verification-status"></span> <!-- Status messages -->
+                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+                        <!-- Display global pending email error -->
+                        <span th:if="${#fields.hasGlobalErrors() and #fields.globalErrors().?[#strings.contains(message, 'pending verification')].size() > 0}"
+                              th:each="err : ${#fields.globalErrors().?[#strings.contains(message, 'pending verification')]}" 
+                              th:text="${err.message}" class="error-message"></span>
+                         <small>Changing your email requires verification.</small>
+                    </div>
+
+                    <!-- Verification Code Section (Initially Hidden) -->
+                    <div id="verificationSection" class="form-group" style="display: none;">
+                        <label for="verificationCode">Verification Code</label>
+                        <div class="input-group">
+                            <input type="text" id="verificationCode" class="form-control" placeholder="Enter code from email">
+                            <button type="button" id="verifyCodeBtn" class="btn btn-primary btn-sm" style="margin-left: 5px;">Verify Code</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" th:field="*{age}" class="form-control">
+                        <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" th:field="*{gender}" class="form-control">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">Height (cm)</label>
+                        <input type="number" step="0.1" id="height" th:field="*{height}" class="form-control">
+                        <span th:if="${#fields.hasErrors('height')}" th:errors="*{height}" class="error-message"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" step="0.1" id="weight" th:field="*{weight}" class="form-control">
+                        <span th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}" class="error-message"></span>
+                    </div>
+
+                    <!-- Optional: Password Change Section -->
+                    <!-- 
+                    <fieldset>
+                        <legend>Change Password (optional)</legend>
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirm New Password</label>
+                            <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="form-control">
+                        </div>
+                    </fieldset>
+                     -->
+
+                    <div class="form-actions">
+                        <button type="submit" id="saveChangesBtn" class="btn btn-primary">Save Changes</button>
+                        <!-- Original Cancel button also redirects -->
+                        <button type="button" onclick="window.location.href='/user/dashboard'" class="btn btn-secondary">Cancel</button> 
+                    </div>
+
+                </form>
             </div>
+        </div>
 
-            <!-- Display success/error messages -->
-            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-
-            <form id="editProfileForm" th:action="@{/user/profile/update}" th:object="${user}" method="post" enctype="multipart/form-data" class="form-centered">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <input type="hidden" th:field="*{id}" />
-
-                <div class="profile-picture-edit">
-                    <img id="profilePicturePreview" th:src="*{profilePicture ?: '/images/default-profile.png'}" alt="Profile Picture" class="profile-picture-large">
-                    <div class="form-group">
-                        <label for="profilePicture" class="btn btn-secondary">Change Profile Picture</label>
-                        <input type="file" id="profilePicture" name="profilePicture" class="form-control-file" accept="image/*">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input type="text" id="firstName" th:field="*{firstName}" class="form-control" required>
-                    <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="error-message"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName" th:field="*{lastName}" class="form-control" required>
-                    <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="error-message"></span>
-                </div>
-
-                <div class="form-group email-group">
-                    <label for="email">Email</label>
-                    <div class="input-group">
-                         <input type="email" id="email" th:field="*{email}" class="form-control" required>
-                         <button type="button" id="sendVerificationBtn" class="btn btn-secondary btn-sm" style="margin-left: 0px; margin-top: 25px; display: none;">Send Code</button>
-                    </div>
-                    <span id="emailVerificationStatus" class="verification-status"></span> <!-- Status messages -->
-                    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
-                    <!-- Display global pending email error -->
-                    <span th:if="${#fields.hasGlobalErrors() and #fields.globalErrors().?[#strings.contains(message, 'pending verification')].size() > 0}"
-                          th:each="err : ${#fields.globalErrors().?[#strings.contains(message, 'pending verification')]}" 
-                          th:text="${err.message}" class="error-message"></span>
-                     <small>Changing your email requires verification.</small>
-                </div>
-
-                <!-- Verification Code Section (Initially Hidden) -->
-                <div id="verificationSection" class="form-group" style="display: none;">
-                    <label for="verificationCode">Verification Code</label>
-                    <div class="input-group">
-                        <input type="text" id="verificationCode" class="form-control" placeholder="Enter code from email">
-                        <button type="button" id="verifyCodeBtn" class="btn btn-primary btn-sm" style="margin-left: 5px;">Verify Code</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="age">Age</label>
-                    <input type="number" id="age" th:field="*{age}" class="form-control">
-                    <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}" class="error-message"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="gender">Gender</label>
-                    <select id="gender" th:field="*{gender}" class="form-control">
-                        <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                        <option value="Prefer not to say">Prefer not to say</option>
-                    </select>
-                    <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="error-message"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="height">Height (cm)</label>
-                    <input type="number" step="0.1" id="height" th:field="*{height}" class="form-control">
-                    <span th:if="${#fields.hasErrors('height')}" th:errors="*{height}" class="error-message"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="weight">Weight (kg)</label>
-                    <input type="number" step="0.1" id="weight" th:field="*{weight}" class="form-control">
-                    <span th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}" class="error-message"></span>
-                </div>
-
-                <!-- Optional: Password Change Section -->
-                <!-- 
-                <fieldset>
-                    <legend>Change Password (optional)</legend>
-                    <div class="form-group">
-                        <label for="currentPassword">Current Password</label>
-                        <input type="password" id="currentPassword" name="currentPassword" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="newPassword">New Password</label>
-                        <input type="password" id="newPassword" name="newPassword" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmNewPassword">Confirm New Password</label>
-                        <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="form-control">
-                    </div>
-                </fieldset>
-                 -->
-
-                <div class="form-actions">
-                    <button type="submit" id="saveChangesBtn" class="btn btn-primary">Save Changes</button>
-                    <a th:href="@{/user/dashboard}" class="btn btn-secondary">Cancel</a>
-                </div>
-
-            </form>
+        <!-- Main content outside modal is now empty -->
+        <main>
+            <!-- Removed original page-header and form -->
         </main>
     </div>
 
-    <!-- Script tags removed from here -->
-
+    <!-- Script tags -->
+    <script th:src="@{/styles/scripts/loggedmeals.js}" defer></script> 
+    <script th:src="@{/styles/scripts/dashboard.js}" defer></script>
+    <script th:src="@{/styles/scripts/edit-profile.js}" defer></script> 
 </body>
 </html> 

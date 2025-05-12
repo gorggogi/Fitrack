@@ -200,4 +200,9 @@ public class WorkoutService {
 
         return workoutRepository.save(existingWorkout);
     }
+
+    // Method to get all workout logs for a user, sorted by date descending
+    public List<WorkoutLog> getAllWorkoutLogsSorted(User user) {
+        return workoutLogRepository.findByUserOrderByCompletedAtDesc(user);
+    }
 }

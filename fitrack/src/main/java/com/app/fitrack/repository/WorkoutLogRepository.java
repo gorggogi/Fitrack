@@ -22,4 +22,7 @@ boolean existsByUserAndWorkoutNameAndDate(@Param("user") User user,
     long countByUserAndCompletedAtBetween(@Param("user") User user, 
                                          @Param("start") LocalDateTime start, 
                                          @Param("end") LocalDateTime end);
+
+    // Find all logs for a user, ordered by completion time descending
+    List<WorkoutLog> findByUserOrderByCompletedAtDesc(User user);
 }

@@ -48,8 +48,11 @@ public class AnalyticsService {
         log.debug("DTO fullName set to: {}", dto.getFullName());
 
         List<BodyMeasurement> measurements = bodyMeasurementService.getMeasurementsForUser(user);
-        BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0);
-        dto.setCurrentUserWeight(latestMeasurement != null ? latestMeasurement.getWeight() : null);
+        // BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0); // Keep for other calculations if needed
+        
+        // Set current weight directly from the User object
+        dto.setCurrentUserWeight(user.getWeight()); 
+        log.debug("Setting currentUserWeight from User object: {}", user.getWeight());
 
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate7Days = endDate.minusDays(7);
@@ -71,6 +74,8 @@ public class AnalyticsService {
         dto.setCurrentBmiValue(bodyMeasurementService.calculateCurrentBMI(user));
         dto.setCurrentBmiCategory(bodyMeasurementService.getBMICategory(dto.getCurrentBmiValue()));
 
+        // Find latestMeasurement again for other calculations
+        BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0); 
         populateWeightProgressAndTrend(dto, measurements, latestMeasurement);
         populateNutrientNeeds(dto, latestMeasurement, tdee);
         

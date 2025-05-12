@@ -158,5 +158,9 @@ public class MealService {
     public void deleteMeal(Meal meal) {
         mealRepository.delete(meal);
     }
+
+    public List<Meal> findAllMealsByUserSorted(User user) {
+        return mealRepository.findByUserOrderByDateTimeDesc(user);
+    }
 }
 
