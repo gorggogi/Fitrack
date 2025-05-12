@@ -41,6 +41,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
+import jakarta.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import java.util.Set;
+import org.springframework.validation.BindingResult;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 @Controller
@@ -62,6 +67,9 @@ public class UserController {
 
     @Autowired
     private GoalService goalService;
+
+    @Autowired
+    private Validator validator;
 
     @GetMapping("/user/success")
     public String showSuccessPage() {
@@ -217,6 +225,18 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         return "profile";
     }
 
+    @GetMapping("/user/profile/edit")
+    public String showEditProfilePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            // Handle case where user is not found, perhaps redirect to login
+            return "redirect:/user/login?error=User not found";
+        }
+        model.addAttribute("user", user);
+        return "edit-profile"; // Name of the Thymeleaf template for editing
+    }
+
     @PostMapping("/user/profile/create")
     public String createProfile(@AuthenticationPrincipal UserDetails userDetails,
                               @RequestParam(required = false) Integer age,
@@ -260,22 +280,166 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
 
     @PostMapping("/user/profile/update")
     public String updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-                              @RequestParam(required = false) Integer age,
-                              @RequestParam(required = false) String gender,
-                              @RequestParam(required = false) Double height,
-                              @RequestParam(required = false) Double weight,
-                              RedirectAttributes redi) {
-        String email = userDetails.getUsername();
+                              @ModelAttribute("user") User updatedUserData,
+                              BindingResult bindingResult,
+                              @RequestParam(required = false) MultipartFile profilePicture,
+                              RedirectAttributes redi,
+                              Model model) {
         
-        String message = userService.updateUserProfile(email, age, gender, height, weight);
-        
-        if ("Profile updated successfully.".equals(message)) {
-            redi.addFlashAttribute("successMessage", message);
-        } else {
-            redi.addFlashAttribute("errorMessage", message);
+        String currentEmail = userDetails.getUsername();
+        User currentUser = userService.findByEmail(currentEmail);
+
+        if (currentUser == null) {
+            redi.addFlashAttribute("errorMessage", "Error: Could not find current user session.");
+            return "redirect:/user/login";
+        }
+
+        String profilePicturePath = currentUser.getProfilePicture(); // Default to current picture
+        boolean attemptedEmailChange = !currentEmail.equalsIgnoreCase(updatedUserData.getEmail());
+
+        // Handle profile picture upload
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            try {
+                Path uploadPath = Paths.get(UPLOAD_DIR);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                String originalFilename = profilePicture.getOriginalFilename();
+                String extension = "";
+                if (originalFilename != null && originalFilename.contains(".")) {
+                    extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String newFilename = UUID.randomUUID().toString() + extension;
+                Path filePath = uploadPath.resolve(newFilename);
+                Files.copy(profilePicture.getInputStream(), filePath);
+                profilePicturePath = "/uploads/profile-pictures/" + newFilename;
+            } catch (IOException e) {
+                logger.error("Error uploading profile picture for user: {}", currentEmail, e);
+                bindingResult.reject("global.error", "Error uploading profile picture. Please try again.");
+                model.addAttribute("user", updatedUserData);
+                return "edit-profile";
+            }
+        }
+
+        // Preserve non-editable fields and set the determined profile picture path
+        updatedUserData.setId(currentUser.getId());
+        updatedUserData.setPassword(currentUser.getPassword());
+        updatedUserData.setVerified(currentUser.isVerified());
+        updatedUserData.setProfilePicture(profilePicturePath);
+        if (!attemptedEmailChange) {
+            updatedUserData.setEmail(currentEmail);
+        }
+
+        // Manual Validation
+        Set<ConstraintViolation<User>> violations = validator.validate(updatedUserData);
+        if (!violations.isEmpty()) {
+            logger.warn("Validation errors updating profile for user: {}", currentEmail);
+            violations.forEach(violation -> {
+                String field = violation.getPropertyPath().toString();
+                String message = violation.getMessage();
+                bindingResult.rejectValue(field, "error." + field, message);
+                logger.warn("Field '{}': Message: {}", field, message);
+            });
+             model.addAttribute("user", updatedUserData);
+             return "edit-profile";
+        }
+
+        // Email Change Check
+        if (attemptedEmailChange) {
+             if (updatedUserData.getEmail().equalsIgnoreCase(currentUser.getPendingEmail())) {
+                  logger.info("User {} attempting to save profile while email {} is pending verification.", currentEmail, updatedUserData.getEmail());
+                  bindingResult.reject("global.pendingEmail", "Your new email address is pending verification. Please check your inbox or request a new code.");
+                  model.addAttribute("user", updatedUserData);
+                  return "edit-profile";
+             } else {
+                 logger.info("User {} submitted profile with a new unverified email: {}. Proceeding with other field updates.", currentEmail, updatedUserData.getEmail());
+             }
+        }
+
+        // Proceed to update
+        try {
+            String resultMessage = userService.updateUserProfile(currentEmail, updatedUserData, profilePicturePath);
+            redi.addFlashAttribute("successMessage", resultMessage);
+            return "redirect:/user/profile/edit";
+        } catch (Exception e) {
+            logger.error("Error updating profile for user: {}", currentEmail, e);
+            bindingResult.reject("global.error", "An unexpected error occurred while updating profile.");
+            model.addAttribute("user", updatedUserData);
+            return "edit-profile";
+        }
+    }
+
+    // Endpoint to send verification code for email change
+    @PostMapping("/user/profile/send-verification")
+    @ResponseBody
+    public ResponseEntity<?> sendEmailChangeVerification(@AuthenticationPrincipal UserDetails userDetails,
+                                                       @RequestParam String newEmail) {
+        String currentEmail = userDetails.getUsername();
+        User user = userService.findByEmail(currentEmail);
+        Map<String, Object> response = new HashMap<>();
+
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "User session error.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
         
-        return "redirect:/user/dashboard";
+        if (currentEmail.equalsIgnoreCase(newEmail)) {
+             response.put("success", false);
+            response.put("message", "Email address has not changed.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            userService.requestEmailChangeVerification(user, newEmail);
+            response.put("success", true);
+            response.put("message", "Verification code sent to " + newEmail);
+            return ResponseEntity.ok(response);
+        } catch (DuplicateEmailException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            logger.error("Error sending email change verification for user {}: {}", currentEmail, e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "Failed to send verification code. Please try again.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // Endpoint to verify the code and complete the email change
+    @PostMapping("/user/profile/verify-email-change")
+    @ResponseBody
+    public ResponseEntity<?> verifyEmailChange(@AuthenticationPrincipal UserDetails userDetails,
+                                             @RequestParam String code) {
+        String currentEmail = userDetails.getUsername();
+        User user = userService.findByEmail(currentEmail);
+         Map<String, Object> response = new HashMap<>();
+
+        if (user == null) {
+             response.put("success", false);
+            response.put("message", "User session error.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        try {
+            boolean success = userService.verifyEmailChange(user, code);
+            if (success) {
+                response.put("success", true);
+                response.put("message", "Email successfully verified and updated!");
+                response.put("newEmail", user.getEmail());
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "Invalid or expired verification code.");
+                return ResponseEntity.badRequest().body(response);
+            }
+        } catch (Exception e) {
+             logger.error("Error verifying email change code for user {}: {}", user.getEmail(), e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "Failed to verify code. Please try again.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     // Analytics endpoint has been moved to AnalyticsController for a more comprehensive implementation
@@ -338,14 +502,9 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                 if (completedGoalName != null) {
                     responseBody.put("completedGoalName", completedGoalName);
                 }
-                // For AJAX, we want the client to reload to get fresh analytics data, including charts.
-                // So, we signal success, and the client will handle the reload and toast.
-                // We also ensure the redirect URL is part of the response for clarity, 
-                // though the client JS will likely just reload the current page.
                 responseBody.put("redirectTo", "/user/analytics"); 
                 return ResponseEntity.ok(responseBody);
             } else {
-                // Non-AJAX: Use RedirectAttributes for flash messages
                 redi.addFlashAttribute("successMessage", "Measurement saved successfully!");
                 if (completedGoalName != null) {
                     redi.addFlashAttribute("completedGoalName", completedGoalName);
@@ -362,7 +521,6 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
             }
             redi.addFlashAttribute("errorMessage", "Failed to save measurement: " + e.getMessage());
-            // For non-AJAX error, redirect back to the measurements page
             return ResponseEntity.status(HttpStatus.FOUND).header("Location", "/user/measurements").build();
         }
     }

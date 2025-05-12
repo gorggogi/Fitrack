@@ -17,10 +17,16 @@ import org.springframework.security.core.Authentication;
 import com.app.fitrack.model.WorkoutLog;
 import com.app.fitrack.repository.WorkoutLogRepository;
 import com.app.fitrack.model.BodyMeasurement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 @Service
 @Transactional 
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -184,37 +190,40 @@ public class UserService {
     }
 
     @Transactional
-    public String updateUserProfile(String email, Integer age, String gender, Double height, Double newWeight) {
-        User user = userRepository.findByEmail(email);
+    public String updateUserProfile(String currentEmail, User updatedUserData, String profilePicturePath) {
+        User user = findByEmail(currentEmail);
         if (user == null) {
-            return "User not found."; 
+            throw new IllegalArgumentException("User not found with email: " + currentEmail);
         }
 
-        boolean weightChanged = false;
-        // Check if newWeight is provided and different from the current user's weight
-        if (newWeight != null && (user.getWeight() == null || !user.getWeight().equals(newWeight))) {
-            weightChanged = true;
+        // Check if email is being changed
+        boolean emailChanged = !currentEmail.equalsIgnoreCase(updatedUserData.getEmail());
+
+        if (emailChanged) {
+            // Email change is handled separately via verification flow.
+            // We only update other fields here.
+            logger.info("Email change detected for user {}. Deferring email update to verification flow.", currentEmail);
+        } else {
+            // If email is NOT changing, update it (in case casing changed etc.)
+             user.setEmail(updatedUserData.getEmail());
         }
 
-        // Update fields only if they are provided (not null)
-        // For age, gender, height, if the request param is null, it means no change was intended.
-        if (age != null) user.setAge(age);
-        if (gender != null) user.setGender(gender);
-        if (height != null) user.setHeight(height);
-        if (newWeight != null) user.setWeight(newWeight); // Update user's weight field
+        // Update other fields (excluding email if changed)
+        user.setFirstName(updatedUserData.getFirstName());
+        user.setLastName(updatedUserData.getLastName());
+        user.setAge(updatedUserData.getAge());
+        user.setGender(updatedUserData.getGender());
+        user.setHeight(updatedUserData.getHeight());
+        user.setWeight(updatedUserData.getWeight());
+        user.setProfilePicture(profilePicturePath); // Update profile picture path
 
         userRepository.save(user);
+        logger.info("Profile updated (excluding potential email change) for user {}", currentEmail);
 
-        // If weight was actually changed, log a new BodyMeasurement
-        if (weightChanged) {
-            BodyMeasurement updatedMeasurement = new BodyMeasurement();
-            updatedMeasurement.setUser(user);
-            updatedMeasurement.setWeight(newWeight); // Use the newWeight for the measurement
-            updatedMeasurement.setDateTime(LocalDateTime.now());
-            updatedMeasurement.setNotes("Weight updated via profile edit"); 
-            bodyMeasurementService.saveMeasurement(updatedMeasurement);
+        if (emailChanged) {
+            return "Profile updated. Please verify your new email address to complete the change.";
         }
-        return "Profile updated successfully.";
+        return "Profile updated successfully!";
     }
 
     public double calculateBMR(User user) {
@@ -343,5 +352,109 @@ public class UserService {
 
         // Cap the activity factor between 1.2 and 1.9 (scientifically validated range)
         return Math.min(Math.max(baseActivityFactor, 1.2), 1.9);
+    }
+
+    // Method to initiate email change verification
+    public void requestEmailChangeVerification(User user, String newEmail) throws DuplicateEmailException {
+        // 1. Check if the new email is already in use by another user
+        User existingUserWithNewEmail = userRepository.findByEmail(newEmail);
+        if (existingUserWithNewEmail != null && !existingUserWithNewEmail.getId().equals(user.getId())) {
+            throw new DuplicateEmailException("Email address " + newEmail + " is already registered.");
+        }
+
+        // 2. Generate verification code and expiry
+        String code = UUID.randomUUID().toString().substring(0, 6).toUpperCase(); // Simple 6-char code
+        LocalDateTime expiryTime = LocalDateTime.now().plusHours(1); // Code valid for 1 hour
+
+        // 3. Store pending email, code, and expiry on the user object
+        user.setPendingEmail(newEmail);
+        user.setEmailChangeCode(code);
+        user.setEmailChangeCodeExpiry(expiryTime);
+
+        // 4. Save the user with pending changes
+        userRepository.save(user);
+
+        // 5. Send verification email to the *new* email address
+        emailService.sendVerificationEmail(newEmail, code); 
+
+        logger.info("Sent email change verification code to {} for user {}", newEmail, user.getEmail());
+    }
+
+    // Method to verify the code and complete the email change
+    public boolean verifyEmailChange(User user, String code) {
+        if (user.getPendingEmail() == null || user.getEmailChangeCode() == null || user.getEmailChangeCodeExpiry() == null) {
+            logger.warn("Email change verification attempt for user {} with no pending change data.", user.getEmail());
+            return false; // No pending change
+        }
+
+        // Check if code matches and is not expired
+        boolean codeMatches = code.equals(user.getEmailChangeCode());
+        boolean codeNotExpired = LocalDateTime.now().isBefore(user.getEmailChangeCodeExpiry());
+
+        if (codeMatches && codeNotExpired) {
+            String oldEmail = user.getEmail();
+            String newEmail = user.getPendingEmail();
+            logger.info("Email change code verified for user {}. Updating email to {}.", oldEmail, newEmail);
+
+            // Update email and mark as verified
+            user.setEmail(newEmail);
+            user.setVerified(true); // Assume changing email requires verification
+
+            // Clear pending change fields
+            user.setPendingEmail(null);
+            user.setEmailChangeCode(null);
+            user.setEmailChangeCodeExpiry(null);
+
+            // Save the user
+            userRepository.save(user);
+
+            // IMPORTANT: Update Spring Security Context
+            updateSecurityContext(oldEmail, newEmail, user);
+
+            return true;
+        } else {
+            if (!codeMatches) {
+                 logger.warn("Invalid email change code provided for user {}", user.getEmail());
+            } 
+            if (!codeNotExpired) {
+                 logger.warn("Expired email change code provided for user {}", user.getEmail());
+                 // Optionally clear expired code fields here
+                 // user.setPendingEmail(null);
+                 // user.setEmailChangeCode(null);
+                 // user.setEmailChangeCodeExpiry(null);
+                 // userRepository.save(user);
+            }
+            return false;
+        }
+    }
+
+    // Helper method to update Spring Security Context after successful email change
+    private void updateSecurityContext(String oldEmail, String newEmail, User user) {
+        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+        if (currentAuth != null && currentAuth.getName().equals(oldEmail)) {
+            // Recreate the UserDetails or principal object if necessary based on your CustomUserDetailsService
+            // Assuming your principal is the standard UserDetails:
+             UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(newEmail)
+                .password(user.getPassword()) // Use the existing encoded password
+                .authorities("ROLE_USER") // Or fetch roles dynamically if needed
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(!user.isVerified()) 
+                .build();
+
+            // Create a new Authentication token with the updated principal
+            UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+                userDetails, 
+                currentAuth.getCredentials(), // Keep existing credentials (usually null after authentication)
+                userDetails.getAuthorities());
+            newAuth.setDetails(currentAuth.getDetails()); // Keep existing details (like IP, Session ID)
+
+            // Set the new Authentication object in the SecurityContext
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+            logger.info("Updated SecurityContext for user. Old email: {}, New email: {}", oldEmail, newEmail);
+        } else {
+            logger.warn("Could not update SecurityContext. Authentication mismatch or null. Old email: {}, New email: {}", oldEmail, newEmail);
+        }
     }
 }

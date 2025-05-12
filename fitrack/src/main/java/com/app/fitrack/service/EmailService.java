@@ -41,6 +41,28 @@ public class EmailService {
         message.setText(body);
         mailSender.send(message);
     }
+
+    /**
+     * Sends an email with a verification code to a specified email address.
+     * Used for verifying a *new* email address during profile updates.
+     * This method does NOT generate or store a VerificationToken itself.
+     *
+     * @param email The email address to send the verification code to.
+     * @param code The verification code to include in the email.
+     */
+    @Async
+    public void sendVerificationEmail(String email, String code) {
+        String subject = "Verify Your New Fitrack Email Address";
+        // Consider making the expiry time configurable or passing it in if needed.
+        String body = "Your verification code for the new email address is: " + code + "\nThis code will expire in 30 minutes."; 
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email); // Send to the new/pending email
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
+    }
+
     @Async
     @Transactional
     public void sendPasswordResetEmail(User user, String token) {

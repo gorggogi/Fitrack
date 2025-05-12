@@ -10,6 +10,9 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.CascadeType;
 import java.util.List;
+import java.time.LocalDateTime;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Temporal;
 
 @Entity
 @Table(name = "users")
@@ -20,7 +23,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 45)
+    @Column(nullable = true, unique = true, length = 45)
     private String email;
 
     @Column(nullable = false, length = 255)
@@ -55,6 +58,18 @@ public class User {
 
     @Transient
     private String confirmPassword;
+
+    // --- Fields for Email Change Verification ---
+    @Column(name = "pending_email", nullable = true)
+    private String pendingEmail; // Stores the email address waiting for verification
+
+    @Column(name = "email_change_code", nullable = true)
+    private String emailChangeCode; // Stores the verification code for the email change
+
+    @Column(name = "email_change_code_expiry", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime emailChangeCodeExpiry; // Stores the expiry time for the code
+    // --- End Email Change Fields ---
 
     public Long getId() {
         return id;
@@ -163,4 +178,30 @@ public class User {
     public String getFullName() {
         return firstName + " " + lastName;
     }
+
+    // --- Getters and Setters for new fields ---
+    public String getPendingEmail() {
+        return pendingEmail;
+    }
+
+    public void setPendingEmail(String pendingEmail) {
+        this.pendingEmail = pendingEmail;
+    }
+
+    public String getEmailChangeCode() {
+        return emailChangeCode;
+    }
+
+    public void setEmailChangeCode(String emailChangeCode) {
+        this.emailChangeCode = emailChangeCode;
+    }
+
+    public LocalDateTime getEmailChangeCodeExpiry() {
+        return emailChangeCodeExpiry;
+    }
+
+    public void setEmailChangeCodeExpiry(LocalDateTime emailChangeCodeExpiry) {
+        this.emailChangeCodeExpiry = emailChangeCodeExpiry;
+    }
+    // --- End Getters and Setters ---
 }
