@@ -2340,12 +2340,12 @@ button.primary {
 
 .completed-goal-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding-top: 20px;
-    border-top: 1px solid #eee; /* Lighter separator */
+    border-top: 1px solid #eee;
     margin-top: 20px;
-    gap: 10px; /* Add gap between buttons */
+    gap: 10px;
 }
 
 .completed-goal-actions .btn {
