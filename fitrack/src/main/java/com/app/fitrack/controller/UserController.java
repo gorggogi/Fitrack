@@ -283,89 +283,98 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                               @ModelAttribute("user") User updatedUserData,
                               BindingResult bindingResult,
                               @RequestParam(required = false) MultipartFile profilePicture,
-                              RedirectAttributes redi,
+                              RedirectAttributes redirectAttributes,
                               Model model) {
         
         String currentEmail = userDetails.getUsername();
         User currentUser = userService.findByEmail(currentEmail);
 
         if (currentUser == null) {
-            redi.addFlashAttribute("errorMessage", "Error: Could not find current user session.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: Could not find current user session.");
             return "redirect:/user/login";
         }
 
-        String profilePicturePath = currentUser.getProfilePicture(); // Default to current picture
-        boolean attemptedEmailChange = !currentEmail.equalsIgnoreCase(updatedUserData.getEmail());
-
-        // Handle profile picture upload
-        if (profilePicture != null && !profilePicture.isEmpty()) {
-            try {
-                Path uploadPath = Paths.get(UPLOAD_DIR);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                String originalFilename = profilePicture.getOriginalFilename();
-                String extension = "";
-                if (originalFilename != null && originalFilename.contains(".")) {
-                    extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                }
-                String newFilename = UUID.randomUUID().toString() + extension;
-                Path filePath = uploadPath.resolve(newFilename);
-                Files.copy(profilePicture.getInputStream(), filePath);
-                profilePicturePath = "/uploads/profile-pictures/" + newFilename;
-            } catch (IOException e) {
-                logger.error("Error uploading profile picture for user: {}", currentEmail, e);
-                bindingResult.reject("global.error", "Error uploading profile picture. Please try again.");
-                model.addAttribute("user", updatedUserData);
-                return "edit-profile";
-            }
-        }
-
-        // Preserve non-editable fields and set the determined profile picture path
-        updatedUserData.setId(currentUser.getId());
-        updatedUserData.setPassword(currentUser.getPassword());
-        updatedUserData.setVerified(currentUser.isVerified());
-        updatedUserData.setProfilePicture(profilePicturePath);
-        if (!attemptedEmailChange) {
-            updatedUserData.setEmail(currentEmail);
-        }
-
-        // Manual Validation
-        Set<ConstraintViolation<User>> violations = validator.validate(updatedUserData);
+        // Manual validation logic (as added previously)
+        Set<ConstraintViolation<User>> violations = validator.validate(updatedUserData); // Validate the populated object
         if (!violations.isEmpty()) {
-            logger.warn("Validation errors updating profile for user: {}", currentEmail);
-            violations.forEach(violation -> {
-                String field = violation.getPropertyPath().toString();
-                String message = violation.getMessage();
-                bindingResult.rejectValue(field, "error." + field, message);
-                logger.warn("Field '{}': Message: {}", field, message);
-            });
-             model.addAttribute("user", updatedUserData);
-             return "edit-profile";
+            // Log validation errors
+             logger.warn("Validation errors updating profile for user: {}", currentEmail);
+            violations.forEach(violation -> 
+                bindingResult.rejectValue(violation.getPropertyPath().toString(), "", violation.getMessage()));
+             bindingResult.getFieldErrors().forEach(error -> {
+                 logger.warn("Field '{}': Rejected value [{}]; Message: {}", 
+                             error.getField(), error.getRejectedValue(), error.getDefaultMessage());
+             });
+             bindingResult.getGlobalErrors().forEach(error -> {
+                  logger.warn("Global error: {}", error.getDefaultMessage());
+             });
+            model.addAttribute("user", updatedUserData); // Add user data back
+            return "edit-profile"; // Return to form
         }
 
-        // Email Change Check
-        if (attemptedEmailChange) {
-             if (updatedUserData.getEmail().equalsIgnoreCase(currentUser.getPendingEmail())) {
-                  logger.info("User {} attempting to save profile while email {} is pending verification.", currentEmail, updatedUserData.getEmail());
-                  bindingResult.reject("global.pendingEmail", "Your new email address is pending verification. Please check your inbox or request a new code.");
-                  model.addAttribute("user", updatedUserData);
-                  return "edit-profile";
-             } else {
-                 logger.info("User {} submitted profile with a new unverified email: {}. Proceeding with other field updates.", currentEmail, updatedUserData.getEmail());
+        // Additional Check: If email changed, ensure it's verified or verification is pending correctly
+        if (!currentUser.getEmail().equalsIgnoreCase(updatedUserData.getEmail())) {
+            // This logic is handled by the verification endpoints and userService.completeEmailChange
+             logger.info("Email change detected from {} to {}. Verification process should be used.", currentUser.getEmail(), updatedUserData.getEmail());
+            // Consider adding a check here to prevent saving if the email is different but not the verified pendingEmail
+             if (currentUser.getPendingEmail() == null || !currentUser.getPendingEmail().equalsIgnoreCase(updatedUserData.getEmail())) {
+                 // If the email in the form doesn't match the current or the verified pending one, it's an invalid state.
+                 // However, the primary update should only happen after verification now.
+                 // Let's keep the current user's email for this direct update call.
+                 updatedUserData.setEmail(currentUser.getEmail()); 
              }
         }
 
-        // Proceed to update
+        // Proceed with update if validation passes
+        String profilePicturePath = currentUser.getProfilePicture(); // Initialize with existing path
+        String finalPathToSave = profilePicturePath; // Use a separate variable for clarity
+
         try {
-            String resultMessage = userService.updateUserProfile(currentEmail, updatedUserData, profilePicturePath);
-            redi.addFlashAttribute("successMessage", resultMessage);
-            return "redirect:/user/profile/edit";
-        } catch (Exception e) {
+            // Handle profile picture upload directly here
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                logger.info("Attempting to save new profile picture for user {}", currentEmail);
+                try {
+                    Path uploadPath = Paths.get(UPLOAD_DIR);
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                    }
+                    String originalFilename = profilePicture.getOriginalFilename();
+                    String extension = "";
+                    if (originalFilename != null && originalFilename.contains(".")) {
+                        extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                    }
+                    String newFilename = UUID.randomUUID().toString() + extension;
+                    Path filePath = uploadPath.resolve(newFilename);
+                    Files.copy(profilePicture.getInputStream(), filePath);
+                    
+                    finalPathToSave = "/uploads/profile-pictures/" + newFilename; // Update the path to save
+                    
+                    // logger.info("New profile picture saved successfully: {}", finalPathToSave); // Removed log
+                } catch (IOException e) {
+                    logger.error("IOException saving uploaded profile picture for user: {}. Update will proceed with the existing picture path.", currentEmail, e);
+                    redirectAttributes.addFlashAttribute("errorMessage", "Error saving new profile picture. Other details updated.");
+                    // Explicitly keep the original path if saving failed
+                    finalPathToSave = currentUser.getProfilePicture(); 
+                }
+            } else {
+                 // logger.info("No new profile picture file provided for user {}.", currentEmail); // Removed log
+            }
+
+            // Call the service to update user details (using finalPathToSave)
+            // logger.info("Passing finalPathToSave to service: {}", finalPathToSave); // Removed log
+            String resultMessage = userService.updateUserProfile(currentEmail, updatedUserData, finalPathToSave);
+            
+            // logger.info("User profile updated successfully for {}", currentEmail); // Removed log
+            redirectAttributes.addFlashAttribute("successMessage", resultMessage);
+
+            // Redirect to dashboard after successful update
+            return "redirect:/user/dashboard"; 
+
+        } catch (Exception e) { // Catch broad exceptions from the service layer or other unexpected issues
             logger.error("Error updating profile for user: {}", currentEmail, e);
-            bindingResult.reject("global.error", "An unexpected error occurred while updating profile.");
-            model.addAttribute("user", updatedUserData);
-            return "edit-profile";
+            redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred during the update. Please try again.");
+            model.addAttribute("user", updatedUserData); // Add user data back to model on general error
+            return "edit-profile"; // Return to edit page on other errors
         }
     }
 
@@ -606,6 +615,5 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
             return "redirect:/user/scheduledworkouts?error=" + e.getMessage();
         }
     }
-
 }
     

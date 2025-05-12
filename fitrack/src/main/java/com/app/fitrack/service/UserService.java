@@ -215,11 +215,19 @@ public class UserService {
         user.setGender(updatedUserData.getGender());
         user.setHeight(updatedUserData.getHeight());
         user.setWeight(updatedUserData.getWeight());
-        user.setProfilePicture(profilePicturePath); // Update profile picture path
+        
+        // Update profile picture path if a new one was provided
+        if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
+            user.setProfilePicture(profilePicturePath);
+            // logger.info("UserService: Setting profile picture path to: {}", profilePicturePath); // Removed log
+        } else {
+            // logger.info("UserService: No new profile picture path provided, retaining existing: {}", user.getProfilePicture()); // Removed log
+        }
 
-        userRepository.save(user);
-        logger.info("Profile updated (excluding potential email change) for user {}", currentEmail);
-
+        // Save the updated user
+        User savedUser = userRepository.save(user);
+        // logger.info("UserService: Saved user. Profile picture path on savedUser: {}", savedUser.getProfilePicture()); // Removed log
+        
         if (emailChanged) {
             return "Profile updated. Please verify your new email address to complete the change.";
         }

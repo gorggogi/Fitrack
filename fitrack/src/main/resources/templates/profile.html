@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Profile - Fitrack</title>
     <link rel="stylesheet" href="/styles/Fitrack.css">
+    <script th:src="@{/styles/scripts/profile.js}" defer></script>
 </head>
 <body>
     <div class="container">
@@ -20,7 +21,7 @@
                     <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture-preview" alt="Default Profile Picture">
                     <div class="file-input-container">
                         <label for="profilePicture" class="file-input-label">Choose Profile Picture</label>
-                        <input type="file" id="profilePicture" name="profilePicture" accept="image/*" onchange="previewImage(this)">
+                        <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
                     </div>
                 </div>
 
@@ -56,18 +57,5 @@
             </form>
         </div>
     </div>
-
-    <script>
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.querySelector('.profile-picture-preview');
-                    preview.src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
 </body>
 </html> 

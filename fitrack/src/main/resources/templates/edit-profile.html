@@ -81,7 +81,7 @@
                     <label for="email">Email</label>
                     <div class="input-group">
                          <input type="email" id="email" th:field="*{email}" class="form-control" required>
-                         <button type="button" id="sendVerificationBtn" class="btn btn-secondary btn-sm" style="margin-left: 5px; display: none;">Send Code</button>
+                         <button type="button" id="sendVerificationBtn" class="btn btn-secondary btn-sm" style="margin-left: 0px; margin-top: 25px; display: none;">Send Code</button>
                     </div>
                     <span id="emailVerificationStatus" class="verification-status"></span> <!-- Status messages -->
                     <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>

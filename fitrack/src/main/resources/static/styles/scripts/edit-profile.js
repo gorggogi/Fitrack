@@ -1,24 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, edit-profile.js running'); // Log: Script start
+    
     const profilePictureInput = document.getElementById('profilePicture');
     const profilePicturePreview = document.getElementById('profilePicturePreview');
+    
+    console.log('Profile picture elements found:', profilePictureInput, profilePicturePreview); // Log: Elements found?
 
     if (profilePictureInput && profilePicturePreview) {
         profilePictureInput.addEventListener('change', function(event) {
+            console.log('Profile picture input changed!'); // Log: Change event fired
             const file = event.target.files[0];
             if (file && file.type.startsWith('image/')) {
+                console.log('Image file selected:', file.name); // Log: Image detected
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
+                    console.log('FileReader loaded, setting image src...'); // Log: FileReader finished
                     profilePicturePreview.src = e.target.result;
+                    console.log('Image src set to:', e.target.result.substring(0, 50) + '...'); // Log: src updated
+                }
+
+                reader.onerror = function(e) {
+                    console.error('FileReader error:', e); // Log: FileReader error
                 }
                 
                 reader.readAsDataURL(file);
             } else {
-                // Optional: Handle non-image file selection if needed
-                // e.g., reset to a default image or the original image.
-                // For now, it does nothing if a non-image is selected.
+                console.log('No file selected or file is not an image.'); // Log: Not an image or no file
             }
         });
+    } else {
+        console.error('Could not find profile picture input or preview element.'); // Log: Elements not found
     }
 
     // Email verification logic
