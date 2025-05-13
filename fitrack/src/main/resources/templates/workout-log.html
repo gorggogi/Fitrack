@@ -31,10 +31,12 @@
                 <div th:unless="${groupedLogs == null or groupedLogs.isEmpty()}" class="timeline">
                     <!-- Iterate through map entries (Date -> List<WorkoutLog>) -->
                     <div th:each="entry : ${groupedLogs}" class="timeline-group">
-                        <h3 class="timeline-date-header" 
-                            th:text="${#temporals.format(entry.key, 'EEEE, MMMM dd, yyyy')}">
-                            Date Header
-                        </h3>
+                        <div class="timeline-date-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span th:text="${#temporals.format(entry.key, 'EEEE, MMMM dd, yyyy')}">Date Header</span>
+                            <span class="date-summary">
+                                Total Burned: <span class="date-calories" th:text="${#numbers.formatDecimal(#aggregates.sum(entry.value.![caloriesBurned ?: 0]), 0, 0)} + ' kcal'">0 kcal</span>
+                            </span>
+                        </div>
                         <ul class="timeline-entries">
                             <!-- Iterate through logs for that specific date -->
                             <li th:each="log : ${entry.value}" class="timeline-entry">

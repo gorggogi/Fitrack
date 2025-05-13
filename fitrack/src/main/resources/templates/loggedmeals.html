@@ -34,7 +34,7 @@
                         <div class="timeline-date-header" style="display: flex; justify-content: space-between; align-items: center;">
                             <span th:text="${#temporals.format(entry.key, 'EEEE, MMMM dd, yyyy')}">Date Header</span>
                             <span class="date-summary">
-                                Total: <span class="date-calories" th:text="${#aggregates.sum(entry.value.![totalCalories])} + ' kcal'">0 kcal</span>
+                                Total Consumed: <span class="date-calories" th:text="${#aggregates.sum(entry.value.![totalCalories])} + ' kcal'">0 kcal</span>
                             </span>
                         </div>
                         <ul class="timeline-entries">
