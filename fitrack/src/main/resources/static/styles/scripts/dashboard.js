@@ -229,6 +229,14 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
+
+    // Update to attach the new modal opening function to ALL goal cards
+    const allGoalCards = document.querySelectorAll('.goal-card');
+    allGoalCards.forEach(card => {
+        card.addEventListener('click', function() {
+            openGoalDetailModal(this); // Use the new generic function
+        });
+    });
 });
 
 function openModal(workoutElement) {
@@ -336,16 +344,20 @@ function closeMealModal() {
     }
 }
 
-function openCompletedGoalDetailModal(goalCardElement) {
+function openGoalDetailModal(goalCardElement) {
     const modal = document.getElementById('completedGoalDetailModal');
     if (!modal) return;
+
+    console.log('[Debug] Opening goal detail modal. Goal card classes:', goalCardElement.className);
 
     const goalId = goalCardElement.getAttribute('data-goal-id');
     const goalName = goalCardElement.getAttribute('data-goal-name');
     const goalStartDate = goalCardElement.getAttribute('data-goal-start-date');
     const goalType = goalCardElement.getAttribute('data-goal-type');
     const goalInitialValue = goalCardElement.getAttribute('data-goal-initial-value');
-    const goalAchievedValue = goalCardElement.getAttribute('data-goal-achieved-value');
+    const goalCurrentValue = goalCardElement.getAttribute('data-goal-achieved-value'); // Current value is stored in 'data-goal-achieved-value'
+    const goalTargetValue = goalCardElement.getAttribute('data-goal-target-value');
+    const goalCompletionDate = goalCardElement.getAttribute('data-goal-completion-date');
 
     let unitSuffix = '';
     let startingLabel = 'Starting:';
@@ -354,7 +366,7 @@ function openCompletedGoalDetailModal(goalCardElement) {
         const upperGoalType = goalType.toUpperCase();
         if (upperGoalType === 'WEIGHT_LOSS' || upperGoalType === 'WEIGHT_GAIN') {
             unitSuffix = ' kg';
-            startingLabel = 'Initial Weight:';
+            startingLabel = 'Initial Value:';
         }
     }
 
@@ -363,57 +375,141 @@ function openCompletedGoalDetailModal(goalCardElement) {
     document.getElementById('completedGoalNameModalText').textContent = goalName;
     document.getElementById('completedGoalTypeModalText').textContent = `Type: ${formattedGoalType}`;
     document.getElementById('completedGoalTargetModalText').textContent = `${startingLabel} ${goalInitialValue}${unitSuffix}`;
-    document.getElementById('completedGoalAchievedModalText').textContent = `Achieved: ${goalAchievedValue}${unitSuffix}`;
-    document.getElementById('completedGoalSetDateText').textContent = `You set this goal on ${goalStartDate}.`;
+    document.getElementById('completedGoalAchievedModalText').textContent = `Current: ${goalCurrentValue}${unitSuffix} / Target: ${goalTargetValue}${unitSuffix}`;
+    document.getElementById('completedGoalSetDateText').textContent = `Goal set on: ${goalStartDate}.`;
+    document.getElementById('completedGoalAchievedDateText').textContent = goalCompletionDate && goalCompletionDate !== 'N/A' ? `Goal achieved on: ${goalCompletionDate}.` : '';
 
-    const archiveButton = document.getElementById('archiveGoalButton');
-    archiveButton.onclick = function() {
-        if (!goalId) {
-            alert('Error: Goal ID not found.');
-            return;
+    const trophyIcon = modal.querySelector('.modal-trophy-icon');
+    const isCompleted = goalCardElement.classList.contains('completed-goal');
+    console.log('[Debug] isCompleted:', isCompleted);
+
+    if (trophyIcon) {
+        trophyIcon.classList.remove('modal-trophy-icon-incomplete');
+        trophyIcon.classList.add('fas', 'fa-trophy');
+
+        if (isCompleted) {
+            console.log('[Debug] Trophy: Goal is completed.');
+        } else {
+            console.log('[Debug] Trophy: Goal is NOT completed, making icon gray.');
+            trophyIcon.classList.add('modal-trophy-icon-incomplete');
         }
-        
-        if (!confirm(`Are you sure you want to archive the goal "${goalName}"?`)) {
-            return;
-        }
+    }
 
-        const csrfToken = document.querySelector('input[name="_csrf"]').value;
-        if (!csrfToken) {
-            alert('Error: Security token not found. Please refresh the page.');
-            return;
-        }
+    const actionButton = document.getElementById('archiveGoalButton');
+    console.log('[Debug] actionButton element:', actionButton);
+    const csrfTokenEl = document.querySelector('input[name="_csrf"]');
+    let csrfToken = '';
+    if (!csrfTokenEl || !csrfTokenEl.value) {
+        console.error('Error: Security token not found. Button actions will fail.');
+        // Optionally disable the button or alert the user more directly
+        actionButton.disabled = true;
+        actionButton.textContent = 'Error';
+    } else {
+        csrfToken = csrfTokenEl.value;
+        actionButton.disabled = false; // Ensure button is enabled if CSRF token is found
+    }
 
-        archiveButton.disabled = true;
-        archiveButton.textContent = 'archiving...';
-
-        fetch(`/user/goals/archive/${goalId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { 
-                    throw new Error(text || `Failed to archive goal. Status: ${response.status}`); 
-                });
+    if (isCompleted) {
+        console.log('[Debug] Button: Goal is completed. Setting text to "archive goal".');
+        actionButton.textContent = 'archive goal';
+        actionButton.onclick = function() {
+            if (!goalId) {
+                alert('Error: Goal ID not found.');
+                return;
             }
-            return response.text();
-        })
-        .then(message => {
-            console.log(message);
-            closeCompletedGoalDetailModal();
-            window.location.reload();
-        })
-        .catch(error => {
-            console.error('Error archiving goal:', error);
-            alert('Error archiving goal: ' + error.message);
-            archiveButton.disabled = false;
-            archiveButton.textContent = 'archive goal';
-        });
-    };
+            if (!confirm(`Are you sure you want to archive the goal "${goalName}"?`)) {
+                return;
+            }
+            if (!csrfToken) {
+                 alert('Error: Security token not found. Please refresh the page.');
+                 return;
+            }
+
+            actionButton.disabled = true;
+            actionButton.textContent = 'archiving...';
+
+            fetch(`/user/goals/archive/${goalId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { 
+                        throw new Error(text || `Failed to archive goal. Status: ${response.status}`); 
+                    });
+                }
+                return response.text();
+            })
+            .then(message => {
+                console.log(message);
+                closeCompletedGoalDetailModal();
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error archiving goal:', error);
+                alert('Error archiving goal: ' + error.message);
+                actionButton.disabled = false;
+                actionButton.textContent = 'archive goal';
+            });
+        };
+    } else { // Goal is not completed
+        console.log('[Debug] Button: Goal is NOT completed. Setting text to "remove goal".');
+        actionButton.textContent = 'remove goal';
+        actionButton.onclick = function() {
+            if (!goalId) {
+                alert('Error: Goal ID not found.');
+                return;
+            }
+            if (!confirm(`Are you sure you want to remove the goal "${goalName}"? This action cannot be undone.`)) {
+                return;
+            }
+            if (!csrfToken) {
+                 alert('Error: Security token not found. Please refresh the page.');
+                 return;
+            }
+
+            actionButton.disabled = true;
+            actionButton.textContent = 'removing...';
+
+            fetch(`/user/goals/delete/${goalId}`, {
+                method: 'POST', // Assuming delete endpoint is POST as per typical Spring Boot setups with CSRF
+                headers: {
+                    'Content-Type': 'application/json', // Or 'application/x-www-form-urlencoded' if backend expects that
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { 
+                        throw new Error(text || `Failed to remove goal. Status: ${response.status}`); 
+                    });
+                }
+                // Check if response has content before parsing as text/json
+                // For a delete operation, often a 200 OK or 204 No Content is returned.
+                // If 204, response.text() might be empty or cause issues.
+                if (response.status === 204) {
+                    return "Goal removed successfully (No Content)";
+                }
+                return response.text(); 
+            })
+            .then(message => {
+                console.log(message);
+                closeCompletedGoalDetailModal();
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error removing goal:', error);
+                alert('Error removing goal: ' + error.message);
+                actionButton.disabled = false;
+                actionButton.textContent = 'remove goal';
+            });
+        };
+    }
 
     modal.style.display = 'flex';
 }

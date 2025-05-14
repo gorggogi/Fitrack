@@ -94,9 +94,23 @@ public class GoalController {
     }
 
     @PostMapping("/delete/{goalId}")
-    public String deleteGoal(@PathVariable Long goalId) {
-        goalService.deleteGoal(goalId);
-        return "redirect:/user/goals";
+    public ResponseEntity<Void> deleteGoal(@PathVariable Long goalId) {
+        logger.info("Attempting to delete goal with ID: {}", goalId);
+        try {
+            // Optional: Add user ownership check here if necessary
+            // User currentUser = userService.findByEmail(userDetails.getUsername()); // Requires @AuthenticationPrincipal UserDetails userDetails
+            // Goal goal = goalRepository.findById(goalId).orElse(null); // Requires goalRepository
+            // if (goal == null || !goal.getUser().equals(currentUser)) {
+            //     logger.warn("User attempted to delete goal {} not owned by them or goal not found.", goalId);
+            //     return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            // }
+            goalService.deleteGoal(goalId);
+            logger.info("Successfully deleted goal with ID: {}", goalId);
+            return ResponseEntity.ok().build(); // Return 200 OK
+        } catch (Exception e) {
+            logger.error("Error deleting goal ID {}: {}", goalId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Return 500 Internal Server Error
+        }
     }
 
     @PostMapping("/archive/{goalId}")

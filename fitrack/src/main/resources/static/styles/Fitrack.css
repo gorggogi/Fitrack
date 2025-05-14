@@ -2819,3 +2819,8 @@ button.primary {
     margin-bottom: 1.5rem; /* Consistent spacing */
 }
 
+/* Style for the incomplete goal trophy in the modal */
+.modal-trophy-icon.modal-trophy-icon-incomplete {
+    color: #cccccc; /* Grey color for incomplete trophy */
+}
+

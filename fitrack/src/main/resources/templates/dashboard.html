@@ -52,7 +52,8 @@
                               data-goal-type=${goal.goalType != null ? goal.goalType : 'N/A'},
                               data-goal-initial-value=${goal.startValue != null ? goal.startValue : 'N/A'},
                               data-goal-target-value=${goal.targetValue},
-                              data-goal-achieved-value=${goal.currentValue}">
+                              data-goal-achieved-value=${goal.currentValue},
+                              data-goal-completion-date=${goal.completionDate != null ? #temporals.format(goal.completionDate, 'MMM dd, yyyy') : 'N/A'}">
                     <div th:if="${goalService.calculateProgress(goal) >= 100}" class="goal-completed-icon">
                         <i class="fas fa-trophy"></i>
                     </div>
@@ -273,12 +274,22 @@
         <p id="completedGoalTargetModalText" class="completed-goal-info-text"></p>
         <p id="completedGoalAchievedModalText" class="completed-goal-info-text"></p>
         <p id="completedGoalSetDateText" class="completed-goal-info-text"></p>
+        <p id="completedGoalAchievedDateText" class="completed-goal-info-text"></p>
         <div class="modal-actions completed-goal-actions">
             <button type="button" id="archiveGoalButton" class="btn btn-secondary archive-btn">archive goal</button>
             <button type="button" class="btn btn-primary close-btn-modal" onclick="closeCompletedGoalDetailModal()">close</button>
         </div>
     </div>
 </div>
+
+<style>
+    .modal-trophy-icon-incomplete {
+        color: #cccccc; /* Light grey color for incomplete trophy */
+    }
+    .goal-card {
+        cursor: pointer; /* Add pointer cursor to all goal cards */
+    }
+</style>
 
 </body>
 </html>

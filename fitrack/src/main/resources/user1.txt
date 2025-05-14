@@ -218,6 +218,8 @@ VALUES
 (141, 1, 'Morning Walk', 30, 150, '2025-05-13 07:00:00', 'CARDIO'),
 (142, 1, 'Running', 30, 160, '2025-05-13 10:00:00', 'CARDIO'),
 (143, 1, 'Core Workout', 30, 150, '2025-05-13 18:00:00', 'STRENGTH');
+(144, 1, 'Morning Walk', 30, 150, '2025-05-14 07:00:00', 'CARDIO'),
+(145, 1, 'Full Body Workout', 45, 180, '2025-05-14 10:00:00', 'STRENGTH');
 
 -- Insert meals for the extended period (sample days)
 INSERT INTO meal (id, user_id, date_time, meal_name)
@@ -443,7 +445,13 @@ VALUES
 (145, 1, '2025-05-13 08:00:00', 'Breakfast'),
 (146, 1, '2025-05-13 12:00:00', 'Lunch'),
 (147, 1, '2025-05-13 18:00:00', 'Dinner'),
-(148, 1, '2025-05-13 21:00:00', 'Snack');
+(148, 1, '2025-05-13 21:00:00', 'Snack'),
+
+-- May 14
+(149, 1, '2025-05-14 08:00:00', 'Breakfast'),
+(150, 1, '2025-05-14 12:00:00', 'Lunch'),
+(151, 1, '2025-05-14 18:00:00', 'Dinner'),
+(152, 1, '2025-05-14 21:00:00', 'Snack');
 
 -- Insert meal food items for the extended period
 INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
@@ -866,7 +874,17 @@ VALUES
 (343, 147, 'Grilled Chicken', 370, 150, 'g', 45, 0, 15),
 (344, 147, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
 (345, 148, 'Greek Yogurt', 220, 1, 'cup', 15, 8, 5),
-(346, 148, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0);
+(346, 148, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+
+-- May 14
+(347, 149, 'Oatmeal with Protein', 300, 0.75, 'cup', 12, 40, 7),
+(348, 149, 'Greek Yogurt', 120, 0.75, 'cup', 12, 6, 4),
+(349, 150, 'Grilled Chicken Salad', 350, 0.75, 'serving', 30, 10, 18),
+(350, 150, 'Quinoa', 180, 0.75, 'cup', 6, 30, 3),
+(351, 151, 'Baked Salmon', 300, 120, 'g', 35, 0, 18),
+(352, 151, 'Steamed Vegetables', 80, 1.5, 'cup', 3, 15, 0),
+(353, 152, 'Apple', 80, 0.8, 'medium', 0, 20, 0),
+(354, 152, 'Almonds', 130, 20, 'g', 5, 5, 11);
 
 
 

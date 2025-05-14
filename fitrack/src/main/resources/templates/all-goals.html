@@ -50,7 +50,13 @@
                     </div>
                     <div th:each="goal : ${allGoals.?[status == 'IN_PROGRESS']}"
                          class="goal-card goal-ongoing-layout"
-                         th:attr="data-goal-id=${goal.id}">
+                         th:attr="data-goal-id=${goal.id},
+                                  data-goal-name=${goal.description},
+                                  data-goal-start-date=${goal.startDate != null ? #temporals.format(goal.startDate, 'MM/dd/yy') : 'N/A'},
+                                  data-goal-type=${goal.goalType},
+                                  data-goal-initial-value=${goal.startValue != null ? goal.startValue : 'N/A'},
+                                  data-goal-achieved-value=${goal.currentValue != null ? goal.currentValue : 'N/A'},
+                                  data-goal-target-value=${goal.targetValue != null ? goal.targetValue : 'N/A'}">
                         <i class="fas fa-spinner goal-card-icon-ongoing"></i>
                         <span class="goal-card-description" th:text="${goal.description}">My weight journey</span>
                         <span class="goal-card-date" th:if="${goal.targetDate}"
