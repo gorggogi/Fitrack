@@ -45,6 +45,7 @@
                 </div>
                 <div th:each="goal : ${goals}"
                      class="goal-card"
+                     onclick="event.stopPropagation();"
                      th:classappend="${goalService.calculateProgress(goal) >= 100 ? 'completed-goal' : ''}"
                      th:attr="data-goal-id=${goal.id},
                               data-goal-name=${goal.description},
