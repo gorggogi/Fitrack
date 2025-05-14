@@ -33,10 +33,10 @@
             </div>
         </section>
 
-        <div class="goals-section">
+        <div class="section-card goals-section" onclick="window.location.href='/user/goals/all'" style="cursor: pointer;">
             <div class="section-header">
                 <h2 class="section-title">Goals</h2>
-                <a class="add-button" onclick="openGoalModal()">+</a>
+                <a class="add-button" onclick="event.stopPropagation(); openGoalModal()">+</a>
             </div>
             <div class="goals-grid">
                 <div th:if="${#lists.isEmpty(goals)}" class="goal-card">
