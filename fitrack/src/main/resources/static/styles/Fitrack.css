@@ -2230,6 +2230,60 @@ button.primary {
     display: none;
 }
 
+/* Styles for the new Personalized Recommendations card content */
+.recommendation-section.personalized-recommendations-section > h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1.5rem; 
+    padding-bottom: 0.75rem; 
+    border-bottom: 2px solid #dee2e6;
+}
+
+.recommendation-section.personalized-recommendations-section h4 { /* Sub-headings like "Calorie Targets:" */
+    font-size: 1.1rem;
+    color: #444;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.recommendation-section.personalized-recommendations-section p { /* General paragraphs within personalized recommendations */
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem; 
+}
+
+.recommendation-section.personalized-recommendations-section ul.recommendation-list {
+    list-style-type: disc;
+    padding-left: 25px; 
+    margin-bottom: 1.5rem; 
+    margin-top: 0.5rem; 
+}
+
+.recommendation-section.personalized-recommendations-section ul.recommendation-list li {
+    margin-bottom: 0.85rem;
+    line-height: 1.5;
+    color: #555;
+}
+
+.recommendation-section.personalized-recommendations-section ul.recommendation-list li strong {
+    color: #333; 
+}
+
+.recommendation-section.personalized-recommendations-section p.disclaimer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+     /* Ensure it doesn't pick up the general 'p' margin-bottom if not desired here, or adjust as needed */
+    margin-bottom: 0; /* Reset margin-bottom for disclaimer if general 'p' rule is too much */
+}
+
+.recommendation-section.personalized-recommendations-section p.disclaimer small {
+    font-size: 0.85em;
+    color: #666;
+    line-height: 1.4;
+    display: block; 
+}
+
 @media (max-width: 1024px) {
     .summary-section {
         grid-template-columns: 1fr;

@@ -137,20 +137,6 @@
                             </div>
                         </div>
 
-                        <div class="recommendation-section" style="display: none;">
-                            <h3>Weight Trend Analysis</h3>
-                            <div class="projection-item" th:if="${analyticsData.weightTrend != null}">
-                                <span class="projection-label">Weekly Trend:</span>
-                                <span class="projection-value" th:classappend="${analyticsData.weightTrend > 0 ? 'positive' : 'negative'}"
-                                      th:text="${analyticsData.weightTrend != 0 ? (analyticsData.weightTrend > 0 ? '+' : '') + #numbers.formatDecimal(analyticsData.weightTrend, 1, 1) + ' kg/week' : 'Stable'}">--</span>
-                            </div>
-                            <div class="projection-item">
-                                <span class="projection-label">Trend Status:</span>
-                                <span class="projection-value" th:text="${analyticsData.weightTrendDescription}">--</span>
-                            </div>
-                            <div class="recommendation-text" th:text="${analyticsData.weightRecommendation}">--</div>
-                        </div>
-
                         <div class="recommendation-section">
                             <h3>Macronutrient Consumption <span class="period-indicator">(last 7 days)</span></h3>
                             <div class="nutrition-chart-container">
@@ -173,6 +159,43 @@
                             <div class="view-meals-button">
                                 <button class="primary" onclick="showLoggedMeals()">View Logged Meals</button>
                             </div>
+                        </div>
+                        
+                        <div class="recommendation-section personalized-recommendations-section">
+                            <h3>Personalized Recommendations</h3>
+
+                            <div th:if="${analyticsData.tdee != null and analyticsData.tdee > 0}">
+                                <h4>Calorie Targets:</h4>
+                                <p>Based on your estimated Total Daily Energy Expenditure (TDEE) of <strong id="tdeeValue" th:text="${#numbers.formatDecimal(analyticsData.tdee, 0, 0) + ' kcal'}"></strong>:</p>
+                                <ul class="recommendation-list">
+                                    <li id="calorieTargetWeightLoss">
+                                        <strong>For Weight Loss</strong> <span id="weightLossRecommended" class="recommended-text"></span><br/>
+                                        Consume around <strong id="weightLossCalories"></strong> per day.
+                                        <span id="weightLossRate" class="target-rate-text"></span>
+                                    </li>
+                                    <li id="calorieTargetWeightMaintenance">
+                                        <strong>For Weight Maintenance</strong> <span id="maintenanceRecommended" class="recommended-text"></span><br/>
+                                        Consume around <strong id="maintenanceCalories"></strong> per day.
+                                        <span id="maintenanceRate" class="target-rate-text"></span>
+                                    </li>
+                                    <li id="calorieTargetWeightGain">
+                                        <strong>For Weight Gain</strong> <span id="weightGainRecommended" class="recommended-text"></span><br/>
+                                        Consume around <strong id="weightGainCalories"></strong> per day.
+                                        <span id="weightGainRate" class="target-rate-text"></span>
+                                    </li>
+                                </ul>
+                                <p class="disclaimer"><small><strong>Disclaimer:</strong> These are general estimates. Individual needs may vary. Consult with a healthcare professional or registered dietitian for personalized advice before making significant changes to your diet or exercise routine.</small></p>
+                            </div>
+                            <div th:if="${analyticsData.tdee == null or analyticsData.tdee <= 0}">
+                                <p>To receive personalized calorie recommendations, please ensure your profile (age, gender, height, current weight, and activity level) is complete and up-to-date. This information is used to estimate your Total Daily Energy Expenditure (TDEE).</p>
+                            </div>
+
+                            <h4>Workout Recommendations (Tailored to Your Goals & Activity):</h4>
+                            <div id="dynamic-workout-recommendations-content">
+                                <!-- JavaScript will populate recommendations here -->
+                            </div>
+                           
+                            <p class="disclaimer"><small><strong>Disclaimer:</strong> These recommendations are general guidelines based on your BMI and reported activity levels, and are not a substitute for professional medical or fitness advice. Consult with a healthcare provider or certified fitness professional before starting any new workout program, especially if you have underlying health conditions.</small></p>
                         </div>
                     </div>
                 </div>

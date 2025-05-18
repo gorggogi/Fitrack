@@ -56,6 +56,7 @@ public class AnalyticsService {
 
         LocalDateTime endDate = LocalDateTime.now();
         LocalDateTime startDate7Days = endDate.minusDays(7);
+        LocalDateTime startDate90Days = endDate.minusDays(90); // For overall frequency
 
         dto.setAvgDailyCalories(mealService.getAverageDailyCalories(user, 7));
         dto.setAvgDailyExerciseCalories(workoutService.getAverageDailyExerciseCalories(user, 7));
@@ -68,6 +69,7 @@ public class AnalyticsService {
         dto.setTotalFats7Days(mealService.getTotalFatsForPeriod(user, 7));
 
         populateWorkoutChartData(dto, user, startDate7Days, endDate);
+        populateWorkoutFrequencyData(dto, user, startDate90Days, endDate);
         populateMeasurementChartData(dto, user, measurements);
         populateTimelineData(dto, measurements);
 
@@ -123,6 +125,21 @@ public class AnalyticsService {
         
         dto.setWorkoutTypeData(workoutTypeData);
         dto.setDailyCaloriesBurned7Days(dailyCaloriesBurned);
+    }
+
+    private void populateWorkoutFrequencyData(AnalyticsPageDTO dto, User user, LocalDateTime startDate, LocalDateTime endDate) {
+        log.debug("Populating workout frequency data for user: {} from {} to {}", user.getEmail(), startDate, endDate);
+        List<WorkoutLog> logs = workoutService.getWorkoutLogsForUser(user, startDate, endDate);
+        
+        Map<String, Long> workoutFrequency = logs.stream()
+            .filter(log -> log.getWorkoutType() != null && !log.getWorkoutType().trim().isEmpty())
+            .collect(Collectors.groupingBy(
+                WorkoutLog::getWorkoutType, 
+                Collectors.counting()
+            ));
+        
+        dto.setWorkoutTypeFrequency(workoutFrequency);
+        log.debug("Workout type frequency map: {}", workoutFrequency);
     }
 
     private void populateMeasurementChartData(AnalyticsPageDTO dto, User user, List<BodyMeasurement> measurements) {

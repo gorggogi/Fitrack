@@ -380,4 +380,247 @@ document.getElementById('measurementForm').addEventListener('submit', function(e
         alert('Error saving measurement: ' + error.message);
     });
 });
+
+function generateDynamicWorkoutRecommendations() {
+    const recommendationContainer = document.getElementById('dynamic-workout-recommendations-content');
+    if (!recommendationContainer) return;
+
+    const bmiCategory = analyticsData.currentBmiCategory;
+    const workoutFreq = analyticsData.workoutTypeFrequency || {}; // Counts over last 90 days
+    const avgExerciseCalories = analyticsData.avgDailyExerciseCalories;
+
+    let recommendations = [];
+
+    const WORKOUT_TYPES = {
+        CARDIO: {
+            name: 'Cardio',
+            examples: [
+                { name: 'Brisk Walking', detail: 'Aim for 30+ minutes at a pace where you can talk but feel your heart rate increase.' },
+                { name: 'Running', detail: 'Builds endurance; start with a comfortable pace and gradually increase distance or speed.' },
+                { name: 'Cycling', detail: 'Low-impact and great for leg strength; vary resistance or try interval speeds for 20-40 minutes.' },
+                { name: 'Swimming', detail: 'Full-body workout that\'s gentle on the joints; focus on different strokes.' },
+                { name: 'Jumping Jacks', detail: 'A simple full-body cardio to get your heart rate up quickly.' }
+            ]
+        },
+        STRENGTH: {
+            name: 'Strength Training',
+            examples: [
+                { name: 'Squats', detail: 'Targets quads, hamstrings, and glutes; focus on depth and keeping your chest up.' },
+                { name: 'Push-ups', detail: 'Versatile bodyweight exercise for upper body; modify on knees if needed, aiming for 3 sets.' },
+                { name: 'Lunges', detail: 'Great for single-leg strength and balance; keep your front knee behind your toes.' },
+                { name: 'Plank', detail: 'Core stability exercise; engage your abs and maintain a straight line from head to heels for 30-60 seconds.' },
+                { name: 'Deadlifts', detail: 'Compound movement for posterior chain (back, glutes, hamstrings); prioritize form over weight.' },
+                { name: 'Bench Press', detail: 'Works chest, shoulders, and triceps; ensure a stable setup and controlled movement.' }
+            ]
+        },
+        FLEXIBILITY: {
+            name: 'Flexibility & Mobility',
+            examples: [
+                { name: 'Hamstring Stretch', detail: 'Hold for 30 seconds per leg to improve flexibility in the back of your legs; avoid bouncing.' },
+                { name: 'Quad Stretch', detail: 'Stand tall and hold for 30 seconds per leg to stretch the front of your thighs.' },
+                { name: 'Yoga (e.g., Downward Dog)', detail: 'Stretches shoulders, hamstrings, and calves while building strength.' },
+                { name: 'Pilates (e.g., The Hundred)', detail: 'Core-focused exercises that also emphasize breath control and flexibility.' }
+            ]
+        },
+        HIIT: {
+            name: 'HIIT',
+            examples: [
+                { name: 'Sprint Intervals', detail: 'Alternate short bursts of all-out sprinting (20-30s) with recovery periods (60-90s).' },
+                { name: 'Tabata Sprints', detail: '20 seconds of intense effort followed by 10 seconds of rest, repeated for 4 minutes per exercise.' },
+                { name: 'Burpee Intervals', detail: 'Perform burpees at high intensity for a set time (e.g., 45s), rest briefly (e.g., 15s), and repeat.' }
+            ]
+        },
+        BALANCE_STABILITY: {
+            name: 'Balance & Stability',
+            examples: [
+                { name: 'Single-Leg Stands', detail: 'Improve balance by standing on one leg (30s each); try with eyes open, then closed for a challenge.' },
+                { name: 'Tai Chi movements', detail: 'Slow, flowing movements that enhance balance, coordination, and mindfulness.' },
+                { name: 'Heel-to-Toe Walk', detail: 'Improves balance and proprioception; walk in a straight line placing heel directly before toe.' }
+            ]
+        },
+        FUNCTIONAL_TRAINING: {
+            name: 'Functional Training',
+            examples: [
+                { name: "Farmer's Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.' },
+                { name: 'Kettlebell Swings', detail: 'Develops explosive power in hips and glutes; focus on a hip hinge, not a squat.' },
+                { name: 'Medicine Ball Slams', detail: 'Full-body power exercise; slam the ball forcefully to the ground from overhead.' }
+            ]
+        },
+        SPORTS_RECREATION: {
+            name: 'Sports & Recreation',
+            examples: [
+                { name: 'Basketball', detail: 'Improves agility, coordination, and cardiovascular fitness through dynamic team play.' },
+                { name: 'Hiking', detail: 'Enjoy nature while getting a great lower body and cardio workout; vary terrain for challenge.' },
+                { name: 'Dancing', detail: 'A fun way to improve cardio, coordination, and mood; try different styles like Zumba or salsa.' }
+            ]
+        },
+        OTHER: { name: 'Other Activities', examples: [] }
+    };
+
+    const formatExamples = (examples) => {
+        if (!examples || examples.length === 0) return '';
+        const shuffled = [...examples].sort(() => 0.5 - Math.random());
+        
+        const minToShow = 3;
+        const maxToShow = 5;
+        let countToShow;
+
+        if (examples.length <= minToShow) {
+            countToShow = examples.length;
+        } else {
+            // Select a random number of examples between minToShow and maxToShow, but not more than available
+            countToShow = Math.min(examples.length, Math.floor(Math.random() * (maxToShow - minToShow + 1)) + minToShow);
+        }
+        
+        const selected = shuffled.slice(0, countToShow);
+
+        if (selected.length === 0) return '';
+
+        let exampleHtmlList = '<ul class="example-list">';
+        selected.forEach((ex) => {
+            exampleHtmlList += `<li><strong>${ex.name}</strong> – ${ex.detail}</li>`;
+        });
+        exampleHtmlList += '</ul>';
+        return exampleHtmlList;
+    };
+    
+    const exampleIntroText = '<div class="recommendation-examples-intro">For instance:</div>';
+
+    const allTypeKeys = Object.keys(WORKOUT_TYPES);
+    const loggedTypeKeys = Object.keys(workoutFreq);
+
+    const getFrequency = (typeKey) => workoutFreq[typeKey] || 0;
+
+    if (!bmiCategory) {
+        recommendations.push('<li>Complete your profile (height and weight) to receive personalized workout recommendations.</li>');
+    } else {
+        recommendations.push(`<li><strong>Your BMI Category: ${bmiCategory}.</strong> Here are some tailored suggestions:</li>`);
+
+        if (bmiCategory === 'Underweight') {
+            recommendations.push('<li><strong>Goal Focus: Healthy Weight Gain & Muscle Building.</strong></li>');
+            if (getFrequency('STRENGTH') < 8) {
+                recommendations.push(`<li>Prioritize <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>. You should aim for 2-3 sessions weekly, focusing on compound movements and progressive overload. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+            } else {
+                recommendations.push(`<li>Continue your great work with <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>! Ensure progressive overload for continued muscle growth. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+            }
+            if (getFrequency('CARDIO') < 4 && avgExerciseCalories < 200) {
+                recommendations.push(`<li>Incorporate moderate <strong>${WORKOUT_TYPES.CARDIO.name}</strong>, aiming for 2-3 times per week (20-30 mins) for cardiovascular health. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+            } else {
+                recommendations.push(`<li>Balance your <strong>${WORKOUT_TYPES.CARDIO.name}</strong> with your strength goals. Ensure it's supportive, not excessive, for muscle gain. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+            }
+        } else if (bmiCategory === 'Overweight' || bmiCategory.toLowerCase().includes('obese')) {
+            recommendations.push('<li><strong>Goal Focus: Fat Loss & Improved Metabolic Health.</strong></li>');
+            if (getFrequency('CARDIO') < 12) {
+                recommendations.push(`<li>Increase your <strong>${WORKOUT_TYPES.CARDIO.name}</strong>, aiming for 3-5 sessions of moderate-intensity for 30+ minutes. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+            } else {
+                recommendations.push(`<li>Excellent consistency with <strong>${WORKOUT_TYPES.CARDIO.name}</strong>! Maintain 150-300 minutes of moderate-intensity cardio weekly. Consider varying type or intensity. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+            }
+            if (getFrequency('STRENGTH') < 8) {
+                recommendations.push(`<li>Incorporate <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>, aiming for 2-3 times per week as this builds muscle and boosts metabolism. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+            } else {
+                recommendations.push(`<li>Keep up the <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>! It's crucial for preserving muscle mass during fat loss. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+            }
+            if (avgExerciseCalories > 150 && getFrequency('HIIT') < 4) {
+                recommendations.push(`<li>If your fitness allows, consider adding 1-2 <strong>${WORKOUT_TYPES.HIIT.name}</strong> sessions weekly. These are an efficient way to boost calorie burn. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.HIIT.examples)}</li>`);
+            }
+        } else if (bmiCategory === 'Normal') {
+            recommendations.push('<li><strong>Goal Focus: Maintain Health & Optimize Overall Fitness.</strong></li>');
+            recommendations.push(`<li>Aim for a balanced routine. Include regular <strong>${WORKOUT_TYPES.CARDIO.name}</strong> (3-5 sessions/week). ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+            if (getFrequency('STRENGTH') < 8) {
+                recommendations.push(`<li>Incorporate <strong>${WORKOUT_TYPES.STRENGTH.name}</strong> (2-3 times per week) for muscle and bone health. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+            } else {
+                recommendations.push(`<li>Well done on your <strong>${WORKOUT_TYPES.STRENGTH.name}</strong> routine! Keep it consistent. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+            }
+            recommendations.push('<li>Explore a variety of activities to keep your fitness journey engaging and well-rounded!</li>');
+        }
+
+        // General recommendations for all categories based on missing types
+        if (getFrequency('FLEXIBILITY') < 8) {
+            recommendations.push(`<li>Don't forget <strong>${WORKOUT_TYPES.FLEXIBILITY.name}</strong> a few times a week. This improves range of motion and aids recovery. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.FLEXIBILITY.examples)}</li>`);
+        }
+        if (getFrequency('FUNCTIONAL_TRAINING') < 4 && bmiCategory !== 'Underweight') {
+             recommendations.push(`<li>Consider adding some <strong>${WORKOUT_TYPES.FUNCTIONAL_TRAINING.name}</strong>. It enhances everyday strength and movement. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.FUNCTIONAL_TRAINING.examples)}</li>`);
+        }
+        if (getFrequency('BALANCE_STABILITY') < 4) {
+            recommendations.push(`<li>Basic <strong>${WORKOUT_TYPES.BALANCE_STABILITY.name}</strong> exercises can improve coordination and reduce injury risk. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.BALANCE_STABILITY.examples)}</li>`);
+        }
+        
+        // Suggest trying new activities
+        let suggestedNew = 0;
+        const highlyRecommendedForVariety = ['SPORTS_RECREATION', 'FUNCTIONAL_TRAINING', 'HIIT'];
+        for (const typeKey of allTypeKeys) {
+            if (typeKey === 'OTHER' || WORKOUT_TYPES[typeKey].examples.length === 0) continue;
+
+            if (getFrequency(typeKey) === 0 && suggestedNew < 2) {
+                if ( (bmiCategory === 'Normal' && highlyRecommendedForVariety.includes(typeKey)) || 
+                     (bmiCategory !== 'Underweight' && typeKey === 'SPORTS_RECREATION') || 
+                     (bmiCategory === 'Underweight' && typeKey === 'FLEXIBILITY') 
+                   ) {
+                    recommendations.push(`<li>Explore something new: <strong>${WORKOUT_TYPES[typeKey].name}</strong> could be a great addition to your routine. ${exampleIntroText}${formatExamples(WORKOUT_TYPES[typeKey].examples)}</li>`);
+                    suggestedNew++;
+                }
+            }
+        }
+         if (loggedTypeKeys.length === 0 && recommendations.length <= 2) {
+            recommendations.push('<li>Log your workouts regularly to get even more specific feedback and track your progress effectively.</li>');
+        }
+    }
+
+    if (recommendations.length === 0) {
+        recommendations.push('<li>Keep logging your activities to receive personalized workout recommendations!</li>');
+    }
+
+    recommendationContainer.innerHTML = `<ul class="recommendation-list">${recommendations.join('')}</ul>`;
+}
+
+function updateCalorieTargetRecommendations() {
+    if (!analyticsData || analyticsData.tdee == null || analyticsData.tdee <= 0) {
+        // If TDEE is not available, the Thymeleaf conditional block handles this, so JS does nothing here.
+        return;
+    }
+
+    const tdee = analyticsData.tdee;
+    const bmiCategory = analyticsData.currentBmiCategory ? analyticsData.currentBmiCategory.toLowerCase() : '';
+
+    const weightLossCalories = Math.round(tdee - 500);
+    const maintenanceCalories = Math.round(tdee);
+    const weightGainCalories = Math.round(tdee + 500);
+
+    const approxRateText = "(approx. 0.5 kg/week)";
+
+    // Update calorie values
+    document.getElementById('tdeeValue').textContent = `${maintenanceCalories} kcal`;
+    document.getElementById('weightLossCalories').textContent = `${weightLossCalories} kcal`;
+    document.getElementById('maintenanceCalories').textContent = `${maintenanceCalories} kcal`;
+    document.getElementById('weightGainCalories').textContent = `${weightGainCalories} kcal`;
+
+    // Clear previous recommendations and rates
+    document.getElementById('weightLossRecommended').textContent = '';
+    document.getElementById('weightGainRecommended').textContent = '';
+    document.getElementById('maintenanceRecommended').textContent = '';
+    document.getElementById('weightLossRate').textContent = '';
+    document.getElementById('maintenanceRate').textContent = '';
+    document.getElementById('weightGainRate').textContent = '';
+
+    if (bmiCategory.includes('overweight') || bmiCategory.includes('obese')) {
+        document.getElementById('weightLossRecommended').textContent = "(Recommended)";
+        document.getElementById('weightLossRate').textContent = approxRateText;
+        document.getElementById('weightGainRate').textContent = approxRateText;
+    } else if (bmiCategory.includes('underweight')) {
+        document.getElementById('weightGainRecommended').textContent = "(Recommended)";
+        document.getElementById('weightGainRate').textContent = approxRateText;
+        document.getElementById('weightLossRate').textContent = "approx. 0.5 kg/week";
+    } else if (bmiCategory.includes('normal')) {
+        document.getElementById('maintenanceRecommended').textContent = "(Recommended)";
+        document.getElementById('weightLossRate').textContent = approxRateText;
+        document.getElementById('weightGainRate').textContent = approxRateText;
+    } else {
+        document.getElementById('weightLossRate').textContent = approxRateText;
+        document.getElementById('weightGainRate').textContent = approxRateText;
+    }
+}
+
+// Call the function to generate recommendations when the script runs and data is available
+generateDynamicWorkoutRecommendations();
+updateCalorieTargetRecommendations(); // Call the new function
 } 

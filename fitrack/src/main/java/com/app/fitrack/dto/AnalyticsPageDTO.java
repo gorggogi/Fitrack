@@ -38,6 +38,9 @@ public class AnalyticsPageDTO {
     private List<Map<String, Object>> timelineData; // Formatted measurements for a timeline view
     private List<Map<String, Object>> workoutTypeData; // Workout counts by type for last 7 days
 
+    // Field for overall workout type frequency
+    private Map<String, Long> workoutTypeFrequency;
+
     // Constructor (example - can be more detailed or use a builder)
     public AnalyticsPageDTO() {}
 
@@ -225,5 +228,14 @@ public class AnalyticsPageDTO {
 
     public void setWorkoutTypeData(List<Map<String, Object>> workoutTypeData) {
         this.workoutTypeData = workoutTypeData;
+    }
+
+    // Getter and Setter for workoutTypeFrequency
+    public Map<String, Long> getWorkoutTypeFrequency() {
+        return workoutTypeFrequency;
+    }
+
+    public void setWorkoutTypeFrequency(Map<String, Long> workoutTypeFrequency) {
+        this.workoutTypeFrequency = workoutTypeFrequency;
     }
 } 
