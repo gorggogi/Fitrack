@@ -30,7 +30,8 @@ public class SecurityConfig {
                 "/styles/**",
                 "/images/**",
                 "/js/**",
-                "/webjars/**"
+                "/webjars/**",
+                "/favicon.ico"
             ).permitAll()
             .requestMatchers(
                 "/user/login",
