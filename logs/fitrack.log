@@ -4084,3 +4084,363 @@ org.springframework.security.authorization.AuthorizationDeniedException: Access 
 2025-05-19 07:18:11 [http-nio-8080-exec-3] TRACE o.s.s.w.c.SupplierDeferredSecurityContext - Created SecurityContextImpl [Null authentication]
 2025-05-19 07:18:11 [http-nio-8080-exec-3] TRACE o.s.s.w.c.SupplierDeferredSecurityContext - Created SecurityContextImpl [Null authentication]
 2025-05-19 07:18:11 [http-nio-8080-exec-3] TRACE o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to AnonymousAuthenticationToken [Principal=anonymousUser, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=0:0:0:0:0:0:0:1, SessionId=ED5A9945206B178611E431571EA33D9A], Granted Authorities=[ROLE_ANONYMOUS]]
+2025-05-19 07:19:45 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-05-19 07:19:45 [Thread-5] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-19 07:19:45 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-19 07:19:45 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:19:45 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-19 07:19:45 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-19 07:19:45 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Starting FitrackApplication using Java 19.0.1 with PID 19236 (C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack\fitrack\target\classes started by Charlene C. Dilig in C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack)
+2025-05-19 07:19:45 [restartedMain] DEBUG com.app.fitrack.FitrackApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-05-19 07:19:45 [restartedMain] INFO  com.app.fitrack.FitrackApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-19 07:19:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-19 07:19:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 31 ms. Found 7 JPA repository interfaces.
+2025-05-19 07:19:46 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-19 07:19:46 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-19 07:19:46 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-19 07:19:46 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-19 07:19:46 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 705 ms
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.LocalContainerEntityManagerFactoryBean - Building JPA container EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:19:46 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-19 07:19:46 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-19 07:19:46 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-19 07:19:46 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-05-19 07:19:46 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5439ea19
+2025-05-19 07:19:46 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-05-19 07:19:46 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-19 07:19:46 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-19 07:19:46 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@50ea7bdc) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@7898f29a)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@24e8b5a) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@71005080)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@72b7f1e7) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4d04c109)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3be687a8) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@48114404)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@564ac28) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6e033904)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@615738ab) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@232461e1)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3818c41) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@74bd4e2c)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2cf7b270) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@2cdce566)
+2025-05-19 07:19:46 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@23b09738) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3de2714c)
+2025-05-19 07:19:46 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-19 07:19:46 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendVerificationEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendPasswordResetEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.updateSecurityContext' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.getAuthenticatedUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateDynamicActivityFactor' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.findByEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateBMR' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resendVerificationCode' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.generatePasswordResetToken' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.requestEmailChangeVerification' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resetPassword' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.registerUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.updateUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.createUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.saveUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyEmailChange' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateTDEE' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:46 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:19:47 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalProgress' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:47 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.createGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:47 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.deleteGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:47 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.archiveGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:47 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalsBasedOnActivity' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:19:47 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-19 07:19:47 [restartedMain] TRACE o.s.s.c.a.a.c.AuthenticationConfiguration$EnableGlobalAuthenticationAutowiredConfigurer - Eagerly initializing {securityConfig=com.app.fitrack.config.SecurityConfig$$SpringCGLIB$$0@5d72dda0}
+2025-05-19 07:19:47 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 50 mappings in 'requestMappingHandlerMapping'
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /uploads/profile-pictures/**] in 'resourceHandlerMapping'
+2025-05-19 07:19:47 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CsrfFilter, LogoutFilter, UsernamePasswordAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-19 07:19:47 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-19 07:19:47 [restartedMain] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:mysql://localhost:3306/testschema'
+2025-05-19 07:19:47 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-19 07:19:47 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-05-19 07:19:47 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Started FitrackApplication in 2.003 seconds (process running for 116.476)
+2025-05-19 07:19:47 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-05-19 07:29:29 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-05-19 07:29:29 [Thread-7] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-19 07:29:30 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-19 07:29:30 [Thread-7] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:29:30 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2025-05-19 07:29:30 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2025-05-19 07:29:30 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Starting FitrackApplication using Java 19.0.1 with PID 19236 (C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack\fitrack\target\classes started by Charlene C. Dilig in C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack)
+2025-05-19 07:29:30 [restartedMain] DEBUG com.app.fitrack.FitrackApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-05-19 07:29:30 [restartedMain] INFO  com.app.fitrack.FitrackApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-19 07:29:30 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-19 07:29:30 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 21 ms. Found 7 JPA repository interfaces.
+2025-05-19 07:29:30 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-19 07:29:30 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-19 07:29:30 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-19 07:29:30 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-19 07:29:30 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 616 ms
+2025-05-19 07:29:30 [restartedMain] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+2025-05-19 07:29:30 [restartedMain] DEBUG o.s.o.j.LocalContainerEntityManagerFactoryBean - Building JPA container EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:29:30 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-19 07:29:30 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-19 07:29:30 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-19 07:29:30 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2025-05-19 07:29:30 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@20c04134
+2025-05-19 07:29:30 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2025-05-19 07:29:30 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-19 07:29:30 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-19 07:29:30 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@17046f8) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@385d0e63)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@71f61af4) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@438e878e)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@404a5e81) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@10b46efd)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@5154e7a5) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6651a8f6)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@74fd5ceb) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@470d070f)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3192b984) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@5aefb158)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@44eba4ea) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6b71e607)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4f8b3c74) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@68c921ac)
+2025-05-19 07:29:30 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@711c14ab) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@15398551)
+2025-05-19 07:29:31 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-19 07:29:31 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendVerificationEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendPasswordResetEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.updateSecurityContext' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.getAuthenticatedUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateDynamicActivityFactor' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.findByEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateBMR' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resendVerificationCode' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.generatePasswordResetToken' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.requestEmailChangeVerification' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resetPassword' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.registerUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.updateUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.createUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.saveUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyEmailChange' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateTDEE' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalProgress' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.createGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.deleteGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.archiveGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalsBasedOnActivity' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:29:31 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-19 07:29:31 [restartedMain] TRACE o.s.s.c.a.a.c.AuthenticationConfiguration$EnableGlobalAuthenticationAutowiredConfigurer - Eagerly initializing {securityConfig=com.app.fitrack.config.SecurityConfig$$SpringCGLIB$$0@702f3664}
+2025-05-19 07:29:31 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 50 mappings in 'requestMappingHandlerMapping'
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /uploads/profile-pictures/**] in 'resourceHandlerMapping'
+2025-05-19 07:29:31 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CsrfFilter, LogoutFilter, UsernamePasswordAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-19 07:29:31 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-19 07:29:31 [restartedMain] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:mysql://localhost:3306/testschema'
+2025-05-19 07:29:31 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-19 07:29:31 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-05-19 07:29:31 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Started FitrackApplication in 1.53 seconds (process running for 700.546)
+2025-05-19 07:29:31 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-05-19 07:31:20 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-05-19 07:31:20 [Thread-11] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-19 07:31:21 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-19 07:31:21 [Thread-11] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:31:21 [Thread-11] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2025-05-19 07:31:21 [Thread-11] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2025-05-19 07:31:21 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Starting FitrackApplication using Java 19.0.1 with PID 19236 (C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack\fitrack\target\classes started by Charlene C. Dilig in C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack)
+2025-05-19 07:31:21 [restartedMain] DEBUG com.app.fitrack.FitrackApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-05-19 07:31:21 [restartedMain] INFO  com.app.fitrack.FitrackApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-19 07:31:21 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-19 07:31:21 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 20 ms. Found 7 JPA repository interfaces.
+2025-05-19 07:31:21 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-19 07:31:21 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-19 07:31:21 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-19 07:31:21 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-19 07:31:21 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 398 ms
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.LocalContainerEntityManagerFactoryBean - Building JPA container EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:31:21 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-19 07:31:21 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-19 07:31:21 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-19 07:31:21 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Starting...
+2025-05-19 07:31:21 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4326e0c7
+2025-05-19 07:31:21 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Start completed.
+2025-05-19 07:31:21 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-19 07:31:21 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-19 07:31:21 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-4)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4e81e458) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2e4356ee)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@63c975f) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@7d6e6862)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3c0ce0b3) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@84c25fa)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6aa8cdc3) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@648b958c)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3f59e8d6) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@56536932)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@7ab960ee) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@42a6adc0)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@32c9f21a) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@7f9e0788)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4e11b685) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@392eca2a)
+2025-05-19 07:31:21 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@448ab637) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4b274b69)
+2025-05-19 07:31:21 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-19 07:31:21 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendVerificationEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendPasswordResetEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.updateSecurityContext' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.getAuthenticatedUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateDynamicActivityFactor' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.findByEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateBMR' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resendVerificationCode' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.generatePasswordResetToken' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.requestEmailChangeVerification' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resetPassword' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.registerUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.updateUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.createUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.saveUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyEmailChange' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:21 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateTDEE' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-19 07:31:22 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalProgress' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:22 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.createGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:22 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.deleteGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:22 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.archiveGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:22 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalsBasedOnActivity' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-19 07:31:22 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-19 07:31:22 [restartedMain] TRACE o.s.s.c.a.a.c.AuthenticationConfiguration$EnableGlobalAuthenticationAutowiredConfigurer - Eagerly initializing {securityConfig=com.app.fitrack.config.SecurityConfig$$SpringCGLIB$$0@1ac32bab}
+2025-05-19 07:31:22 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 50 mappings in 'requestMappingHandlerMapping'
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /uploads/profile-pictures/**] in 'resourceHandlerMapping'
+2025-05-19 07:31:22 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CsrfFilter, LogoutFilter, UsernamePasswordAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-19 07:31:22 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-19 07:31:22 [restartedMain] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:mysql://localhost:3306/testschema'
+2025-05-19 07:31:22 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-19 07:31:22 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-05-19 07:31:22 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Started FitrackApplication in 1.401 seconds (process running for 811.407)
+2025-05-19 07:31:22 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged

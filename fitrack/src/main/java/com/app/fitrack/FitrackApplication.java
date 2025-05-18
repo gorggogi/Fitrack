@@ -15,6 +15,7 @@ public class FitrackApplication {
 
 	@PostConstruct
 	public void init() {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Manila"));
 		System.out.println("Default JVM TimeZone ID: " + TimeZone.getDefault().getID());
 		System.out.println("Default JVM TimeZone Display Name: " + TimeZone.getDefault().getDisplayName());
 		System.out.println("Current LocalDate.now(): " + LocalDate.now());
