@@ -9,10 +9,10 @@
 		<relativePath/> 
 	</parent>
 	<groupId>com.laboratory</groupId>
-	<artifactId>lab2</artifactId>
+	<artifactId>fitrack</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>lab2</name>
-	<description>laboratory activity</description>
+	<name>fitrack</name>
+	<description>Fitrack Application</description>
 	<url/>
 	<licenses>
 		<license/>
