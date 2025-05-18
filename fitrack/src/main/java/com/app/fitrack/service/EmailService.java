@@ -1,6 +1,7 @@
 package com.app.fitrack.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -20,6 +21,9 @@ public class EmailService {
 
     @Autowired
     private VerificationTokenRepository tokenRepository;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @Async
     @Transactional
@@ -73,7 +77,7 @@ public class EmailService {
         VerificationToken verificationToken = new VerificationToken(token, user, LocalDateTime.now().plusMinutes(30));
         tokenRepository.saveAndFlush(verificationToken); 
 
-        String resetUrl = "http://localhost:8080/user/change-password?token=" + token;
+        String resetUrl = baseUrl + "/user/change-password?token=" + token;
         String subject = "Password Reset Request";
         String body = "Hi " + user.getFirstName() + ",\n\n" +
                       "You requested a password reset. Click the link below to reset your password:\n" +

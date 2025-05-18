@@ -114,7 +114,7 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
     @GetMapping("/user/new")
     public String showUserPage(Model model) {
         model.addAttribute("user", new User());
-        return "registration-form";
+        return "Registration-form";
     }
 
     @PostMapping("/user/save")
