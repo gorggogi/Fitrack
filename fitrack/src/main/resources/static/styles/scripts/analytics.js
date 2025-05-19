@@ -389,7 +389,7 @@ function generateDynamicWorkoutRecommendations() {
     const workoutFreq = analyticsData.workoutTypeFrequency || {}; // Counts over last 90 days
     const avgExerciseCalories = analyticsData.avgDailyExerciseCalories;
 
-    let recommendations = [];
+    let recommendationsHtml = []; // Changed variable name for clarity
 
     const WORKOUT_TYPES = {
         CARDIO: {
@@ -441,7 +441,7 @@ function generateDynamicWorkoutRecommendations() {
         FUNCTIONAL_TRAINING: {
             name: 'Functional Training',
             examples: [
-                { name: "Farmer's Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.' },
+                { name: "Farmer\'s Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.' },
                 { name: 'Kettlebell Swings', detail: 'Develops explosive power in hips and glutes; focus on a hip hinge, not a squat.' },
                 { name: 'Medicine Ball Slams', detail: 'Full-body power exercise; slam the ball forcefully to the ground from overhead.' }
             ]
@@ -468,7 +468,6 @@ function generateDynamicWorkoutRecommendations() {
         if (examples.length <= minToShow) {
             countToShow = examples.length;
         } else {
-            // Select a random number of examples between minToShow and maxToShow, but not more than available
             countToShow = Math.min(examples.length, Math.floor(Math.random() * (maxToShow - minToShow + 1)) + minToShow);
         }
         
@@ -492,60 +491,74 @@ function generateDynamicWorkoutRecommendations() {
     const getFrequency = (typeKey) => workoutFreq[typeKey] || 0;
 
     if (!bmiCategory) {
-        recommendations.push('<li>Complete your profile (height and weight) to receive personalized workout recommendations.</li>');
+        recommendationsHtml.push('<div class="workout-recommendation-card"><p>Complete your profile (height and weight) to receive personalized workout recommendations.</p></div>');
     } else {
-        recommendations.push(`<li><strong>Your BMI Category: ${bmiCategory}.</strong> Here are some tailored suggestions:</li>`);
+        // This is the line to be removed/commented out
+        // recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Your BMI Category: ${bmiCategory}</h5><p>Here are some tailored suggestions:</p></div>`);
 
         if (bmiCategory === 'Underweight') {
-            recommendations.push('<li><strong>Goal Focus: Healthy Weight Gain & Muscle Building.</strong></li>');
+            recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Healthy Weight Gain & Muscle Building</h5></div>');
             if (getFrequency('STRENGTH') < 8) {
-                recommendations.push(`<li>Prioritize <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>. You should aim for 2-3 sessions weekly, focusing on compound movements and progressive overload. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+                let content = `<p>You should aim for 2-3 sessions weekly, focusing on compound movements and progressive overload.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Prioritize ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             } else {
-                recommendations.push(`<li>Continue your great work with <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>! Ensure progressive overload for continued muscle growth. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+                let content = `<p>Ensure progressive overload for continued muscle growth.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Continue Your Great Work with ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             }
             if (getFrequency('CARDIO') < 4 && avgExerciseCalories < 200) {
-                recommendations.push(`<li>Incorporate moderate <strong>${WORKOUT_TYPES.CARDIO.name}</strong>, aiming for 2-3 times per week (20-30 mins) for cardiovascular health. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+                let content = `<p>Aiming for 2-3 times per week (20-30 mins) for cardiovascular health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate Moderate ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             } else {
-                recommendations.push(`<li>Balance your <strong>${WORKOUT_TYPES.CARDIO.name}</strong> with your strength goals. Ensure it's supportive, not excessive, for muscle gain. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+                let content = `<p>Balance your cardio with your strength goals. Ensure it\'s supportive, not excessive, for muscle gain.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Balance Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             }
         } else if (bmiCategory === 'Overweight' || bmiCategory.toLowerCase().includes('obese')) {
-            recommendations.push('<li><strong>Goal Focus: Fat Loss & Improved Metabolic Health.</strong></li>');
+            recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Fat Loss & Improved Metabolic Health</h5></div>');
             if (getFrequency('CARDIO') < 12) {
-                recommendations.push(`<li>Increase your <strong>${WORKOUT_TYPES.CARDIO.name}</strong>, aiming for 3-5 sessions of moderate-intensity for 30+ minutes. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+                let content = `<p>Aiming for 3-5 sessions of moderate-intensity for 30+ minutes.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Increase Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             } else {
-                recommendations.push(`<li>Excellent consistency with <strong>${WORKOUT_TYPES.CARDIO.name}</strong>! Maintain 150-300 minutes of moderate-intensity cardio weekly. Consider varying type or intensity. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+                let content = `<p>Maintain 150-300 minutes of moderate-intensity cardio weekly. Consider varying type or intensity.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Excellent Consistency with ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             }
             if (getFrequency('STRENGTH') < 8) {
-                recommendations.push(`<li>Incorporate <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>, aiming for 2-3 times per week as this builds muscle and boosts metabolism. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+                let content = `<p>Aiming for 2-3 times per week as this builds muscle and boosts metabolism.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             } else {
-                recommendations.push(`<li>Keep up the <strong>${WORKOUT_TYPES.STRENGTH.name}</strong>! It's crucial for preserving muscle mass during fat loss. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+                let content = `<p>It\'s crucial for preserving muscle mass during fat loss.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Keep Up ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             }
             if (avgExerciseCalories > 150 && getFrequency('HIIT') < 4) {
-                recommendations.push(`<li>If your fitness allows, consider adding 1-2 <strong>${WORKOUT_TYPES.HIIT.name}</strong> sessions weekly. These are an efficient way to boost calorie burn. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.HIIT.examples)}</li>`);
+                let content = `<p>These are an efficient way to boost calorie burn.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.HIIT.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.HIIT.name}</h5>${content}</div>`);
             }
         } else if (bmiCategory === 'Normal') {
-            recommendations.push('<li><strong>Goal Focus: Maintain Health & Optimize Overall Fitness.</strong></li>');
-            recommendations.push(`<li>Aim for a balanced routine. Include regular <strong>${WORKOUT_TYPES.CARDIO.name}</strong> (3-5 sessions/week). ${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}</li>`);
+            recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Maintain Health & Optimize Overall Fitness</h5></div>');
+            let cardioContent = `<p>Include regular sessions (3-5 times/week).</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+            recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Aim for Balanced ${WORKOUT_TYPES.CARDIO.name}</h5>${cardioContent}</div>`);
             if (getFrequency('STRENGTH') < 8) {
-                recommendations.push(`<li>Incorporate <strong>${WORKOUT_TYPES.STRENGTH.name}</strong> (2-3 times per week) for muscle and bone health. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+                let strengthContent = `<p>Incorporate sessions (2-3 times per week) for muscle and bone health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
             } else {
-                recommendations.push(`<li>Well done on your <strong>${WORKOUT_TYPES.STRENGTH.name}</strong> routine! Keep it consistent. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}</li>`);
+                let strengthContent = `<p>Keep it consistent.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Well Done on ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
             }
-            recommendations.push('<li>Explore a variety of activities to keep your fitness journey engaging and well-rounded!</li>');
+            recommendationsHtml.push('<div class="workout-recommendation-card"><p>Explore a variety of activities to keep your fitness journey engaging and well-rounded!</p></div>');
         }
 
-        // General recommendations for all categories based on missing types
         if (getFrequency('FLEXIBILITY') < 8) {
-            recommendations.push(`<li>Don't forget <strong>${WORKOUT_TYPES.FLEXIBILITY.name}</strong> a few times a week. This improves range of motion and aids recovery. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.FLEXIBILITY.examples)}</li>`);
+            let content = `<p>This improves range of motion and aids recovery.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FLEXIBILITY.examples)}`;
+            recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Don\'t Forget ${WORKOUT_TYPES.FLEXIBILITY.name}</h5>${content}</div>`);
         }
         if (getFrequency('FUNCTIONAL_TRAINING') < 4 && bmiCategory !== 'Underweight') {
-             recommendations.push(`<li>Consider adding some <strong>${WORKOUT_TYPES.FUNCTIONAL_TRAINING.name}</strong>. It enhances everyday strength and movement. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.FUNCTIONAL_TRAINING.examples)}</li>`);
+             let content = `<p>It enhances everyday strength and movement.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FUNCTIONAL_TRAINING.examples)}`;
+             recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.FUNCTIONAL_TRAINING.name}</h5>${content}</div>`);
         }
         if (getFrequency('BALANCE_STABILITY') < 4) {
-            recommendations.push(`<li>Basic <strong>${WORKOUT_TYPES.BALANCE_STABILITY.name}</strong> exercises can improve coordination and reduce injury risk. ${exampleIntroText}${formatExamples(WORKOUT_TYPES.BALANCE_STABILITY.examples)}</li>`);
+            let content = `<p>These exercises can improve coordination and reduce injury risk.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.BALANCE_STABILITY.examples)}`;
+            recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Try Basic ${WORKOUT_TYPES.BALANCE_STABILITY.name}</h5>${content}</div>`);
         }
         
-        // Suggest trying new activities
         let suggestedNew = 0;
         const highlyRecommendedForVariety = ['SPORTS_RECREATION', 'FUNCTIONAL_TRAINING', 'HIIT'];
         for (const typeKey of allTypeKeys) {
@@ -556,26 +569,26 @@ function generateDynamicWorkoutRecommendations() {
                      (bmiCategory !== 'Underweight' && typeKey === 'SPORTS_RECREATION') || 
                      (bmiCategory === 'Underweight' && typeKey === 'FLEXIBILITY') 
                    ) {
-                    recommendations.push(`<li>Explore something new: <strong>${WORKOUT_TYPES[typeKey].name}</strong> could be a great addition to your routine. ${exampleIntroText}${formatExamples(WORKOUT_TYPES[typeKey].examples)}</li>`);
+                    let content = `<p>${WORKOUT_TYPES[typeKey].name} could be a great addition to your routine.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES[typeKey].examples)}`;
+                    recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Explore Something New: ${WORKOUT_TYPES[typeKey].name}</h5>${content}</div>`);
                     suggestedNew++;
                 }
             }
         }
-         if (loggedTypeKeys.length === 0 && recommendations.length <= 2) {
-            recommendations.push('<li>Log your workouts regularly to get even more specific feedback and track your progress effectively.</li>');
+         if (loggedTypeKeys.length === 0 && recommendationsHtml.length <= 2) { // Check new array name
+            recommendationsHtml.push('<div class="workout-recommendation-card"><p>Log your workouts regularly to get even more specific feedback and track your progress effectively.</p></div>');
         }
     }
 
-    if (recommendations.length === 0) {
-        recommendations.push('<li>Keep logging your activities to receive personalized workout recommendations!</li>');
+    if (recommendationsHtml.length === 0) {
+        recommendationsHtml.push('<div class="workout-recommendation-card"><p>Keep logging your activities to receive personalized workout recommendations!</p></div>');
     }
 
-    recommendationContainer.innerHTML = `<ul class="recommendation-list">${recommendations.join('')}</ul>`;
+    recommendationContainer.innerHTML = recommendationsHtml.join(''); // Use the new array and join directly
 }
 
 function updateCalorieTargetRecommendations() {
     if (!analyticsData || analyticsData.tdee == null || analyticsData.tdee <= 0) {
-        // If TDEE is not available, the Thymeleaf conditional block handles this, so JS does nothing here.
         return;
     }
 
@@ -588,13 +601,11 @@ function updateCalorieTargetRecommendations() {
 
     const approxRateText = "(approx. 0.5 kg/week)";
 
-    // Update calorie values
     document.getElementById('tdeeValue').textContent = `${maintenanceCalories} kcal`;
     document.getElementById('weightLossCalories').textContent = `${weightLossCalories} kcal`;
     document.getElementById('maintenanceCalories').textContent = `${maintenanceCalories} kcal`;
     document.getElementById('weightGainCalories').textContent = `${weightGainCalories} kcal`;
 
-    // Clear previous recommendations and rates
     document.getElementById('weightLossRecommended').textContent = '';
     document.getElementById('weightGainRecommended').textContent = '';
     document.getElementById('maintenanceRecommended').textContent = '';
