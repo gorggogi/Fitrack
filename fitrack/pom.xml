@@ -141,6 +141,12 @@
 			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.36.0</version>
+		</dependency>
+
 	</dependencies>
 	
 	<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->

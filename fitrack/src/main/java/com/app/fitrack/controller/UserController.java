@@ -38,10 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import com.app.fitrack.service.CloudinaryService;
 import jakarta.validation.Validator;
 import jakarta.validation.ConstraintViolation;
 import java.util.Set;
@@ -54,7 +51,6 @@ import com.app.fitrack.model.WorkoutLog;
 @Controller
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/fitrack/uploads/profile-pictures/";
 
     @Autowired
     private UserService userService; 
@@ -73,6 +69,9 @@ public class UserController {
 
     @Autowired
     private Validator validator;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @GetMapping("/user/success")
     public String showSuccessPage() {
@@ -249,35 +248,22 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
                               @RequestParam(required = false) MultipartFile profilePicture,
                               RedirectAttributes redi) {
         String email = userDetails.getUsername();
-        String profilePicturePath = null;
+        String profilePictureUrl = null;
 
         if (profilePicture != null && !profilePicture.isEmpty()) {
             try {
-                // Create upload directory if it doesn't exist
-                Path uploadPath = Paths.get(UPLOAD_DIR);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                // Generate unique filename
-                String originalFilename = profilePicture.getOriginalFilename();
-                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                String newFilename = UUID.randomUUID().toString() + extension;
-
-                // Save file
-                Path filePath = uploadPath.resolve(newFilename);
-                Files.copy(profilePicture.getInputStream(), filePath);
-
-                // Set profile picture path for resource handler
-                profilePicturePath = "/uploads/profile-pictures/" + newFilename;
+                profilePictureUrl = cloudinaryService.uploadProfilePicture(profilePicture);
             } catch (IOException e) {
-                logger.error("Failed to save profile picture", e);
+                logger.error("Failed to upload profile picture to Cloudinary", e);
                 redi.addFlashAttribute("error", "Failed to upload profile picture. Please try again.");
                 return "redirect:/user/profile";
             }
+        } else {
+            // Optionally set a default URL or leave as null if no picture is uploaded
+            // profilePictureUrl = "/images/default-profile.png"; // Example if you want a default stored
         }
 
-        userService.createUserProfile(email, age, gender, height, weight, profilePicturePath);
+        userService.createUserProfile(email, age, gender, height, weight, profilePictureUrl);
         return "redirect:/user/dashboard";
     }
 
@@ -298,87 +284,49 @@ public String resendVerificationPage(@RequestParam(value = "email", required = f
         }
 
         // Manual validation logic (as added previously)
-        Set<ConstraintViolation<User>> violations = validator.validate(updatedUserData); // Validate the populated object
+        Set<ConstraintViolation<User>> violations = validator.validate(updatedUserData); 
         if (!violations.isEmpty()) {
-            // Log validation errors
-             logger.warn("Validation errors updating profile for user: {}", currentEmail);
+            logger.warn("Validation errors updating profile for user: {}", currentEmail);
             violations.forEach(violation -> 
                 bindingResult.rejectValue(violation.getPropertyPath().toString(), "", violation.getMessage()));
-             bindingResult.getFieldErrors().forEach(error -> {
-                 logger.warn("Field '{}': Rejected value [{}]; Message: {}", 
-                             error.getField(), error.getRejectedValue(), error.getDefaultMessage());
-             });
-             bindingResult.getGlobalErrors().forEach(error -> {
-                  logger.warn("Global error: {}", error.getDefaultMessage());
-             });
-            model.addAttribute("user", updatedUserData); // Add user data back
-            return "edit-profile"; // Return to form
+            model.addAttribute("user", updatedUserData); 
+            return "edit-profile"; 
         }
 
-        // Additional Check: If email changed, ensure it's verified or verification is pending correctly
+        // Email change logic (keep as is)
         if (!currentUser.getEmail().equalsIgnoreCase(updatedUserData.getEmail())) {
-            // This logic is handled by the verification endpoints and userService.completeEmailChange
              logger.info("Email change detected from {} to {}. Verification process should be used.", currentUser.getEmail(), updatedUserData.getEmail());
-            // Consider adding a check here to prevent saving if the email is different but not the verified pendingEmail
              if (currentUser.getPendingEmail() == null || !currentUser.getPendingEmail().equalsIgnoreCase(updatedUserData.getEmail())) {
-                 // If the email in the form doesn't match the current or the verified pending one, it's an invalid state.
-                 // However, the primary update should only happen after verification now.
-                 // Let's keep the current user's email for this direct update call.
                  updatedUserData.setEmail(currentUser.getEmail()); 
              }
         }
 
-        // Proceed with update if validation passes
-        String profilePicturePath = currentUser.getProfilePicture(); // Initialize with existing path
-        String finalPathToSave = profilePicturePath; // Use a separate variable for clarity
+        String newProfilePictureUrl = currentUser.getProfilePicture(); // Initialize with existing URL
 
-        try {
-            // Handle profile picture upload directly here
-            if (profilePicture != null && !profilePicture.isEmpty()) {
-                logger.info("Attempting to save new profile picture for user {}", currentEmail);
-                try {
-                    Path uploadPath = Paths.get(UPLOAD_DIR);
-                    if (!Files.exists(uploadPath)) {
-                        Files.createDirectories(uploadPath);
-                    }
-                    String originalFilename = profilePicture.getOriginalFilename();
-                    String extension = "";
-                    if (originalFilename != null && originalFilename.contains(".")) {
-                        extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                    }
-                    String newFilename = UUID.randomUUID().toString() + extension;
-                    Path filePath = uploadPath.resolve(newFilename);
-                    Files.copy(profilePicture.getInputStream(), filePath);
-                    
-                    finalPathToSave = "/uploads/profile-pictures/" + newFilename; // Update the path to save
-                    
-                    // logger.info("New profile picture saved successfully: {}", finalPathToSave); // Removed log
-                } catch (IOException e) {
-                    logger.error("IOException saving uploaded profile picture for user: {}. Update will proceed with the existing picture path.", currentEmail, e);
-                    redirectAttributes.addFlashAttribute("errorMessage", "Error saving new profile picture. Other details updated.");
-                    // Explicitly keep the original path if saving failed
-                    finalPathToSave = currentUser.getProfilePicture(); 
-                }
-            } else {
-                 // logger.info("No new profile picture file provided for user {}.", currentEmail); // Removed log
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            logger.info("Attempting to upload new profile picture to Cloudinary for user {}", currentEmail);
+            try {
+                // Optional: Delete old picture from Cloudinary if you implement that
+                // if (currentUser.getProfilePicture() != null && currentUser.getProfilePicture().startsWith("https://res.cloudinary.com")) {
+                //    String publicId = extractPublicIdFromUrl(currentUser.getProfilePicture()); // You'd need a helper for this
+                //    cloudinaryService.deleteImage(publicId); 
+                // }
+                newProfilePictureUrl = cloudinaryService.uploadProfilePicture(profilePicture);
+                logger.info("New profile picture uploaded to Cloudinary: {}", newProfilePictureUrl);
+            } catch (IOException e) {
+                logger.error("IOException uploading profile picture to Cloudinary for user: {}. Update will proceed with the existing picture URL.", currentEmail, e);
+                redirectAttributes.addFlashAttribute("errorMessage", "Error saving new profile picture. Other details updated if any.");
+                // newProfilePictureUrl remains the currentUser.getProfilePicture() if upload fails
             }
-
-            // Call the service to update user details (using finalPathToSave)
-            // logger.info("Passing finalPathToSave to service: {}", finalPathToSave); // Removed log
-            String resultMessage = userService.updateUserProfile(currentEmail, updatedUserData, finalPathToSave);
-            
-            // logger.info("User profile updated successfully for {}", currentEmail); // Removed log
-            redirectAttributes.addFlashAttribute("successMessage", resultMessage);
-
-            // Redirect to dashboard after successful update
-            return "redirect:/user/dashboard"; 
-
-        } catch (Exception e) { // Catch broad exceptions from the service layer or other unexpected issues
-            logger.error("Error updating profile for user: {}", currentEmail, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred during the update. Please try again.");
-            model.addAttribute("user", updatedUserData); // Add user data back to model on general error
-            return "edit-profile"; // Return to edit page on other errors
+        } else {
+            logger.info("No new profile picture file provided for user {}. Retaining existing: {}", currentEmail, newProfilePictureUrl);
         }
+
+        // Pass the newProfilePictureUrl (which is either the new Cloudinary URL or the existing one)
+        userService.updateUserProfile(currentEmail, updatedUserData, newProfilePictureUrl);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully!");
+        return "redirect:/user/dashboard";
     }
 
     // Endpoint to send verification code for email change
