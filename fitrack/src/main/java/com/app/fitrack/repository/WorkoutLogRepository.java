@@ -16,6 +16,14 @@ boolean existsByUserAndWorkoutNameAndDate(@Param("user") User user,
                                           @Param("workoutName") String workoutName, 
                                           @Param("date") LocalDate date);
 
+    @Query("SELECT COUNT(w) > 0 FROM WorkoutLog w WHERE w.user = :user AND w.workoutName = :workoutName AND w.completedAt >= :startOfDay AND w.completedAt < :endOfDay")
+    boolean existsByUserAndWorkoutNameBetweenDates(
+        @Param("user") User user,
+        @Param("workoutName") String workoutName,
+        @Param("startOfDay") LocalDateTime startOfDay,
+        @Param("endOfDay") LocalDateTime endOfDay
+    );
+
     List<WorkoutLog> findByUserAndCompletedAtBetween(User user, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT COUNT(w) FROM WorkoutLog w WHERE w.user = :user AND w.completedAt BETWEEN :start AND :end")

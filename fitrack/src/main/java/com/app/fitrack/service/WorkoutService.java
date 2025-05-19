@@ -61,6 +61,9 @@ public class WorkoutService {
         LocalDate today = LocalDate.now();
         String dayOfWeek = today.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
 
+        LocalDateTime startOfTodayUserTz = today.atStartOfDay();
+        LocalDateTime endOfTodayUserTz = today.plusDays(1).atStartOfDay(); // Exclusive end
+
         List<Workout> allUserWorkouts = workoutRepository.findByUser(currentUser);
 
         // Filter workouts scheduled for today AND NOT already logged today
@@ -70,9 +73,9 @@ public class WorkoutService {
                 boolean isScheduledForToday = workout.getRepeatDays().contains("Daily") || 
                                            workout.getRepeatDays().contains(dayOfWeek);
                 
-                // Check if workout hasn't been logged today
-                boolean notLoggedToday = !workoutLogRepository.existsByUserAndWorkoutNameAndDate(
-                    currentUser, workout.getWorkoutName(), today);
+                // Check if workout hasn't been logged today using the new method
+                boolean notLoggedToday = !workoutLogRepository.existsByUserAndWorkoutNameBetweenDates(
+                    currentUser, workout.getWorkoutName(), startOfTodayUserTz, endOfTodayUserTz);
                 
                 return isScheduledForToday && notLoggedToday;
             })
