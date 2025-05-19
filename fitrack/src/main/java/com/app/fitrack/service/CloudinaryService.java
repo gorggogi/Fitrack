@@ -3,10 +3,15 @@ package com.app.fitrack.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -47,6 +52,33 @@ public class CloudinaryService {
 
         // "secure_url" gives you an HTTPS URL, which is preferred.
         return (String) uploadResult.get("secure_url");
+    }
+
+    public String uploadApplicationLogo() throws IOException {
+        String publicId = "fitrack_app_logo"; // Specific public ID for the app logo
+        String logoPath = "static/images/Fitrack.png"; // Path in classpath
+
+        // Load the resource from the classpath
+        ClassPathResource resource = new ClassPathResource(logoPath);
+        if (!resource.exists()) {
+            throw new IOException("Logo file not found in classpath: " + logoPath);
+        }
+
+        // Read the file into a byte array
+        byte[] logoBytes;
+        try (InputStream inputStream = resource.getInputStream()) {
+            logoBytes = inputStream.readAllBytes();
+        }
+
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(logoBytes, ObjectUtils.asMap(
+                "public_id", publicId,
+                "overwrite", true, // Overwrite if it already exists to ensure latest version
+                "resource_type", "image"
+        ));
+
+        String secureUrl = (String) uploadResult.get("secure_url");
+        System.out.println("Fitrack logo uploaded to: " + secureUrl + " with public ID: " + publicId);
+        return secureUrl;
     }
 
     // Optional: Method to delete an image if a user changes their profile picture
