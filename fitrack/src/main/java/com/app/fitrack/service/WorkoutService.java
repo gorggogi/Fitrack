@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.time.ZoneId;
 
 @Service
 public class WorkoutService {
@@ -90,9 +91,14 @@ public class WorkoutService {
             throw new IllegalStateException("No authenticated user found.");
         }
 
-        // Check if already logged today
-        if (workoutLogRepository.existsByUserAndWorkoutNameAndDate(currentUser, workout.getWorkoutName(), LocalDate.now())) {
-            System.out.println("Workout already logged today: " + workout.getWorkoutName());
+        // Consistent check for "today" using the application's default timezone (Asia/Manila)
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Manila")); // Explicitly use Asia/Manila
+        LocalDateTime startOfToday = today.atStartOfDay();
+        LocalDateTime endOfToday = today.plusDays(1).atStartOfDay(); // Exclusive end for "less than" comparison
+
+        // Use the same method as the dashboard logic to check if logged
+        if (workoutLogRepository.existsByUserAndWorkoutNameBetweenDates(currentUser, workout.getWorkoutName(), startOfToday, endOfToday)) {
+            System.out.println("Workout already logged today (between dates check): " + workout.getWorkoutName() + " for user " + currentUser.getEmail() + " between " + startOfToday + " and " + endOfToday);
             return; 
         }
 
@@ -102,14 +108,16 @@ public class WorkoutService {
         log.setDuration(workout.getDuration());
         log.setCaloriesBurned(workout.getCaloriesBurned() != null ? workout.getCaloriesBurned() : 0.0);
         log.setWorkoutType(workout.getWorkoutType());
-        log.setCompletedAt(LocalDateTime.now());
+        // Set completedAt using the application's default timezone explicitly
+        log.setCompletedAt(LocalDateTime.now(ZoneId.of("Asia/Manila"))); 
 
         try {
             workoutLogRepository.save(log);
-            System.out.println("Workout logged: " + workout.getWorkoutName());
+            System.out.println("Workout logged: " + workout.getWorkoutName() + " at " + log.getCompletedAt());
         } catch (Exception e) {
-            System.err.println("Error saving workout log: " + e.getMessage());
-            throw e;
+            System.err.println("Error saving workout log for " + workout.getWorkoutName() + ": " + e.getMessage());
+            // Consider more specific logging or re-throwing a custom exception
+            throw e; 
         }
     }
     
