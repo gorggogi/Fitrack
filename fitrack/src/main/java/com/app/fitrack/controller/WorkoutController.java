@@ -6,6 +6,7 @@ import com.app.fitrack.service.ExerciseService;
 import com.app.fitrack.service.GoalService;
 import com.app.fitrack.model.User;
 import com.app.fitrack.service.UserService;
+import com.app.fitrack.service.NutritionixService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,7 @@ public class WorkoutController {
     private WorkoutService workoutService;
 
     @Autowired
-    private ExerciseService exerciseService;
+    private NutritionixService nutritionixService;
 
     @Autowired
     private GoalService goalService;
@@ -72,13 +74,49 @@ public class WorkoutController {
 
     @PostMapping("/workouts/estimate-calories")
     @ResponseBody
-    public ResponseEntity<Map<String, Integer>> estimateCalories(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<?> estimateCalories(@RequestBody Map<String, Object> request) {
         String workoutName = (String) request.get("workoutName");
-        double duration = Double.parseDouble(request.get("duration").toString());
+        Object durationObj = request.get("duration");
+        int durationMinutes;
+
+        if (workoutName == null || workoutName.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Workout name is required."));
+        }
+        if (durationObj == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Duration is required."));
+        }
+
+        try {
+            durationMinutes = (int) Double.parseDouble(durationObj.toString());
+            if (durationMinutes <= 0) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Duration must be positive."));
+            }
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid duration format."));
+        }
+
+        User currentUser = userService.getAuthenticatedUser();
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not authenticated."));
+        }
+
+        if (currentUser.getWeight() == null || currentUser.getAge() == null || currentUser.getHeight() == null || currentUser.getGender() == null) {
+            System.err.println("User profile data incomplete for calorie estimation. User ID: " + currentUser.getId());
+            return ResponseEntity.badRequest().body(Map.of("error", "User profile data (weight, age, height, gender) is incomplete. Please update your profile."));
+        }
+
+        String exerciseQuery = durationMinutes + " minutes of " + workoutName;
         
-        int calories = exerciseService.getBurnedCalories(workoutName, duration);
+        double calories = nutritionixService.calculateExerciseCalories(
+            exerciseQuery, 
+            currentUser.getWeight(), 
+            durationMinutes, 
+            currentUser.getAge(), 
+            currentUser.getHeight(),
+            currentUser.getGender().toString()
+        );
         
-        return ResponseEntity.ok(Map.of("calories", calories));
+        return ResponseEntity.ok(Map.of("calories", (int) Math.round(calories)));
     }
 }
 

@@ -8,10 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.app.fitrack.model.MealFoodItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -20,41 +21,59 @@ import java.util.HashMap;
 public class NutritionixService {
     private static final Logger logger = LoggerFactory.getLogger(NutritionixService.class);
 
-    @Value("${nutritionix.app-id}")
-    private String appId;
-
-    @Value("${nutritionix.app-key}")
-    private String appKey;
-
+    private final String apiKey;
+    private final String appId;
     private final String BASE_URL = "https://trackapi.nutritionix.com/v2";
     private final RestTemplate restTemplate;
-    public NutritionixService(RestTemplate restTemplate, ObjectMapper objectMapper) {
-        this.restTemplate = restTemplate;
+
+    public NutritionixService(@Value("${nutritionix.api.key}") String apiKey,
+                              @Value("${nutritionix.api.appId}") String appId,
+                              RestTemplateBuilder restTemplateBuilder) {
+        this.apiKey = apiKey;
+        this.appId = appId;
+        this.restTemplate = restTemplateBuilder.build();
+        // Log to confirm that keys are being loaded (or not, in case of issues)
+        // Be cautious about logging actual keys in production environments
+        logger.info("NutritionixService initialized. App ID loaded: {}, API Key loaded: {}", 
+                    (this.appId != null && !this.appId.isEmpty()), 
+                    (this.apiKey != null && !this.apiKey.isEmpty()));
+        if (this.appId == null || this.appId.isEmpty() || this.apiKey == null || this.apiKey.isEmpty()) {
+            logger.error("CRITICAL: Nutritionix API ID or Key is missing from properties!");
+            // Consider throwing an exception here if these are absolutely critical for app startup
+            // throw new IllegalStateException("Nutritionix API credentials are not configured.");
+        }
     }
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("x-app-id", appId);
-        headers.set("x-app-key", appKey);
-        headers.set("Content-Type", "application/json");
+        headers.set("x-app-key", apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
 
-    public double calculateExerciseCalories(String exercise, double weightKg, int durationMin, String gender) {
+    public double calculateExerciseCalories(String exerciseQuery, double weightKg, int durationMin, Integer age, Double heightCm, String gender) {
         try {
             String url = BASE_URL + "/natural/exercise";
-            String query = String.format("%s for %d minutes", exercise, durationMin);
-
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("query", query);
-            requestBody.put("weight_kg", weightKg);
-            requestBody.put("gender", gender);
+            requestBody.put("query", exerciseQuery);
+            
+            if (weightKg > 0) {
+                requestBody.put("weight_kg", weightKg);
+            }
+            if (gender != null && !gender.trim().isEmpty()) {
+                requestBody.put("gender", gender.toLowerCase());
+            }
+            if (age != null && age > 0) {
+                requestBody.put("age", age);
+            }
+            if (heightCm != null && heightCm > 0) {
+                requestBody.put("height_cm", heightCm);
+            }
 
-            logger.info("Sending request to Nutritionix:");
+            logger.info("Sending request to Nutritionix for exercise calorie estimation:");
             logger.info("URL: {}", url);
-            logger.info("Query: {}", query);
-            logger.info("Weight: {}", weightKg);
-            logger.info("Gender: {}", gender);
+            logger.info("Request Body: {}", requestBody);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, createHeaders());
             ResponseEntity<JsonNode> response = restTemplate.exchange(

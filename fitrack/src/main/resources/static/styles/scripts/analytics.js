@@ -381,6 +381,49 @@ document.getElementById('measurementForm').addEventListener('submit', function(e
     });
 });
 
+async function estimateCaloriesForWorkout(workoutName, durationMinutes, calorieSpanId) {
+    const csrfToken = document.querySelector('input[name="_csrf"]')?.value;
+    if (!csrfToken) {
+        console.error('CSRF token not found for calorie estimation.');
+        if (document.getElementById(calorieSpanId)) {
+            document.getElementById(calorieSpanId).textContent = 'Error';
+        }
+        return;
+    }
+
+    try {
+        const response = await fetch('/workouts/estimate-calories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ 
+                workoutName: workoutName,
+                duration: durationMinutes 
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data && typeof data.calories === 'number') {
+            if (document.getElementById(calorieSpanId)) {
+                document.getElementById(calorieSpanId).textContent = Math.round(data.calories);
+            }
+        } else {
+            console.error('Failed to estimate calories:', data.error || response.statusText);
+            if (document.getElementById(calorieSpanId)) {
+                document.getElementById(calorieSpanId).textContent = 'N/A';
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching calorie estimation:', error);
+        if (document.getElementById(calorieSpanId)) {
+            document.getElementById(calorieSpanId).textContent = 'N/A';
+        }
+    }
+}
+
 function generateDynamicWorkoutRecommendations() {
     const recommendationContainer = document.getElementById('dynamic-workout-recommendations-content');
     if (!recommendationContainer) return;
@@ -395,66 +438,66 @@ function generateDynamicWorkoutRecommendations() {
         CARDIO: {
             name: 'Cardio',
             examples: [
-                { name: 'Brisk Walking', detail: 'Aim for 30+ minutes at a pace where you can talk but feel your heart rate increase.' },
-                { name: 'Running', detail: 'Builds endurance; start with a comfortable pace and gradually increase distance or speed.' },
-                { name: 'Cycling', detail: 'Low-impact and great for leg strength; vary resistance or try interval speeds for 20-40 minutes.' },
-                { name: 'Swimming', detail: 'Full-body workout that\'s gentle on the joints; focus on different strokes.' },
-                { name: 'Jumping Jacks', detail: 'A simple full-body cardio to get your heart rate up quickly.' }
+                { name: 'Brisk Walking', detail: 'Aim for 30+ minutes at a pace where you can talk but feel your heart rate increase.', defaultDurationMinutes: 30 },
+                { name: 'Running', detail: 'Builds endurance; start with a comfortable pace and gradually increase distance or speed.', defaultDurationMinutes: 20 },
+                { name: 'Cycling', detail: 'Low-impact and great for leg strength; vary resistance or try interval speeds for 20-40 minutes.', defaultDurationMinutes: 30 },
+                { name: 'Swimming', detail: 'Full-body workout that\'s gentle on the joints; focus on different strokes.', defaultDurationMinutes: 30 },
+                { name: 'Jumping Jacks', detail: 'A simple full-body cardio to get your heart rate up quickly.', defaultDurationMinutes: 10 }
             ]
         },
         STRENGTH: {
             name: 'Strength Training',
             examples: [
-                { name: 'Squats', detail: 'Targets quads, hamstrings, and glutes; focus on depth and keeping your chest up.' },
-                { name: 'Push-ups', detail: 'Versatile bodyweight exercise for upper body; modify on knees if needed, aiming for 3 sets.' },
-                { name: 'Lunges', detail: 'Great for single-leg strength and balance; keep your front knee behind your toes.' },
-                { name: 'Plank', detail: 'Core stability exercise; engage your abs and maintain a straight line from head to heels for 30-60 seconds.' },
-                { name: 'Deadlifts', detail: 'Compound movement for posterior chain (back, glutes, hamstrings); prioritize form over weight.' },
-                { name: 'Bench Press', detail: 'Works chest, shoulders, and triceps; ensure a stable setup and controlled movement.' }
+                { name: 'Squats', detail: 'Targets quads, hamstrings, and glutes; focus on depth and keeping your chest up.', defaultDurationMinutes: 20 },
+                { name: 'Push-ups', detail: 'Versatile bodyweight exercise for upper body; modify on knees if needed, aiming for 3 sets.', defaultDurationMinutes: 15 },
+                { name: 'Lunges', detail: 'Great for single-leg strength and balance; keep your front knee behind your toes.', defaultDurationMinutes: 15 },
+                { name: 'Plank', detail: 'Core stability exercise; engage your abs and maintain a straight line from head to heels for 30-60 seconds.', defaultDurationMinutes: 1 }, // 1 minute for plank
+                { name: 'Deadlifts', detail: 'Compound movement for posterior chain (back, glutes, hamstrings); prioritize form over weight.', defaultDurationMinutes: 20 },
+                { name: 'Bench Press', detail: 'Works chest, shoulders, and triceps; ensure a stable setup and controlled movement.', defaultDurationMinutes: 20 }
             ]
         },
         FLEXIBILITY: {
             name: 'Flexibility & Mobility',
             examples: [
-                { name: 'Hamstring Stretch', detail: 'Hold for 30 seconds per leg to improve flexibility in the back of your legs; avoid bouncing.' },
-                { name: 'Quad Stretch', detail: 'Stand tall and hold for 30 seconds per leg to stretch the front of your thighs.' },
-                { name: 'Yoga (e.g., Downward Dog)', detail: 'Stretches shoulders, hamstrings, and calves while building strength.' },
-                { name: 'Pilates (e.g., The Hundred)', detail: 'Core-focused exercises that also emphasize breath control and flexibility.' }
+                { name: 'Hamstring Stretch', detail: 'Hold for 30 seconds per leg to improve flexibility in the back of your legs; avoid bouncing.', defaultDurationMinutes: 5 },
+                { name: 'Quad Stretch', detail: 'Stand tall and hold for 30 seconds per leg to stretch the front of your thighs.', defaultDurationMinutes: 5 },
+                { name: 'Yoga (e.g., Downward Dog)', detail: 'Stretches shoulders, hamstrings, and calves while building strength.', defaultDurationMinutes: 20 },
+                { name: 'Pilates (e.g., The Hundred)', detail: 'Core-focused exercises that also emphasize breath control and flexibility.', defaultDurationMinutes: 20 }
             ]
         },
         HIIT: {
             name: 'HIIT',
             examples: [
-                { name: 'Sprint Intervals', detail: 'Alternate short bursts of all-out sprinting (20-30s) with recovery periods (60-90s).' },
-                { name: 'Tabata Sprints', detail: '20 seconds of intense effort followed by 10 seconds of rest, repeated for 4 minutes per exercise.' },
-                { name: 'Burpee Intervals', detail: 'Perform burpees at high intensity for a set time (e.g., 45s), rest briefly (e.g., 15s), and repeat.' }
+                { name: 'Sprint Intervals', detail: 'Alternate short bursts of all-out sprinting (20-30s) with recovery periods (60-90s).', defaultDurationMinutes: 15 },
+                { name: 'Tabata Sprints', detail: '20 seconds of intense effort followed by 10 seconds of rest, repeated for 4 minutes per exercise.', defaultDurationMinutes: 10 }, // Tabata is usually short and intense
+                { name: 'Burpee Intervals', detail: 'Perform burpees at high intensity for a set time (e.g., 45s), rest briefly (e.g., 15s), and repeat.', defaultDurationMinutes: 10 }
             ]
         },
         BALANCE_STABILITY: {
             name: 'Balance & Stability',
             examples: [
-                { name: 'Single-Leg Stands', detail: 'Improve balance by standing on one leg (30s each); try with eyes open, then closed for a challenge.' },
-                { name: 'Tai Chi movements', detail: 'Slow, flowing movements that enhance balance, coordination, and mindfulness.' },
-                { name: 'Heel-to-Toe Walk', detail: 'Improves balance and proprioception; walk in a straight line placing heel directly before toe.' }
+                { name: 'Single-Leg Stands', detail: 'Improve balance by standing on one leg (30s each); try with eyes open, then closed for a challenge.', defaultDurationMinutes: 5 },
+                { name: 'Tai Chi movements', detail: 'Slow, flowing movements that enhance balance, coordination, and mindfulness.', defaultDurationMinutes: 20 },
+                { name: 'Heel-to-Toe Walk', detail: 'Improves balance and proprioception; walk in a straight line placing heel directly before toe.', defaultDurationMinutes: 5 }
             ]
         },
         FUNCTIONAL_TRAINING: {
             name: 'Functional Training',
             examples: [
-                { name: "Farmer\'s Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.' },
-                { name: 'Kettlebell Swings', detail: 'Develops explosive power in hips and glutes; focus on a hip hinge, not a squat.' },
-                { name: 'Medicine Ball Slams', detail: 'Full-body power exercise; slam the ball forcefully to the ground from overhead.' }
+                { name: "Farmer\'s Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.', defaultDurationMinutes: 10 },
+                { name: 'Kettlebell Swings', detail: 'Develops explosive power in hips and glutes; focus on a hip hinge, not a squat.', defaultDurationMinutes: 15 },
+                { name: 'Medicine Ball Slams', detail: 'Full-body power exercise; slam the ball forcefully to the ground from overhead.', defaultDurationMinutes: 10 }
             ]
         },
         SPORTS_RECREATION: {
             name: 'Sports & Recreation',
             examples: [
-                { name: 'Basketball', detail: 'Improves agility, coordination, and cardiovascular fitness through dynamic team play.' },
-                { name: 'Hiking', detail: 'Enjoy nature while getting a great lower body and cardio workout; vary terrain for challenge.' },
-                { name: 'Dancing', detail: 'A fun way to improve cardio, coordination, and mood; try different styles like Zumba or salsa.' }
+                { name: 'Basketball', detail: 'Improves agility, coordination, and cardiovascular fitness through dynamic team play.', defaultDurationMinutes: 30 },
+                { name: 'Hiking', detail: 'Enjoy nature while getting a great lower body and cardio workout; vary terrain for challenge.', defaultDurationMinutes: 45 },
+                { name: 'Dancing', detail: 'A fun way to improve cardio, coordination, and mood; try different styles like Zumba or salsa.', defaultDurationMinutes: 30 }
             ]
         },
-        OTHER: { name: 'Other Activities', examples: [] }
+        OTHER: { name: 'Other Activities', examples: [] } // No duration needed if no examples
     };
 
     const formatExamples = (examples) => {
@@ -471,15 +514,39 @@ function generateDynamicWorkoutRecommendations() {
             countToShow = Math.min(examples.length, Math.floor(Math.random() * (maxToShow - minToShow + 1)) + minToShow);
         }
         
-        const selected = shuffled.slice(0, countToShow);
+        const selectedExamplesWithIds = shuffled.slice(0, countToShow).map(ex => ({
+            ...ex,
+            calorieSpanId: `calorie-span-${encodeURIComponent(ex.name.replace(/[^a-zA-Z0-9]/g, '-'))}-${Math.random().toString(36).substring(2, 7)}`
+        }));
 
-        if (selected.length === 0) return '';
+        if (selectedExamplesWithIds.length === 0) return '';
 
-        let exampleHtmlList = '<ul class="example-list">';
-        selected.forEach((ex) => {
-            exampleHtmlList += `<li><strong>${ex.name}</strong> – ${ex.detail}</li>`;
+        let exampleHtmlList = '<ul class="example-list workout-recommendation-detailed-list">'; // Added a new class for specific styling
+        selectedExamplesWithIds.forEach((ex) => {
+            const duration = ex.defaultDurationMinutes || 0;
+            exampleHtmlList += `<li>
+                                    <div class="workout-rec-item">
+                                        <div class="workout-rec-main">
+                                            <strong class="workout-rec-name">${ex.name}</strong>
+                                            <span class="workout-rec-detail"> – ${ex.detail}</span>
+                                        </div>
+                                        <div class="workout-rec-stats">
+                                            <span class="workout-rec-duration">Recommended: ${duration} mins</span>
+                                            <span class="workout-rec-calories">Calories Burned: <span id="${ex.calorieSpanId}" class="estimated-calories-value">Loading...</span> kcal</span>
+                                        </div>
+                                    </div>
+                               </li>`;
         });
         exampleHtmlList += '</ul>';
+
+        // After HTML is constructed, kick off the calorie estimation for each selected example
+        selectedExamplesWithIds.forEach((ex) => {
+            const duration = ex.defaultDurationMinutes || 0;
+            if (duration > 0) { // Only estimate if duration is sensible
+                estimateCaloriesForWorkout(ex.name, duration, ex.calorieSpanId);
+            }
+        });
+
         return exampleHtmlList;
     };
     
@@ -612,22 +679,33 @@ function updateCalorieTargetRecommendations() {
     document.getElementById('weightLossRate').textContent = '';
     document.getElementById('maintenanceRate').textContent = '';
     document.getElementById('weightGainRate').textContent = '';
+    document.getElementById('recommendedActivityCalories').textContent = '--'; // Default
+    document.getElementById('activityBurnRate').textContent = ''; // Default
+
+    if (analyticsData.recommendedActivityCalories != null && analyticsData.recommendedActivityCalories > 0) {
+        document.getElementById('recommendedActivityCalories').textContent = `${Math.round(analyticsData.recommendedActivityCalories)} kcal`;
+    }
 
     if (bmiCategory.includes('overweight') || bmiCategory.includes('obese')) {
         document.getElementById('weightLossRecommended').textContent = "(Recommended)";
         document.getElementById('weightLossRate').textContent = approxRateText;
         document.getElementById('weightGainRate').textContent = approxRateText;
+        document.getElementById('activityBurnRate').textContent = "Helps create a healthy energy deficit.";
     } else if (bmiCategory.includes('underweight')) {
         document.getElementById('weightGainRecommended').textContent = "(Recommended)";
         document.getElementById('weightGainRate').textContent = approxRateText;
         document.getElementById('weightLossRate').textContent = "approx. 0.5 kg/week";
+        document.getElementById('activityBurnRate').textContent = "Focus on caloric intake for gain.";
     } else if (bmiCategory.includes('normal')) {
         document.getElementById('maintenanceRecommended').textContent = "(Recommended)";
         document.getElementById('weightLossRate').textContent = approxRateText;
         document.getElementById('weightGainRate').textContent = approxRateText;
+        document.getElementById('activityBurnRate').textContent = "For general health & fitness.";
     } else {
         document.getElementById('weightLossRate').textContent = approxRateText;
         document.getElementById('weightGainRate').textContent = approxRateText;
+        // For default/unknown BMI category, perhaps a generic message or leave blank
+        document.getElementById('activityBurnRate').textContent = "For general well-being.";
     }
 }
 

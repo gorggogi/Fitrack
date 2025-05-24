@@ -47,6 +47,11 @@ public class AnalyticsService {
         
         log.debug("DTO fullName set to: {}", dto.getFullName());
 
+        // Populate User-specific details for estimations
+        dto.setAge(user.getAge());
+        dto.setHeightCm(user.getHeight()); // Assuming user.getHeight() returns height in CM
+        dto.setGender(user.getGender() != null ? user.getGender().toString() : null); // Assuming Gender is an enum or needs conversion to String
+
         List<BodyMeasurement> measurements = bodyMeasurementService.getMeasurementsForUser(user);
         // BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0); // Keep for other calculations if needed
         
@@ -75,6 +80,46 @@ public class AnalyticsService {
 
         dto.setCurrentBmiValue(bodyMeasurementService.calculateCurrentBMI(user));
         dto.setCurrentBmiCategory(bodyMeasurementService.getBMICategory(dto.getCurrentBmiValue()));
+
+        // Calculate recommended activity calories based on BMI category and TDEE
+        double calculatedTdee = dto.getTdee(); // TDEE is already calculated and set in DTO
+        double recommendedActivityCalories;
+        String bmiCategory = dto.getCurrentBmiCategory();
+
+        if (calculatedTdee > 0) {
+            if (bmiCategory != null) {
+                if (bmiCategory.toLowerCase().contains("overweight") || bmiCategory.toLowerCase().contains("obese")) {
+                    // Target 15% of TDEE, min 200, max 400
+                    recommendedActivityCalories = Math.max(200, Math.min(calculatedTdee * 0.15, 400));
+                } else if (bmiCategory.toLowerCase().contains("normal")) {
+                    // Target 10% of TDEE, min 150, max 300
+                    recommendedActivityCalories = Math.max(150, Math.min(calculatedTdee * 0.10, 300));
+                } else if (bmiCategory.toLowerCase().contains("underweight")) {
+                    // Target 5% of TDEE, min 100, max 200
+                    recommendedActivityCalories = Math.max(100, Math.min(calculatedTdee * 0.05, 200));
+                } else { // Unknown BMI category
+                    recommendedActivityCalories = Math.max(150, Math.min(calculatedTdee * 0.10, 300)); // Default to 'Normal' logic
+                }
+            } else { // BMI category is null
+                recommendedActivityCalories = Math.max(150, Math.min(calculatedTdee * 0.10, 300)); // Default to 'Normal' logic
+            }
+        } else { // TDEE is not sensible (<=0), use fallback fixed values
+            log.warn("TDEE is not positive ({}). Using fallback for recommendedActivityCalories for user: {}", calculatedTdee, user.getEmail());
+            if (bmiCategory != null) {
+                if (bmiCategory.toLowerCase().contains("overweight") || bmiCategory.toLowerCase().contains("obese")) {
+                    recommendedActivityCalories = 300; // Fallback fixed
+                } else if (bmiCategory.toLowerCase().contains("normal")) {
+                    recommendedActivityCalories = 200; // Fallback fixed
+                } else if (bmiCategory.toLowerCase().contains("underweight")) {
+                    recommendedActivityCalories = 100; // Fallback fixed
+                } else { // Unknown BMI category
+                    recommendedActivityCalories = 200; // General fallback
+                }
+            } else { // BMI category is null
+                recommendedActivityCalories = 200; // General fallback
+            }
+        }
+        dto.setRecommendedActivityCalories(Math.round(recommendedActivityCalories));
 
         // Find latestMeasurement again for other calculations
         BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0); 

@@ -2985,3 +2985,59 @@ button.primary {
     color: #333; /* Make the exercise name slightly darker or match card title */
 }
 
+/* Workout Recommendation Enhancements */
+.workout-recommendation-detailed-list {
+    list-style-type: none; /* Removes default bullet points if not already done */
+    padding-left: 0; /* Removes default padding if not already done */
+}
+
+.workout-recommendation-detailed-list li {
+    margin-bottom: 15px; /* Adds space between recommendation items */
+}
+
+.workout-rec-item {
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #fdfdfd;
+}
+
+.workout-rec-main {
+    margin-bottom: 8px; /* Space between main description and stats */
+}
+
+.workout-rec-name {
+    font-weight: bold;
+    color: #333;
+    display: inline; /* Keep name and detail on the same line if possible */
+}
+
+.workout-rec-detail {
+    font-size: 0.95em;
+    color: #555;
+    display: inline;
+}
+
+.workout-rec-stats {
+    display: flex; /* Aligns duration and calories on the same line */
+    justify-content: space-between; /* Puts space between duration and calories */
+    align-items: center;
+    font-size: 0.9em;
+    color: #444;
+    padding-top: 8px;
+    border-top: 1px dashed #eee; /* Subtle separator */
+}
+
+.workout-rec-duration {
+    /* Style for duration if needed */
+}
+
+.workout-rec-calories {
+    font-weight: bold;
+    color: #2a9d8f; /* A distinct color for calories - adjust as needed */
+}
+
+.estimated-calories-value {
+    /* Specific styling for the number itself if needed */
+}
+

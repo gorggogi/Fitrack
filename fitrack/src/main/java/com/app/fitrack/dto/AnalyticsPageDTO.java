@@ -31,6 +31,14 @@ public class AnalyticsPageDTO {
     private double fatNeeds;     // g/day
     private double waterNeeds;   // L/day
 
+    // User profile details for more accurate estimations
+    private Integer age;
+    private Double heightCm;
+    private String gender;
+
+    // Recommended calories to burn through activity
+    private double recommendedActivityCalories;
+
     // Chart data
     private int[] dailyWorkoutCounts7Days; // Count of workouts per day for last 7 days
     private int[] dailyCaloriesBurned7Days; // Calories burned from workouts per day
@@ -190,6 +198,30 @@ public class AnalyticsPageDTO {
         this.waterNeeds = waterNeeds;
     }
 
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Double getHeightCm() {
+        return heightCm;
+    }
+
+    public void setHeightCm(Double heightCm) {
+        this.heightCm = heightCm;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     public int[] getDailyWorkoutCounts7Days() {
         return dailyWorkoutCounts7Days;
     }
@@ -237,5 +269,13 @@ public class AnalyticsPageDTO {
 
     public void setWorkoutTypeFrequency(Map<String, Long> workoutTypeFrequency) {
         this.workoutTypeFrequency = workoutTypeFrequency;
+    }
+
+    public double getRecommendedActivityCalories() {
+        return recommendedActivityCalories;
+    }
+
+    public void setRecommendedActivityCalories(double recommendedActivityCalories) {
+        this.recommendedActivityCalories = recommendedActivityCalories;
     }
 } 
