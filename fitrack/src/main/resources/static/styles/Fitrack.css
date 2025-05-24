@@ -3000,6 +3000,12 @@ button.primary {
     border: 1px solid #eee;
     border-radius: 5px;
     background-color: #fdfdfd;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Added transition */
+}
+
+.workout-rec-item:hover {
+    transform: scale(1.03); /* Slight zoom on hover */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Softer, larger shadow on hover */
 }
 
 .workout-rec-main {
@@ -3039,5 +3045,17 @@ button.primary {
 
 .estimated-calories-value {
     /* Specific styling for the number itself if needed */
+}
+
+/* Indicator for already scheduled workout recommendations */
+.workout-rec-item.is-scheduled {
+    border-left: 4px solid #4CAF50; /* Green left border for scheduled items */
+    background-color: #f5fff5; /* Very light green background tint */
+}
+
+.scheduled-indicator {
+    color: #4CAF50; /* Green icon */
+    margin-left: 5px;
+    font-size: 0.9em; /* Slightly smaller than text */
 }
 

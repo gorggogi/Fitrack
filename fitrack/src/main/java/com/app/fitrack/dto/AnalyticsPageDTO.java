@@ -39,6 +39,9 @@ public class AnalyticsPageDTO {
     // Recommended calories to burn through activity
     private double recommendedActivityCalories;
 
+    // Set of names of workouts currently scheduled by the user
+    private java.util.Set<String> scheduledWorkoutNames;
+
     // Chart data
     private int[] dailyWorkoutCounts7Days; // Count of workouts per day for last 7 days
     private int[] dailyCaloriesBurned7Days; // Calories burned from workouts per day
@@ -277,5 +280,13 @@ public class AnalyticsPageDTO {
 
     public void setRecommendedActivityCalories(double recommendedActivityCalories) {
         this.recommendedActivityCalories = recommendedActivityCalories;
+    }
+
+    public java.util.Set<String> getScheduledWorkoutNames() {
+        return scheduledWorkoutNames;
+    }
+
+    public void setScheduledWorkoutNames(java.util.Set<String> scheduledWorkoutNames) {
+        this.scheduledWorkoutNames = scheduledWorkoutNames;
     }
 } 

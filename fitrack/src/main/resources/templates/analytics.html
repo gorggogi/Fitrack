@@ -257,5 +257,80 @@
             <a id="toastViewLink" href="/user/dashboard" class="toast-view-link">View</a>
         </div>
     </div>
+
+    <!-- Workout Modal (copied from dashboard.html for analytics page) -->
+    <div id="workoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeWorkoutModal()">&times;</span>
+            <h2 id="modalTitle">Add New Workout</h2>
+            <!-- The workoutDetails div is primarily for viewing an existing workout from the dashboard, 
+                 so it might not be directly used when adding from analytics, but keeping for structural consistency -->
+            <div id="workoutDetails" style="display: none;">
+                <h3 id="modalWorkoutName"></h3>
+                <p>Duration: <span id="modalWorkoutDuration"></span></p>
+                <p>Calories: <span id="modalWorkoutCalories"></span></p>
+                <div class="form-actions">
+                    <button type="button" id="markAsDoneButton" class="btn btn-success">Mark as Done</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeWorkoutModal()">Close</button>
+                </div>
+            </div>
+            <form id="workoutForm" action="/user/saveworkout" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div class="form-group">
+                    <label>Workout name</label>
+                    <input type="text" name="workoutName" id="workoutName" placeholder="Enter workout name" required>
+                </div>
+                <div class="form-group">
+                    <label>Workout Type</label>
+                    <select name="workoutType" id="workoutType" required>
+                        <option value="">Select workout type</option>
+                        <option value="CARDIO">Cardio</option>
+                        <option value="STRENGTH">Strength Training</option>
+                        <option value="FLEXIBILITY">Flexibility</option>
+                        <option value="HIIT">HIIT</option>
+                        <option value="BALANCE">Balance & Stability</option>
+                        <option value="FUNCTIONAL">Functional Training</option>
+                        <option value="SPORTS">Sports & Recreation</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Duration (minutes)</label>
+                    <input type="number" name="duration" id="duration" placeholder="Duration" required>
+                </div>
+                <div class="form-group">
+                    <label>Burned Calories</label>
+                    <input type="number" name="caloriesBurned" id="caloriesBurned" placeholder="Burned Calories" required>
+                </div>
+                <!-- Repeat Days might not be directly relevant when adding from a recommendation, but keeping for now -->
+                <div class="form-group">
+                    <label>Repeat Days</label>
+                    <div class="repeat-days">
+                        <input type="checkbox" id="sunday" name="repeatDays" value="Sunday">
+                        <label for="sunday">Sun</label>
+                        <input type="checkbox" id="monday" name="repeatDays" value="Monday">
+                        <label for="monday">Mon</label>
+                        <input type="checkbox" id="tuesday" name="repeatDays" value="Tuesday">
+                        <label for="tuesday">Tue</label>
+                        <input type="checkbox" id="wednesday" name="repeatDays" value="Wednesday">
+                        <label for="wednesday">Wed</label>
+                        <input type="checkbox" id="thursday" name="repeatDays" value="Thursday">
+                        <label for="thursday">Thu</label>
+                        <input type="checkbox" id="friday" name="repeatDays" value="Friday">
+                        <label for="friday">Fri</label>
+                        <input type="checkbox" id="saturday" name="repeatDays" value="Saturday">
+                        <label for="saturday">Sat</label>
+                        <input type="checkbox" id="daily" name="repeatDays" value="Daily" checked> <!-- Default to Daily -->
+                        <label for="daily">Daily</label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="estimateBurnedCalories()" class="btn btn-warning">Estimate Calories</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeWorkoutModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Workout</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html> 

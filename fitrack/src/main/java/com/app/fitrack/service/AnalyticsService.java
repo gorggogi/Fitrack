@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.HashSet;
 
 @Service
 public class AnalyticsService {
@@ -51,6 +53,24 @@ public class AnalyticsService {
         dto.setAge(user.getAge());
         dto.setHeightCm(user.getHeight()); // Assuming user.getHeight() returns height in CM
         dto.setGender(user.getGender() != null ? user.getGender().toString() : null); // Assuming Gender is an enum or needs conversion to String
+
+        // Populate scheduled workout names
+        try {
+            List<com.app.fitrack.model.Workout> scheduledWorkouts = workoutService.getAllUserWorkouts(user);
+            if (scheduledWorkouts != null) {
+                Set<String> workoutNames = scheduledWorkouts.stream()
+                                                            .map(com.app.fitrack.model.Workout::getWorkoutName)
+                                                            .collect(Collectors.toSet());
+                dto.setScheduledWorkoutNames(workoutNames);
+                log.debug("Scheduled workout names for DTO: {}", workoutNames);
+            } else {
+                dto.setScheduledWorkoutNames(new HashSet<>()); // Initialize to empty set if null
+                log.debug("No scheduled workouts found, set to empty set.");
+            }
+        } catch (Exception e) {
+            log.error("Error fetching scheduled workouts for user {}: {}", user.getEmail(), e.getMessage());
+            dto.setScheduledWorkoutNames(new HashSet<>()); // Initialize to empty set on error
+        }
 
         List<BodyMeasurement> measurements = bodyMeasurementService.getMeasurementsForUser(user);
         // BodyMeasurement latestMeasurement = measurements.isEmpty() ? null : measurements.get(0); // Keep for other calculations if needed

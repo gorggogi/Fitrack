@@ -437,6 +437,7 @@ function generateDynamicWorkoutRecommendations() {
     const WORKOUT_TYPES = {
         CARDIO: {
             name: 'Cardio',
+            key: 'CARDIO',
             examples: [
                 { name: 'Brisk Walking', detail: 'Aim for 30+ minutes at a pace where you can talk but feel your heart rate increase.', defaultDurationMinutes: 30 },
                 { name: 'Running', detail: 'Builds endurance; start with a comfortable pace and gradually increase distance or speed.', defaultDurationMinutes: 20 },
@@ -447,6 +448,7 @@ function generateDynamicWorkoutRecommendations() {
         },
         STRENGTH: {
             name: 'Strength Training',
+            key: 'STRENGTH',
             examples: [
                 { name: 'Squats', detail: 'Targets quads, hamstrings, and glutes; focus on depth and keeping your chest up.', defaultDurationMinutes: 20 },
                 { name: 'Push-ups', detail: 'Versatile bodyweight exercise for upper body; modify on knees if needed, aiming for 3 sets.', defaultDurationMinutes: 15 },
@@ -458,6 +460,7 @@ function generateDynamicWorkoutRecommendations() {
         },
         FLEXIBILITY: {
             name: 'Flexibility & Mobility',
+            key: 'FLEXIBILITY',
             examples: [
                 { name: 'Hamstring Stretch', detail: 'Hold for 30 seconds per leg to improve flexibility in the back of your legs; avoid bouncing.', defaultDurationMinutes: 5 },
                 { name: 'Quad Stretch', detail: 'Stand tall and hold for 30 seconds per leg to stretch the front of your thighs.', defaultDurationMinutes: 5 },
@@ -467,6 +470,7 @@ function generateDynamicWorkoutRecommendations() {
         },
         HIIT: {
             name: 'HIIT',
+            key: 'HIIT',
             examples: [
                 { name: 'Sprint Intervals', detail: 'Alternate short bursts of all-out sprinting (20-30s) with recovery periods (60-90s).', defaultDurationMinutes: 15 },
                 { name: 'Tabata Sprints', detail: '20 seconds of intense effort followed by 10 seconds of rest, repeated for 4 minutes per exercise.', defaultDurationMinutes: 10 }, // Tabata is usually short and intense
@@ -475,6 +479,7 @@ function generateDynamicWorkoutRecommendations() {
         },
         BALANCE_STABILITY: {
             name: 'Balance & Stability',
+            key: 'BALANCE_STABILITY',
             examples: [
                 { name: 'Single-Leg Stands', detail: 'Improve balance by standing on one leg (30s each); try with eyes open, then closed for a challenge.', defaultDurationMinutes: 5 },
                 { name: 'Tai Chi movements', detail: 'Slow, flowing movements that enhance balance, coordination, and mindfulness.', defaultDurationMinutes: 20 },
@@ -483,6 +488,7 @@ function generateDynamicWorkoutRecommendations() {
         },
         FUNCTIONAL_TRAINING: {
             name: 'Functional Training',
+            key: 'FUNCTIONAL_TRAINING',
             examples: [
                 { name: "Farmer\'s Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.', defaultDurationMinutes: 10 },
                 { name: 'Kettlebell Swings', detail: 'Develops explosive power in hips and glutes; focus on a hip hinge, not a squat.', defaultDurationMinutes: 15 },
@@ -491,16 +497,17 @@ function generateDynamicWorkoutRecommendations() {
         },
         SPORTS_RECREATION: {
             name: 'Sports & Recreation',
+            key: 'SPORTS_RECREATION',
             examples: [
                 { name: 'Basketball', detail: 'Improves agility, coordination, and cardiovascular fitness through dynamic team play.', defaultDurationMinutes: 30 },
                 { name: 'Hiking', detail: 'Enjoy nature while getting a great lower body and cardio workout; vary terrain for challenge.', defaultDurationMinutes: 45 },
                 { name: 'Dancing', detail: 'A fun way to improve cardio, coordination, and mood; try different styles like Zumba or salsa.', defaultDurationMinutes: 30 }
             ]
         },
-        OTHER: { name: 'Other Activities', examples: [] } // No duration needed if no examples
+        OTHER: { name: 'Other Activities', key: 'OTHER', examples: [] } // No duration needed if no examples
     };
 
-    const formatExamples = (examples) => {
+    const formatExamples = (examples, workoutTypeKey) => {
         if (!examples || examples.length === 0) return '';
         const shuffled = [...examples].sort(() => 0.5 - Math.random());
         
@@ -524,18 +531,12 @@ function generateDynamicWorkoutRecommendations() {
         let exampleHtmlList = '<ul class="example-list workout-recommendation-detailed-list">'; // Added a new class for specific styling
         selectedExamplesWithIds.forEach((ex) => {
             const duration = ex.defaultDurationMinutes || 0;
-            exampleHtmlList += `<li>
-                                    <div class="workout-rec-item">
-                                        <div class="workout-rec-main">
-                                            <strong class="workout-rec-name">${ex.name}</strong>
-                                            <span class="workout-rec-detail"> – ${ex.detail}</span>
-                                        </div>
-                                        <div class="workout-rec-stats">
-                                            <span class="workout-rec-duration">Recommended: ${duration} mins</span>
-                                            <span class="workout-rec-calories">Calories Burned: <span id="${ex.calorieSpanId}" class="estimated-calories-value">Loading...</span> kcal</span>
-                                        </div>
-                                    </div>
-                               </li>`;
+            const escapedExName = ex.name.replace(/'/g, "\\\\'");
+            const isScheduled = analyticsData.scheduledWorkoutNames && analyticsData.scheduledWorkoutNames.includes(ex.name);
+            const scheduledClass = isScheduled ? 'is-scheduled' : '';
+            const scheduledIndicator = isScheduled ? '<i class="fas fa-calendar-check scheduled-indicator" title="Already in your schedule"></i>' : '';
+
+            exampleHtmlList += `<li>\n                                    <div class="workout-rec-item ${scheduledClass}" onclick="openWorkoutModalWithRecommendation('${escapedExName}', ${duration}, '${workoutTypeKey}', '${ex.calorieSpanId}')" style="cursor: pointer;">\n                                        <div class="workout-rec-main">\n                                            <strong class="workout-rec-name">${ex.name} ${scheduledIndicator}</strong>\n                                            <span class="workout-rec-detail"> – ${ex.detail}</span>\n                                        </div>\n                                        <div class="workout-rec-stats">\n                                            <span class="workout-rec-duration">Recommended: ${duration} mins</span>\n                                            <span class="workout-rec-calories">Calories Burned: <span id="${ex.calorieSpanId}" class="estimated-calories-value">Loading...</span> kcal</span>\n                                        </div>\n                                    </div>\n                               </li>`;
         });
         exampleHtmlList += '</ul>';
 
@@ -566,63 +567,63 @@ function generateDynamicWorkoutRecommendations() {
         if (bmiCategory === 'Underweight') {
             recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Healthy Weight Gain & Muscle Building</h5></div>');
             if (getFrequency('STRENGTH') < 8) {
-                let content = `<p>You should aim for 2-3 sessions weekly, focusing on compound movements and progressive overload.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                let content = `<p>You should aim for 2-3 sessions weekly, focusing on compound movements and progressive overload.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Prioritize ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>Ensure progressive overload for continued muscle growth.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                let content = `<p>Ensure progressive overload for continued muscle growth.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Continue Your Great Work with ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             }
             if (getFrequency('CARDIO') < 4 && avgExerciseCalories < 200) {
-                let content = `<p>Aiming for 2-3 times per week (20-30 mins) for cardiovascular health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                let content = `<p>Aiming for 2-3 times per week (20-30 mins) for cardiovascular health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate Moderate ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>Balance your cardio with your strength goals. Ensure it\'s supportive, not excessive, for muscle gain.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                let content = `<p>Balance your cardio with your strength goals. Ensure it\'s supportive, not excessive, for muscle gain.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Balance Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             }
         } else if (bmiCategory === 'Overweight' || bmiCategory.toLowerCase().includes('obese')) {
             recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Fat Loss & Improved Metabolic Health</h5></div>');
             if (getFrequency('CARDIO') < 12) {
-                let content = `<p>Aiming for 3-5 sessions of moderate-intensity for 30+ minutes.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                let content = `<p>Aiming for 3-5 sessions of moderate-intensity for 30+ minutes.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Increase Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>Maintain 150-300 minutes of moderate-intensity cardio weekly. Consider varying type or intensity.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+                let content = `<p>Maintain 150-300 minutes of moderate-intensity cardio weekly. Consider varying type or intensity.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Excellent Consistency with ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             }
             if (getFrequency('STRENGTH') < 8) {
-                let content = `<p>Aiming for 2-3 times per week as this builds muscle and boosts metabolism.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                let content = `<p>Aiming for 2-3 times per week as this builds muscle and boosts metabolism.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>It\'s crucial for preserving muscle mass during fat loss.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                let content = `<p>It\'s crucial for preserving muscle mass during fat loss.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Keep Up ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             }
             if (avgExerciseCalories > 150 && getFrequency('HIIT') < 4) {
-                let content = `<p>These are an efficient way to boost calorie burn.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.HIIT.examples)}`;
+                let content = `<p>These are an efficient way to boost calorie burn.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.HIIT.examples, WORKOUT_TYPES.HIIT.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.HIIT.name}</h5>${content}</div>`);
             }
         } else if (bmiCategory === 'Normal') {
             recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Maintain Health & Optimize Overall Fitness</h5></div>');
-            let cardioContent = `<p>Include regular sessions (3-5 times/week).</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples)}`;
+            let cardioContent = `<p>Include regular sessions (3-5 times/week).</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
             recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Aim for Balanced ${WORKOUT_TYPES.CARDIO.name}</h5>${cardioContent}</div>`);
             if (getFrequency('STRENGTH') < 8) {
-                let strengthContent = `<p>Incorporate sessions (2-3 times per week) for muscle and bone health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                let strengthContent = `<p>Incorporate sessions (2-3 times per week) for muscle and bone health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
             } else {
-                let strengthContent = `<p>Keep it consistent.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples)}`;
+                let strengthContent = `<p>Keep it consistent.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
                 recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Well Done on ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
             }
             recommendationsHtml.push('<div class="workout-recommendation-card"><p>Explore a variety of activities to keep your fitness journey engaging and well-rounded!</p></div>');
         }
 
         if (getFrequency('FLEXIBILITY') < 8) {
-            let content = `<p>This improves range of motion and aids recovery.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FLEXIBILITY.examples)}`;
+            let content = `<p>This improves range of motion and aids recovery.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FLEXIBILITY.examples, WORKOUT_TYPES.FLEXIBILITY.key)}`;
             recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Don\'t Forget ${WORKOUT_TYPES.FLEXIBILITY.name}</h5>${content}</div>`);
         }
         if (getFrequency('FUNCTIONAL_TRAINING') < 4 && bmiCategory !== 'Underweight') {
-             let content = `<p>It enhances everyday strength and movement.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FUNCTIONAL_TRAINING.examples)}`;
+             let content = `<p>It enhances everyday strength and movement.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FUNCTIONAL_TRAINING.examples, WORKOUT_TYPES.FUNCTIONAL_TRAINING.key)}`;
              recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.FUNCTIONAL_TRAINING.name}</h5>${content}</div>`);
         }
         if (getFrequency('BALANCE_STABILITY') < 4) {
-            let content = `<p>These exercises can improve coordination and reduce injury risk.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.BALANCE_STABILITY.examples)}`;
+            let content = `<p>These exercises can improve coordination and reduce injury risk.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.BALANCE_STABILITY.examples, WORKOUT_TYPES.BALANCE_STABILITY.key)}`;
             recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Try Basic ${WORKOUT_TYPES.BALANCE_STABILITY.name}</h5>${content}</div>`);
         }
         
@@ -636,7 +637,7 @@ function generateDynamicWorkoutRecommendations() {
                      (bmiCategory !== 'Underweight' && typeKey === 'SPORTS_RECREATION') || 
                      (bmiCategory === 'Underweight' && typeKey === 'FLEXIBILITY') 
                    ) {
-                    let content = `<p>${WORKOUT_TYPES[typeKey].name} could be a great addition to your routine.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES[typeKey].examples)}`;
+                    let content = `<p>${WORKOUT_TYPES[typeKey].name} could be a great addition to your routine.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES[typeKey].examples, WORKOUT_TYPES[typeKey].key)}`;
                     recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Explore Something New: ${WORKOUT_TYPES[typeKey].name}</h5>${content}</div>`);
                     suggestedNew++;
                 }
@@ -712,4 +713,101 @@ function updateCalorieTargetRecommendations() {
 // Call the function to generate recommendations when the script runs and data is available
 generateDynamicWorkoutRecommendations();
 updateCalorieTargetRecommendations(); // Call the new function
+
+// Function to open workout modal with pre-filled data from recommendations
+function openWorkoutModalWithRecommendation(workoutName, durationMinutes, workoutTypeKey, calorieSpanId) {
+    // Ensure the global openModal function from dashboard.js is available
+    if (typeof openModal !== 'function') {
+        console.error('Global openModal function not found. Cannot open workout modal.');
+        // Fallback: try to find and display the modal directly if openModal is not global
+        const modal = document.getElementById("workoutModal");
+        if (modal) {
+            modal.style.display = "flex";
+        } else {
+            alert('Error: Workout modal or function to open it is not available.');
+            return;
+        }
+    }
+
+    const workoutNameInput = document.getElementById('workoutName');
+    const durationInput = document.getElementById('duration');
+    const workoutTypeSelect = document.getElementById('workoutType');
+    const caloriesBurnedInput = document.getElementById('caloriesBurned');
+    const workoutIdInput = document.getElementById('workoutId'); // For edit, clear for add
+    const workoutForm = document.getElementById('workoutForm'); // Get the form element
+    const modalTitle = document.getElementById('modalTitle'); 
+
+    if (workoutNameInput) workoutNameInput.value = workoutName;
+    if (durationInput) durationInput.value = durationMinutes;
+    if (workoutTypeSelect) {
+        // Map specific keys if they differ from modal option values
+        let modalWorkoutType = workoutTypeKey;
+        if (workoutTypeKey === 'BALANCE_STABILITY') modalWorkoutType = 'BALANCE';
+        if (workoutTypeKey === 'FUNCTIONAL_TRAINING') modalWorkoutType = 'FUNCTIONAL';
+        if (workoutTypeKey === 'SPORTS_RECREATION') modalWorkoutType = 'SPORTS';
+        workoutTypeSelect.value = modalWorkoutType;
+    }
+    
+    // if (caloriesBurnedInput) caloriesBurnedInput.value = ''; // Clear previous estimate - NOW WE POPULATE IT
+    if (caloriesBurnedInput && calorieSpanId) {
+        const calorieSpan = document.getElementById(calorieSpanId);
+        if (calorieSpan && calorieSpan.textContent && !isNaN(parseFloat(calorieSpan.textContent))) {
+            caloriesBurnedInput.value = Math.round(parseFloat(calorieSpan.textContent));
+        } else {
+            caloriesBurnedInput.value = ''; // Clear if not found or not a number
+            console.warn(`Could not find or parse calories from spanId: ${calorieSpanId}`);
+        }
+    } else if (caloriesBurnedInput) {
+        caloriesBurnedInput.value = ''; // Clear if no calorieSpanId provided
+    }
+
+    if (workoutIdInput) workoutIdInput.value = ''; // Ensure it's a new workout
+
+    // Reset form action to default for adding new workout
+    if (workoutForm) {
+        // Check if this form action is generic enough or needs to be specific to /user/saveworkout
+        // For now, assume dashboard.js openModal or scheduledworkouts.js openAddScheduledWorkoutModal handles it.
+        // However, to be safe for analytics page context where only adding is logical from here:
+        if (workoutForm.action.includes('/update') || workoutForm.action.includes('/edit')) {
+            // Try to determine the correct base path or use a sensible default
+            // This is a bit of a guess if the structure is inconsistent
+            const basePath = window.location.origin; // Or a fixed path if known
+            workoutForm.action = `${basePath}/user/saveworkout`; 
+            // If using scheduledworkouts.html modal structure which is /user/saveworkout by default for new
+            // If using dashboard.html modal structure which is also /user/saveworkout by default
+        }
+        // If the modal is shared and its action might be for editing, explicitly set to add action.
+        // This assumes '/user/saveworkout' is the correct endpoint for adding a new workout.
+        // This might conflict if the modal on dashboard/scheduledworkouts has a different default new action.
+        // Best would be if openModal() in dashboard.js resets it for new workouts.
+        // Let's ensure it's the add new workout action if the context is analytics
+        workoutForm.action = '/user/saveworkout'; 
+    }
+    
+    if (modalTitle) modalTitle.textContent = 'Add New Workout';
+
+    // Call the global openModal function if available, otherwise just ensure modal is visible
+    if (typeof openModal === 'function') {
+        openModal(); 
+    } else {
+        // This part is already handled by the fallback at the start of this function.
+        // const modal = document.getElementById("workoutModal");
+        // if (modal) modal.style.display = "flex";
+    }
+
+    // Optional: Set a default date (e.g., today) for the workout
+    // This depends on your modal having a date input with a known ID, e.g., 'workoutDate'
+    // const workoutDateInput = document.getElementById('workoutDate'); // Example ID, adjust if necessary
+    // if (workoutDateInput && workoutDateInput.type === 'date') {
+    //     const today = new Date();
+    //     const year = today.getFullYear();
+    //     const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    //     const day = String(today.getDate()).padStart(2, '0');
+    //     workoutDateInput.value = `${year}-${month}-${day}`;
+    // } else if (workoutDateInput && workoutDateInput.type === 'datetime-local') {
+    //     const now = new Date();
+    //     now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Adjust for local timezone for datetime-local
+    //     workoutDateInput.value = now.toISOString().slice(0,16);
+    // }
+}
 } 
