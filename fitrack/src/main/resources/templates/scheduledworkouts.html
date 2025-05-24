@@ -6,7 +6,12 @@
     <link rel="stylesheet" th:href="@{/styles/main.css}">
     <link rel="stylesheet" th:href="@{/styles/Fitrack.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="/images/Fitrack.ico">
+    <link rel="icon" type="image/x-icon" th:href="@{/images/Fitrack.ico}">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            const contextPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+    </script>
     <script th:src="@{/styles/scripts/dashboard.js}" defer></script>
     <script th:src="@{/styles/scripts/scheduledworkouts.js}" defer></script>
     <title>Workouts</title>
@@ -96,7 +101,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeScheduledWorkoutModal()">&times;</span>
             <h2 id="modalTitle">Add New Workout</h2>
-            <form id="workoutForm" action="/user/saveworkout" method="post">
+            <form id="workoutForm" th:action="@{/user/saveworkout}" method="post">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" name="id" id="workoutId">
                 <div class="form-group">

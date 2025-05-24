@@ -7,19 +7,19 @@
         <span th:text="${fullName}" class="user-name"></span>
         <div class="user-icon" onclick="toggleDropdown()">
             <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture" alt="Profile Picture">
-            <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture" alt="Default Profile Picture">
+            <img th:unless="${user.profilePicture}" th:src="@{/images/default-profile.png}" class="profile-picture" alt="Default Profile Picture">
         </div>
         <div class="dropdown-menu" id="dropdownMenu">
-            <form id="logoutForm" action="/user/logout" method="post" style="display: none;">
+            <form id="logoutForm" th:action="@{/user/logout}" method="post" style="display: none;">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="submit" value="Logout" />
             </form>
-            <a href="/user/dashboard"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="/user/analytics"><i class="fas fa-chart-line"></i> Analytics</a>
-            <a href="/user/goals/all"><i class="fas fa-bullseye"></i> Goals</a>
-            <a href="/user/meals"><i class="fas fa-utensils"></i> Meals</a>
+            <a th:href="@{/user/dashboard}"><i class="fas fa-home"></i> Dashboard</a>
+            <a th:href="@{/user/analytics}"><i class="fas fa-chart-line"></i> Analytics</a>
+            <a th:href="@{/user/goals/all}"><i class="fas fa-bullseye"></i> Goals</a>
+            <a th:href="@{/user/meals}"><i class="fas fa-utensils"></i> Meals</a>
             <a th:href="@{/user/scheduledworkouts}"><i class="fas fa-calendar-alt"></i> Workouts</a>
-            <a href="/user/profile/edit"><i class="fas fa-user-edit"></i> Edit Profile</a>
+            <a th:href="@{/user/profile/edit}"><i class="fas fa-user-edit"></i> Edit Profile</a>
             <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
     </div>

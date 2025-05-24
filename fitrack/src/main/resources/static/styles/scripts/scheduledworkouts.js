@@ -10,7 +10,7 @@ function editWorkout(id) {
         editIconContainer.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     }
 
-    fetch(`/user/workouts/${id}`, {
+    fetch(contextPath + `user/workouts/${id}`, {
         headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
     })
     .then(response => {
@@ -39,7 +39,7 @@ function editWorkout(id) {
         }
         
         const form = document.getElementById('workoutForm');
-        if (form) form.action = `/user/workouts/${id}/update`;
+        if (form) form.action = contextPath + `user/workouts/${id}/update`;
         
         const title = document.getElementById('modalTitle');
         if (title) title.textContent = 'Edit Workout';
@@ -70,7 +70,7 @@ function editWorkout(id) {
 function deleteWorkout(id) {
     if (confirm('Are you sure you want to delete this workout?')) {
         const csrfToken = document.querySelector('input[name="_csrf"]').value;
-        fetch(`/user/workouts/${id}/delete`, {
+        fetch(contextPath + `user/workouts/${id}/delete`, {
             method: 'POST',
             headers: { 'X-CSRF-TOKEN': csrfToken, 'Content-Type': 'application/json' }
         })
@@ -93,7 +93,7 @@ window.openAddScheduledWorkoutModal = function() {
     const form = document.getElementById('workoutForm');
     if (form) {
         form.reset();
-        form.action = '/user/saveworkout';
+        form.action = contextPath + 'user/saveworkout';
     }
     const workoutIdInput = document.getElementById('workoutId');
     if (workoutIdInput) workoutIdInput.value = '';

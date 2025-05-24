@@ -5,7 +5,7 @@ function openMealModal() {
     document.getElementById('mealForm').reset();
     document.getElementById('mealId').value = '';
     document.getElementById('modalTitle').textContent = 'Log New Meal';
-    document.getElementById('mealForm').action = '/user/savemeal';
+    document.getElementById('mealForm').action = contextPath + 'user/savemeal';
     
     const container = document.getElementById('foodItemsContainer');
     container.innerHTML = '';
@@ -74,11 +74,13 @@ function removeFoodItem(button) {
 }
 
 function editMeal(id) {
+    console.log('Context Path in editMeal:', contextPath);
+    console.log('Fetching meal with ID:', id, 'CSRF Token:', csrfToken);
     const editIconContainer = document.querySelector(`a[onclick="editMeal(${id})"]`);
     const originalIconHTML = editIconContainer.innerHTML;
     editIconContainer.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-    fetch(`/user/meals/${id}`, {
+    fetch(contextPath + `user/meals/${id}`, {
         headers: {
             'X-CSRF-TOKEN': csrfToken,
             'Accept': 'application/json'
@@ -92,7 +94,7 @@ function editMeal(id) {
     })
     .then(meal => {
         document.getElementById('modalTitle').textContent = 'Edit Meal';
-        document.getElementById('mealForm').action = `/user/meals/${id}/update`;
+        document.getElementById('mealForm').action = contextPath + `user/meals/${id}/update`;
         document.getElementById('mealId').value = meal.id;
         document.getElementById('mealName').value = meal.mealName;
         const localDateTime = meal.dateTime ? meal.dateTime.substring(0, 16) : '';
@@ -160,7 +162,7 @@ function deleteMeal(id) {
         const originalIconHTML = deleteIconContainer.innerHTML;
         deleteIconContainer.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         
-        fetch(`/user/meals/${id}/delete`, {
+        fetch(contextPath + `user/meals/${id}/delete`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -224,7 +226,7 @@ function estimateAllCaloriesInModal() {
     estimateButton.disabled = true;
     estimateButton.textContent = 'Estimating...';
 
-    fetch('/meals/estimate-calories', {
+    fetch(contextPath + 'meals/estimate-calories', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

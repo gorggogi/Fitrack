@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Verify Your Account</title>
-    <link rel="stylesheet" href="/styles/Join.css">
+    <link rel="stylesheet" th:href="@{/styles/Join.css}">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
 
             <p th:if="${error}" th:text="${error}" style="color: red;"></p>
 
-            <form action="/user/verify-code" method="post">
+            <form th:action="@{/user/verify-code}" method="post">
                 <label>Enter Verification Code:</label>
                 <input type="text" name="code" required>
                 <br>
@@ -23,7 +23,7 @@
             </form>
 
             <hr>
-            <form action="/user/resend-verification" method="post">
+            <form th:action="@{/user/resend-verification}" method="post">
                 <label>Enter Your Email:</label>
                 <input type="email" name="email" th:value="${email}" required>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />

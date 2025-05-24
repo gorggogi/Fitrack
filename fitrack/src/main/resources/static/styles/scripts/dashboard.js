@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             const csrfToken = csrfTokenElement.value;
 
-            fetch(`/user/workouts/${workoutId}/mark-done`, {
+            fetch(contextPath + `user/workouts/${workoutId}/mark-done`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            fetch('/user/saveworkout', {
+            fetch(contextPath + 'user/saveworkout', {
                 method: 'POST',
                 body: formData
             })
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
         goalForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            fetch('/user/goals/add', {
+            fetch(contextPath + 'user/goals/add', {
                 method: 'POST',
                 body: formData
             })
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             const csrfToken = csrfTokenElement.value;
             
-            fetch('/user/meals/save', { 
+            fetch(contextPath + 'user/meals/save', { 
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -428,7 +428,7 @@ function openGoalDetailModal(goalCardElement) {
             actionButton.disabled = true;
             actionButton.textContent = 'archiving...';
 
-            fetch(`/user/goals/archive/${goalId}`, {
+            fetch(contextPath + `user/goals/archive/${goalId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -475,7 +475,7 @@ function openGoalDetailModal(goalCardElement) {
             actionButton.disabled = true;
             actionButton.textContent = 'removing...';
 
-            fetch(`/user/goals/delete/${goalId}`, {
+            fetch(contextPath + `user/goals/delete/${goalId}`, {
                 method: 'POST', // Assuming delete endpoint is POST as per typical Spring Boot setups with CSRF
                 headers: {
                     'Content-Type': 'application/json', // Or 'application/x-www-form-urlencoded' if backend expects that
@@ -700,166 +700,175 @@ function removeFoodItem(button) {
     }
 }
 
-function estimateCalories() {
-    let foodItemsData = [];
-    let hasEmptyFieldsForEstimation = false;
-
-    document.querySelectorAll("#foodItemsContainer .food-item-row").forEach((itemRow, index) => {
-        let foodNameInput = itemRow.querySelector(`input[name="foodItems[${index}].foodItem"]`);
-        let quantityInput = itemRow.querySelector(`input[name="foodItems[${index}].quantity"]`);
-        let unitInput = itemRow.querySelector(`select[name="foodItems[${index}].unit"]`);
-
-        let foodName = foodNameInput ? foodNameInput.value.trim() : "";
-        let quantity = quantityInput ? quantityInput.value.trim() : "";
-        let unit = unitInput ? unitInput.value.trim() : "";
-
-        if (!foodName || !quantity || !unit) {
-            hasEmptyFieldsForEstimation = true;
-        } else {
-             foodItemsData.push({
-                foodName: foodName,
-                quantity: parseFloat(quantity),
-                unit: unit,
-                originalIndex: index
-            });
-        }
-    });
-
-    if (hasEmptyFieldsForEstimation && foodItemsData.length === 0) {
-        alert("Please fill in all fields (Food Item, Quantity, and Unit) for at least one item before estimating calories.");
-        return;
-    }
-    if (foodItemsData.length === 0) {
-        alert("Please add at least one food item with all details (Food Item, Quantity, Unit).");
-        return;
-    }
-    
+async function estimateCalories() {
+    const foodItemsContainer = document.getElementById('foodItemsContainer');
+    const foodItemRows = foodItemsContainer.querySelectorAll('.food-item-row');
+    const estimateButton = document.getElementById('estimateCaloriesButton');
     const csrfTokenElement = document.querySelector('input[name="_csrf"]');
+
     if (!csrfTokenElement || !csrfTokenElement.value) {
-        console.error("CSRF token not found");
-        alert("Security token missing. Please refresh the page and try again.");
+        console.error("⚠️ CSRF token not found for calorie estimation!");
+        alert('Security token missing. Please refresh and try again.');
         return;
     }
     const csrfToken = csrfTokenElement.value;
 
-    console.log("Sending calorie estimation request:", JSON.stringify(foodItemsData));
-    const estimateButton = document.querySelector('#mealModal .btn-warning[onclick="estimateCalories()"]');
-    const originalButtonText = estimateButton ? estimateButton.textContent : 'Estimate Calories';
-    if(estimateButton) {
+    if (estimateButton) {
         estimateButton.disabled = true;
         estimateButton.textContent = 'Estimating...';
     }
 
-    fetch("/meals/estimate-calories", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": csrfToken
-        },
-        body: JSON.stringify(foodItemsData),
-        credentials: 'same-origin'
-    })
-    .then(response => {
-        if (!response.ok) {
-             return response.text().then(text => { throw new Error(text || `HTTP error! status: ${response.status}`); });
+    const foodDataToSend = [];
+    const calorieInputFields = []; // To map responses back to inputs
+
+    for (let i = 0; i < foodItemRows.length; i++) {
+        const itemRow = foodItemRows[i];
+        const foodNameInput = itemRow.querySelector('input[name^="foodItems"][name$=".foodItem"]');
+        const quantityInput = itemRow.querySelector('input[name^="foodItems"][name$=".quantity"]');
+        const unitInput = itemRow.querySelector('select[name^="foodItems"][name$=".unit"]');
+        const caloriesInput = itemRow.querySelector('input[name^="foodItems"][name$=".calories"]');
+
+        const foodName = foodNameInput ? foodNameInput.value : null;
+        const quantity = quantityInput ? parseFloat(quantityInput.value) : null;
+        const unit = unitInput ? unitInput.value : null;
+
+        if (foodName && quantity && unit && quantity > 0) {
+            foodDataToSend.push({
+                foodName: foodName,
+                quantity: quantity,
+                unit: unit
+            });
+            calorieInputFields.push(caloriesInput); // Store the input field to update later
+        } else {
+            // If an item is invalid for estimation, push a null placeholder for caloriesInput
+            // to maintain array alignment, or handle it by skipping and alerting the user.
+            // For simplicity now, we'll only send valid items.
+            // If an item row is partially filled, it won't be sent.
+            console.warn("Skipping partially filled or invalid food item row for estimation:", itemRow);
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Received calorie estimation:", data);
-        if (Array.isArray(data) && data.length === foodItemsData.length) {
-            foodItemsData.forEach((foodItemDetail, i) => {
-                const itemRowToUpdate = document.querySelectorAll("#foodItemsContainer .food-item-row")[foodItemDetail.originalIndex];
-                if (itemRowToUpdate) {
-                    const calorieField = itemRowToUpdate.querySelector(`input[name="foodItems[${foodItemDetail.originalIndex}].calories"]`);
-                    if (calorieField) {
-                        calorieField.value = Math.round(data[i]);
-                    }
+    }
+
+    if (foodDataToSend.length === 0) {
+        alert("No valid food items to estimate. Please ensure food name, quantity (greater than 0), and unit are filled for at least one item.");
+        if (estimateButton) {
+            estimateButton.disabled = false;
+            estimateButton.textContent = 'Estimate Calories';
+        }
+        return;
+    }
+
+    console.log(`Sending calorie estimation request for multiple items:`, foodDataToSend);
+
+    try {
+        const response = await fetch(contextPath + 'meals/estimate-calories', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify(foodDataToSend), // Send the array
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) {
+            // Attempt to get more detailed error from response body
+            const errorText = await response.text();
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorText || 'No error message'}`);
+        }
+
+        const estimatedCaloriesArray = await response.json(); // Expecting an array of numbers
+
+        if (Array.isArray(estimatedCaloriesArray) && estimatedCaloriesArray.length === calorieInputFields.length) {
+            let totalEstimatedCalories = 0;
+            estimatedCaloriesArray.forEach((calories, index) => {
+                if (calorieInputFields[index]) {
+                    const roundedCalories = Math.round(calories);
+                    calorieInputFields[index].value = roundedCalories;
+                    totalEstimatedCalories += roundedCalories;
                 }
             });
+            // Optionally, display total estimated for the batch
+            // alert(`Estimated total calories for submitted items: ${totalEstimatedCalories.toFixed(0)} cal`);
         } else {
-            console.error("Mismatch in estimated data length or invalid format", data);
-            throw new Error("Invalid response format from calorie estimation service.");
+            console.error("Mismatch in response array length or format.", estimatedCaloriesArray);
+            throw new Error("Invalid response format from calorie estimation service. Expected an array of calorie values matching the number of valid items sent.");
         }
-    })
-    .catch(error => {
+
+    } catch (error) {
         console.error("Error estimating calories:", error);
         alert("Failed to estimate calories. " + error.message);
-    })
-    .finally(() => {
-        if(estimateButton) {
+    } finally {
+        if (estimateButton) {
             estimateButton.disabled = false;
-            estimateButton.textContent = originalButtonText;
+            estimateButton.textContent = 'Estimate Calories';
         }
-    });
+    }
 }
 
-function estimateBurnedCalories() {
+async function estimateBurnedCalories() {
+    console.log("estimateBurnedCalories called");
+    const exerciseNameInput = document.getElementById('workoutName');
     const durationInput = document.getElementById('duration');
-    const workoutNameInput = document.getElementById('workoutName');
     const caloriesBurnedInput = document.getElementById('caloriesBurned');
+    const estimateButton = document.getElementById('estimateBurnedCaloriesButton'); // Get the estimate button
 
-    // Ensure the elements exist before trying to access their properties
-    if (!durationInput || !workoutNameInput || !caloriesBurnedInput) {
-        console.error("One or more form elements for calorie estimation are missing.");
-        alert('Error: Form elements are missing. Cannot estimate calories.');
+    const csrfTokenElement = document.querySelector('input[name="_csrf"]');
+    if (!csrfTokenElement || !csrfTokenElement.value) {
+        console.error("⚠️ CSRF token not found for burned calorie estimation!");
+        alert('Security token missing. Please refresh and try again.');
+        if (estimateButton) estimateButton.disabled = false; // Re-enable if CSRF is missing
         return;
     }
+    const csrfToken = csrfTokenElement.value;
 
+    const exerciseName = exerciseNameInput.value;
     const duration = parseFloat(durationInput.value);
-    const workoutName = workoutNameInput.value;
-    
-    if (!duration || !workoutName || isNaN(duration) || duration <= 0) {
-        alert('Please enter both a valid workout name and a positive duration.');
+
+    if (!exerciseName || !duration || duration <= 0) {
+        alert('Please enter both exercise name and a valid duration.');
+        if (estimateButton) estimateButton.disabled = false; // Re-enable if input is invalid
         return;
     }
 
-    // --- UI Feedback Logic ---
-    const estimateButton = document.querySelector('#workoutModal .btn-warning[onclick="estimateBurnedCalories()"]');
-    let originalButtonText = 'Estimate Calories'; // Default
     if (estimateButton) {
-        originalButtonText = estimateButton.textContent;
-        estimateButton.disabled = true;
-        estimateButton.textContent = 'Estimating...';
+        estimateButton.disabled = true; // Disable the button
+        estimateButton.textContent = 'Estimating...'; // Change text
     }
-    // --- End UI Feedback Logic ---
 
-    fetch('/workouts/estimate-calories', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
-        },
-        body: JSON.stringify({
-            workoutName: workoutName,
-            duration: duration
-        })
-    })
-    .then(response => {
+    console.log(`Sending burned calorie estimation request:`, { exerciseName, duration });
+
+    try {
+        const response = await fetch(contextPath + 'workouts/estimate-calories', { // Corrected URL: removed -burned
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken
+            },
+            body: JSON.stringify({
+                workoutName: exerciseName, // Corrected JSON key to workoutName
+                duration: duration
+            })
+        });
+
         if (!response.ok) {
-            return response.text().then(text => { throw new Error(text || 'Network response was not ok'); });
+            throw new Error(`Network response was not ok. Status: ${response.status}`);
         }
-        return response.json();
-    })
-    .then(data => {
+
+        const data = await response.json();
         if (data && typeof data.calories === 'number') {
             caloriesBurnedInput.value = data.calories.toFixed(0); // Display as whole number
         } else {
             throw new Error('Invalid response format from calorie estimation service.');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error estimating burned calories:', error);
         alert('Failed to estimate calories: ' + error.message);
-    })
-    .finally(() => {
-        // --- UI Feedback Revert Logic ---
+    } finally {
         if (estimateButton) {
             estimateButton.disabled = false;
-            estimateButton.textContent = originalButtonText;
+            estimateButton.textContent = 'Estimate Calories';
         }
-        // --- End UI Feedback Revert Logic ---
-    });
+    }
 }
 
 

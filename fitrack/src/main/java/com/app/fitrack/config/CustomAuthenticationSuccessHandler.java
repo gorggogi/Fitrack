@@ -22,12 +22,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String email = authentication.getName();
         com.app.fitrack.model.User user = userService.findByEmail(email);
         
+        String contextPath = request.getContextPath();
         // Check if profile is incomplete (any of the required fields is null)
         if (user.getAge() == null || user.getGender() == null || 
             user.getHeight() == null || user.getWeight() == null) {
-            response.sendRedirect("/user/profile");
+            response.sendRedirect(contextPath + "/user/profile");
         } else {
-            response.sendRedirect("/user/dashboard");
+            response.sendRedirect(contextPath + "/user/dashboard");
         }
     }
 } 

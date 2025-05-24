@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - Fitrack</title>
+    <script th:inline="javascript">
+        /* Define context path for JavaScript */
+        const contextPath = /*[[@{/}]]*/ '';
+    </script>
     <link rel="stylesheet" th:href="@{/styles/Fitrack.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" type="image/x-icon" th:href="@{/images/Fitrack.ico}">
@@ -21,7 +25,7 @@
         <div id="editProfileModal" class="modal active">
             <div class="modal-content">
                 <!-- Modal Close Button -->
-                <span class="close" onclick="window.location.href='/user/dashboard'">&times;</span>
+                <span class="close" th:onclick="'window.location.href=\'' + @{/user/dashboard} + '\''">&times;</span>
 
                 <!-- Modal Header -->
                 <h2>Edit Profile</h2>
@@ -41,7 +45,7 @@
                     <input type="hidden" th:field="*{id}" />
 
                     <div class="profile-picture-edit">
-                        <img id="profilePicturePreview" th:src="*{profilePicture ?: '/images/default-profile.png'}" alt="Profile Picture" class="profile-picture-large">
+                        <img id="profilePicturePreview" th:src="*{profilePicture != null ? profilePicture : '/fitrack/images/default-profile.png'}" alt="Profile Picture" class="profile-picture-large">
                         <div class="form-group">
                             <label for="profilePicture" class="btn btn-secondary">Change Profile Picture</label>
                             <input type="file" id="profilePicture" name="profilePicture" class="form-control-file" accept="image/*">
@@ -136,7 +140,7 @@
                     <div class="form-actions">
                         <button type="submit" id="saveChangesBtn" class="btn btn-primary">Save Changes</button>
                         <!-- Original Cancel button also redirects -->
-                        <button type="button" onclick="window.location.href='/user/dashboard'" class="btn btn-secondary">Cancel</button> 
+                        <button type="button" th:onclick="'window.location.href=\'' + @{/user/dashboard} + '\''" class="btn btn-secondary">Cancel</button> 
                     </div>
 
                 </form>

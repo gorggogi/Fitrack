@@ -392,7 +392,7 @@ async function estimateCaloriesForWorkout(workoutName, durationMinutes, calorieS
     }
 
     try {
-        const response = await fetch('/workouts/estimate-calories', {
+        const response = await fetch(contextPath + 'workouts/estimate-calories', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

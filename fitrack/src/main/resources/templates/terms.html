@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitrack Terms & Conditions</title>
-    <link rel="stylesheet" href="/styles/Join.css">
+    <link rel="stylesheet" th:href="@{/styles/Join.css}">
 </head>
 <body>
     <div class="terms-page-container">
@@ -30,7 +30,7 @@
         <p>Fitrack reserves the right to modify these terms at any time.</p>
 
         <div class="back-container">
-            <button onclick="window.location.href='/user/new'" class="back-button">Back to Sign Up</button>
+            <button th:onclick="'window.location.href=\'' + @{/user/new} + '\''" class="back-button">Back to Sign Up</button>
         </div>
     </div>
 </body>

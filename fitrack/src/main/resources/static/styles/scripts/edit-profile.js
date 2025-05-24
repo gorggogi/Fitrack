@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
             statusSpan.textContent = 'Sending code...';
             statusSpan.className = 'verification-status info';
 
-            fetch('/user/profile/send-verification', {
+            fetch(contextPath + 'user/profile/send-verification', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
             statusSpan.textContent = 'Verifying code...';
             statusSpan.className = 'verification-status info';
 
-            fetch('/user/profile/verify-email-change', {
+            fetch(contextPath + 'user/profile/verify-email-change', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

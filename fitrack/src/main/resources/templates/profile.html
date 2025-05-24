@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile - Fitrack</title>
-    <link rel="stylesheet" href="/styles/Fitrack.css">
+    <link rel="stylesheet" th:href="@{/styles/Fitrack.css}">
     <script th:src="@{/styles/scripts/profile.js}" defer></script>
 </head>
 <body>
@@ -18,7 +18,7 @@
             <form th:action="@{/user/profile/create}" method="post" enctype="multipart/form-data">
                 <div class="form-group profile-picture-center">
                     <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" class="profile-picture-preview" alt="Profile Picture">
-                    <img th:unless="${user.profilePicture}" src="/images/default-profile.png" class="profile-picture-preview" alt="Default Profile Picture">
+                    <img th:unless="${user.profilePicture}" th:src="@{/images/default-profile.png}" class="profile-picture-preview" alt="Default Profile Picture">
                     <div class="file-input-container">
                         <label for="profilePicture" class="file-input-label">Choose Profile Picture</label>
                         <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
