@@ -667,46 +667,163 @@ function updateCalorieTargetRecommendations() {
     const maintenanceCalories = Math.round(tdee);
     const weightGainCalories = Math.round(tdee + 500);
 
-    const approxRateText = "(approx. 0.5 kg/week)";
-
     document.getElementById('tdeeValue').textContent = `${maintenanceCalories} kcal`;
     document.getElementById('weightLossCalories').textContent = `${weightLossCalories} kcal`;
     document.getElementById('maintenanceCalories').textContent = `${maintenanceCalories} kcal`;
     document.getElementById('weightGainCalories').textContent = `${weightGainCalories} kcal`;
 
+    // Get card elements
+    const weightLossCard = document.getElementById('calorieTargetWeightLoss');
+    const maintenanceCard = document.getElementById('calorieTargetWeightMaintenance');
+    const weightGainCard = document.getElementById('calorieTargetWeightGain');
+
+    // Hide all dietary cards by default
+    if(weightLossCard) weightLossCard.style.display = 'none';
+    if(maintenanceCard) maintenanceCard.style.display = 'none';
+    if(weightGainCard) weightGainCard.style.display = 'none';
+
+    // Dynamically calculate and set the rate text for weight loss
+    const dailyDeficitForLoss = tdee - weightLossCalories;
+    const weeklyDeficitForLoss = dailyDeficitForLoss * 7;
+    const weeklyKgLoss = weeklyDeficitForLoss / 7700;
+    if (weeklyKgLoss >= 0.05) {
+        document.getElementById('weightLossRate').textContent = `(approx. ${weeklyKgLoss.toFixed(1)} kg/week)`;
+    } else {
+        document.getElementById('weightLossRate').textContent = '';
+    }
+
+    document.getElementById('maintenanceRate').textContent = '';
+
+    const dailySurplusForGain = weightGainCalories - tdee;
+    const weeklySurplusForGain = dailySurplusForGain * 7;
+    const weeklyKgGain = weeklySurplusForGain / 7700;
+    if (weeklyKgGain >= 0.05) {
+        document.getElementById('weightGainRate').textContent = `(approx. ${weeklyKgGain.toFixed(1)} kg/week)`;
+    } else {
+        document.getElementById('weightGainRate').textContent = '';
+    }
+
+    // Clear all recommended texts first
     document.getElementById('weightLossRecommended').textContent = '';
     document.getElementById('weightGainRecommended').textContent = '';
     document.getElementById('maintenanceRecommended').textContent = '';
-    document.getElementById('weightLossRate').textContent = '';
-    document.getElementById('maintenanceRate').textContent = '';
-    document.getElementById('weightGainRate').textContent = '';
+    
     document.getElementById('recommendedActivityCalories').textContent = '--'; // Default
-    document.getElementById('activityBurnRate').textContent = ''; // Default
+    document.getElementById('activityBurnRate').textContent = ''; // Initialize to empty
 
     if (analyticsData.recommendedActivityCalories != null && analyticsData.recommendedActivityCalories > 0) {
-        document.getElementById('recommendedActivityCalories').textContent = `${Math.round(analyticsData.recommendedActivityCalories)} kcal`;
+        const recommendedActivityKcal = Math.round(analyticsData.recommendedActivityCalories);
+        document.getElementById('recommendedActivityCalories').textContent = `${recommendedActivityKcal} kcal`;
+
+        const dailyActivityDeficit = analyticsData.recommendedActivityCalories;
+        const weeklyActivityDeficit = dailyActivityDeficit * 7;
+        const weeklyKgChange = weeklyActivityDeficit / 7700; 
+
+        if (weeklyKgChange >= 0.05) { 
+            document.getElementById('activityBurnRate').textContent = `(approx. ${weeklyKgChange.toFixed(1)} kg/week)`;
+        } else {
+            document.getElementById('activityBurnRate').textContent = ''; 
+        }
+    } else {
+        // recommendedActivityCalories is already defaulted to '--'
+        // activityBurnRate is already initialized to ''
     }
 
+    // This section now only handles showing the relevant dietary card.
+    // The "(Recommended)" text is removed.
+    // Rates for loss/gain/maintenance and activity are handled above.
     if (bmiCategory.includes('overweight') || bmiCategory.includes('obese')) {
-        document.getElementById('weightLossRecommended').textContent = "(Recommended)";
-        document.getElementById('weightLossRate').textContent = approxRateText;
-        document.getElementById('weightGainRate').textContent = approxRateText;
-        document.getElementById('activityBurnRate').textContent = "Helps create a healthy energy deficit.";
+        if(weightLossCard) weightLossCard.style.display = 'block'; 
     } else if (bmiCategory.includes('underweight')) {
-        document.getElementById('weightGainRecommended').textContent = "(Recommended)";
-        document.getElementById('weightGainRate').textContent = approxRateText;
-        document.getElementById('weightLossRate').textContent = "approx. 0.5 kg/week";
-        document.getElementById('activityBurnRate').textContent = "Focus on caloric intake for gain.";
+        if(weightGainCard) weightGainCard.style.display = 'block'; 
     } else if (bmiCategory.includes('normal')) {
-        document.getElementById('maintenanceRecommended').textContent = "(Recommended)";
-        document.getElementById('weightLossRate').textContent = approxRateText;
-        document.getElementById('weightGainRate').textContent = approxRateText;
-        document.getElementById('activityBurnRate').textContent = "For general health & fitness.";
+        if(maintenanceCard) maintenanceCard.style.display = 'block'; 
     } else {
-        document.getElementById('weightLossRate').textContent = approxRateText;
-        document.getElementById('weightGainRate').textContent = approxRateText;
-        // For default/unknown BMI category, perhaps a generic message or leave blank
-        document.getElementById('activityBurnRate').textContent = "For general well-being.";
+        // No specific card shown if no BMI category matches, or handle default display here.
+        // For now, all dietary cards remain hidden by default setting above if no match.
+    }
+
+    // --- Combined Effect Summary Calculation ---
+    const combinedEffectCard = document.getElementById('combinedEffectCard');
+    const combinedDailyDeficitEl = document.getElementById('combinedDailyDeficit');
+    const combinedWeeklyKgLossEl = document.getElementById('combinedWeeklyKgLoss');
+
+    let dietaryDailyDeficitForSummary = 0;
+    let weeklyKgLossFromDietForSummary = 0;
+    let showCombinedSummary = false;
+
+    if (bmiCategory.includes('overweight') || bmiCategory.includes('obese')) {
+        dietaryDailyDeficitForSummary = tdee - weightLossCalories; 
+        const rawWeeklyKgLoss = dietaryDailyDeficitForSummary * 7 / 7700;
+        if (rawWeeklyKgLoss >= 0.05) {
+            weeklyKgLossFromDietForSummary = parseFloat(rawWeeklyKgLoss.toFixed(1));
+        }
+        showCombinedSummary = true;
+    }
+    // Add similar block for 'underweight' if combined summary for weight gain is desired later
+
+    const activityDailyDeficitForSummary = (analyticsData.recommendedActivityCalories != null && analyticsData.recommendedActivityCalories > 0) ? analyticsData.recommendedActivityCalories : 0;
+    let weeklyKgLossFromActivityForSummary = 0;
+    if (activityDailyDeficitForSummary > 0) {
+        const rawWeeklyActivityLoss = activityDailyDeficitForSummary * 7 / 7700;
+        if (rawWeeklyActivityLoss >= 0.05) {
+            weeklyKgLossFromActivityForSummary = parseFloat(rawWeeklyActivityLoss.toFixed(1));
+        }
+    }
+
+    if (showCombinedSummary && (weeklyKgLossFromDietForSummary > 0 || weeklyKgLossFromActivityForSummary > 0) ) {
+        const totalCombinedDailyDeficitDisplay = dietaryDailyDeficitForSummary + activityDailyDeficitForSummary;
+        // Sum the already rounded (and potentially displayed) kg loss values
+        const totalCombinedWeeklyKgLossDisplay = weeklyKgLossFromDietForSummary + weeklyKgLossFromActivityForSummary;
+
+        combinedDailyDeficitEl.textContent = Math.round(totalCombinedDailyDeficitDisplay);
+        
+        if (totalCombinedWeeklyKgLossDisplay >= 0.05) {
+            combinedWeeklyKgLossEl.textContent = totalCombinedWeeklyKgLossDisplay.toFixed(1);
+        } else if (totalCombinedWeeklyKgLossDisplay > 0) {
+            combinedWeeklyKgLossEl.textContent = "<0.1";
+        } else {
+            combinedWeeklyKgLossEl.textContent = "0.0"; // Or hide if both are zero
+        }
+        
+        // Adjust introductory text based on what contributes to the summary
+        let summaryIntroText = "If you follow your recommended dietary intake";
+        if (weeklyKgLossFromDietForSummary > 0 && weeklyKgLossFromActivityForSummary > 0) {
+            summaryIntroText += " and meet your activity calorie target:";
+        } else if (weeklyKgLossFromActivityForSummary > 0) {
+            summaryIntroText = "If you meet your activity calorie target:"; // Assuming diet part is 0 if not weight loss
+        } else { // Only dietary for loss
+            summaryIntroText += ":";
+        }
+        combinedEffectCard.querySelector('p').textContent = summaryIntroText;
+
+        // Adjust bullet point text based on contributions
+        const dailyDeficitText = `Your estimated total daily calorie deficit could be around <strong id="combinedDailyDeficit">${Math.round(totalCombinedDailyDeficitDisplay)}</strong> kcal.`;
+        const weeklyLossText = `This could lead to an estimated total weight loss of <strong id="combinedWeeklyKgLoss">${totalCombinedWeeklyKgLossDisplay.toFixed(1)}</strong> kg/week.`;
+        
+        const listItems = combinedEffectCard.querySelector('ul');
+        listItems.innerHTML = ''; // Clear existing items
+
+        if (totalCombinedDailyDeficitDisplay > 0) {
+            const liDeficit = document.createElement('li');
+            liDeficit.innerHTML = dailyDeficitText;
+            listItems.appendChild(liDeficit);
+        }
+
+        if (totalCombinedWeeklyKgLossDisplay > 0) {
+            const liLoss = document.createElement('li');
+            liLoss.innerHTML = weeklyLossText;
+            listItems.appendChild(liLoss);
+        }
+        
+        if (listItems.children.length > 0) { // Only show card if there's something to list
+            combinedEffectCard.style.display = 'block'; 
+        } else {
+            combinedEffectCard.style.display = 'none';
+        }
+
+    } else {
+        combinedEffectCard.style.display = 'none'; 
     }
 }
 
