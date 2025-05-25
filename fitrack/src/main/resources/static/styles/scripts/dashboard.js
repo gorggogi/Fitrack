@@ -120,25 +120,60 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            fetch(contextPath + 'user/saveworkout', {
+            let targetUrl = contextPath + 'user/saveworkout';
+            if (this.action.includes('/update') || this.action.match(/\/\d+$/)) {
+                const workoutIdInput = document.getElementById('workoutId');
+                const modalTitleElement = document.getElementById('modalTitle');
+                let isLikelyAddNewContext = (!workoutIdInput || !workoutIdInput.value);
+                if(modalTitleElement && modalTitleElement.textContent === 'Add New Workout'){
+                    isLikelyAddNewContext = true;
+                }
+                if(isLikelyAddNewContext){
+                    console.log("Workout form action is for update, but context is 'add new'. Overriding to save new workout.");
+                } else {
+                    targetUrl = this.action; 
+                }
+            }
+            
+            const workoutName = formData.get('workoutName'); // Get workout name for potential client-side update
+
+            fetch(targetUrl, {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
                 if (response.ok) {
-                    closeWorkoutModal();
-                    this.reset();
-                    window.location.reload();
+                    if (window.analyticsContextSave === true) {
+                        // Analytics context: Update UI client-side, do not reload page
+                        console.log("Analytics context save: Updating UI client-side.");
+                        if (workoutName && window.analyticsData && window.analyticsData.scheduledWorkoutNames && !window.analyticsData.scheduledWorkoutNames.includes(workoutName)) {
+                            window.analyticsData.scheduledWorkoutNames.push(workoutName);
+                        }
+                        if (typeof window.refreshScheduledIndicators === 'function') {
+                            window.refreshScheduledIndicators();
+                        }
+                        window.analyticsContextSave = false; // Reset flag
+                        closeWorkoutModal();
+                        this.reset();
+                        // DO NOT RELOAD
+                    } else {
+                        // Default context: Close modal, reset form, and reload page
+                        closeWorkoutModal();
+                        this.reset();
+                        window.location.reload();
+                    }
                 } else {
                     response.text().then(text => {
                         console.error('Error response:', text);
                         alert('Error adding workout. Please try again.');
                     });
+                     if (window.analyticsContextSave === true) window.analyticsContextSave = false; // Reset flag on error too
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error adding workout. Please try again.');
+                if (window.analyticsContextSave === true) window.analyticsContextSave = false; // Reset flag on error too
             });
         });
     }
@@ -756,18 +791,18 @@ async function estimateCalories() {
         }
         return;
     }
-
+    
     console.log(`Sending calorie estimation request for multiple items:`, foodDataToSend);
 
     try {
         const response = await fetch(contextPath + 'meals/estimate-calories', {
             method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken
-            },
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrfToken
+        },
             body: JSON.stringify(foodDataToSend), // Send the array
-            credentials: 'same-origin'
+        credentials: 'same-origin'
         });
 
         if (!response.ok) {
@@ -823,7 +858,7 @@ async function estimateBurnedCalories() {
 
     const exerciseName = exerciseNameInput.value;
     const duration = parseFloat(durationInput.value);
-
+    
     if (!exerciseName || !duration || duration <= 0) {
         alert('Please enter both exercise name and a valid duration.');
         if (estimateButton) estimateButton.disabled = false; // Re-enable if input is invalid
@@ -839,15 +874,15 @@ async function estimateBurnedCalories() {
 
     try {
         const response = await fetch(contextPath + 'workouts/estimate-calories', { // Corrected URL: removed -burned
-            method: 'POST',
-            headers: {
+        method: 'POST',
+        headers: {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": csrfToken
-            },
-            body: JSON.stringify({
+        },
+        body: JSON.stringify({
                 workoutName: exerciseName, // Corrected JSON key to workoutName
-                duration: duration
-            })
+            duration: duration
+        })
         });
 
         if (!response.ok) {

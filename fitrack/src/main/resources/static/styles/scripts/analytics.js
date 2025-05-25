@@ -381,6 +381,10 @@ document.getElementById('measurementForm').addEventListener('submit', function(e
     });
 });
 
+const RECOMMENDATIONS_CACHE_KEY = 'fitrackAnalyticsRecommendationsHTML';
+const RECOMMENDATIONS_CACHE_TIMESTAMP_KEY = 'fitrackAnalyticsRecommendationsTimestamp';
+const CACHE_DURATION_MS = 6 * 60 * 60 * 1000; // 6 hours cache duration
+
 async function estimateCaloriesForWorkout(workoutName, durationMinutes, calorieSpanId) {
     const csrfToken = document.querySelector('input[name="_csrf"]')?.value;
     if (!csrfToken) {
@@ -388,7 +392,7 @@ async function estimateCaloriesForWorkout(workoutName, durationMinutes, calorieS
         if (document.getElementById(calorieSpanId)) {
             document.getElementById(calorieSpanId).textContent = 'Error';
         }
-        return;
+        return Promise.reject('CSRF token not found'); // Return a rejected promise
     }
 
     try {
@@ -410,29 +414,75 @@ async function estimateCaloriesForWorkout(workoutName, durationMinutes, calorieS
             if (document.getElementById(calorieSpanId)) {
                 document.getElementById(calorieSpanId).textContent = Math.round(data.calories);
             }
+            return Promise.resolve(); // Resolve when successful
         } else {
             console.error('Failed to estimate calories:', data.error || response.statusText);
             if (document.getElementById(calorieSpanId)) {
                 document.getElementById(calorieSpanId).textContent = 'N/A';
             }
+            return Promise.reject(data.error || response.statusText); // Reject with error
         }
     } catch (error) {
         console.error('Error fetching calorie estimation:', error);
         if (document.getElementById(calorieSpanId)) {
             document.getElementById(calorieSpanId).textContent = 'N/A';
         }
+        return Promise.reject(error); // Reject with error
     }
 }
 
-function generateDynamicWorkoutRecommendations() {
+async function generateDynamicWorkoutRecommendations() {
     const recommendationContainer = document.getElementById('dynamic-workout-recommendations-content');
     if (!recommendationContainer) return;
 
-    const bmiCategory = analyticsData.currentBmiCategory;
-    const workoutFreq = analyticsData.workoutTypeFrequency || {}; // Counts over last 90 days
-    const avgExerciseCalories = analyticsData.avgDailyExerciseCalories;
+    const refreshBtnId = 'refreshRecommendationsBtn';
+    const refreshBtnHtml = `<div class="refresh-recs-container">
+                                <button id="${refreshBtnId}" class="btn btn-icon-refresh" title="Refresh Recommendations">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>`;
 
-    let recommendationsHtml = []; // Changed variable name for clarity
+    function setupRefreshButtonListener() {
+        setTimeout(() => { // Ensure DOM is updated
+            const button = document.getElementById(refreshBtnId);
+            if (button) {
+                // Remove existing listener to prevent duplicates if this function is called multiple times
+                button.removeEventListener('click', handleRefreshRecommendations);
+                button.addEventListener('click', handleRefreshRecommendations);
+                console.log("Refresh button event listener attached.");
+            } else {
+                console.error("Refresh button element not found in DOM. Cannot attach listener.");
+            }
+        }, 0);
+    }
+
+    // Try to load from cache
+    try {
+        const cachedHTML = localStorage.getItem(RECOMMENDATIONS_CACHE_KEY);
+        const cachedTimestamp = localStorage.getItem(RECOMMENDATIONS_CACHE_TIMESTAMP_KEY);
+
+        if (cachedHTML && cachedTimestamp && (Date.now() - parseInt(cachedTimestamp)) < CACHE_DURATION_MS) {
+            console.log("Using cached workout recommendations.");
+            recommendationContainer.innerHTML = cachedHTML;
+            // The button should be part of cachedHTML. If not, something is wrong with caching step.
+            setupRefreshButtonListener();
+            return; 
+        }
+    } catch (e) {
+        console.error("Error reading recommendations from localStorage:", e);
+    }
+    
+    console.log("Cache miss or stale. Fetching fresh workout recommendations.");
+    recommendationContainer.innerHTML = `${refreshBtnHtml}<p class="loading-text">Loading recommendations...</p>`; 
+    // Initial render includes loading text and the refresh button container.
+    // Actual recommendations will replace loading text later.
+    setupRefreshButtonListener(); // Attach listener to the initially placed button
+
+    const bmiCategory = analyticsData.currentBmiCategory;
+    const workoutFreq = analyticsData.workoutTypeFrequency || {}; 
+    const avgExerciseCalories = analyticsData.avgDailyExerciseCalories;
+    let recommendationsHtmlParts = []; 
+    let allEstimationPromises = [];
 
     const WORKOUT_TYPES = {
         CARDIO: {
@@ -453,7 +503,7 @@ function generateDynamicWorkoutRecommendations() {
                 { name: 'Squats', detail: 'Targets quads, hamstrings, and glutes; focus on depth and keeping your chest up.', defaultDurationMinutes: 20 },
                 { name: 'Push-ups', detail: 'Versatile bodyweight exercise for upper body; modify on knees if needed, aiming for 3 sets.', defaultDurationMinutes: 15 },
                 { name: 'Lunges', detail: 'Great for single-leg strength and balance; keep your front knee behind your toes.', defaultDurationMinutes: 15 },
-                { name: 'Plank', detail: 'Core stability exercise; engage your abs and maintain a straight line from head to heels for 30-60 seconds.', defaultDurationMinutes: 1 }, // 1 minute for plank
+                { name: 'Plank', detail: 'Core stability exercise; engage your abs and maintain a straight line from head to heels for 30-60 seconds.', defaultDurationMinutes: 1 },
                 { name: 'Deadlifts', detail: 'Compound movement for posterior chain (back, glutes, hamstrings); prioritize form over weight.', defaultDurationMinutes: 20 },
                 { name: 'Bench Press', detail: 'Works chest, shoulders, and triceps; ensure a stable setup and controlled movement.', defaultDurationMinutes: 20 }
             ]
@@ -473,7 +523,7 @@ function generateDynamicWorkoutRecommendations() {
             key: 'HIIT',
             examples: [
                 { name: 'Sprint Intervals', detail: 'Alternate short bursts of all-out sprinting (20-30s) with recovery periods (60-90s).', defaultDurationMinutes: 15 },
-                { name: 'Tabata Sprints', detail: '20 seconds of intense effort followed by 10 seconds of rest, repeated for 4 minutes per exercise.', defaultDurationMinutes: 10 }, // Tabata is usually short and intense
+                { name: 'Tabata Sprints', detail: '20 seconds of intense effort followed by 10 seconds of rest, repeated for 4 minutes per exercise.', defaultDurationMinutes: 10 },
                 { name: 'Burpee Intervals', detail: 'Perform burpees at high intensity for a set time (e.g., 45s), rest briefly (e.g., 15s), and repeat.', defaultDurationMinutes: 10 }
             ]
         },
@@ -490,7 +540,7 @@ function generateDynamicWorkoutRecommendations() {
             name: 'Functional Training',
             key: 'FUNCTIONAL_TRAINING',
             examples: [
-                { name: "Farmer\'s Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.', defaultDurationMinutes: 10 },
+                { name: "Farmer's Walks", detail: 'Builds grip strength and core stability; carry heavy weights for a set distance.', defaultDurationMinutes: 10 },
                 { name: 'Kettlebell Swings', detail: 'Develops explosive power in hips and glutes; focus on a hip hinge, not a squat.', defaultDurationMinutes: 15 },
                 { name: 'Medicine Ball Slams', detail: 'Full-body power exercise; slam the ball forcefully to the ground from overhead.', defaultDurationMinutes: 10 }
             ]
@@ -504,11 +554,12 @@ function generateDynamicWorkoutRecommendations() {
                 { name: 'Dancing', detail: 'A fun way to improve cardio, coordination, and mood; try different styles like Zumba or salsa.', defaultDurationMinutes: 30 }
             ]
         },
-        OTHER: { name: 'Other Activities', key: 'OTHER', examples: [] } // No duration needed if no examples
+        OTHER: { name: 'Other Activities', key: 'OTHER', examples: [] }
     };
 
     const formatExamples = (examples, workoutTypeKey) => {
-        if (!examples || examples.length === 0) return '';
+        if (!examples || examples.length === 0) return { html: '', promises: [] };
+        const localPromises = [];
         const shuffled = [...examples].sort(() => 0.5 - Math.random());
         
         const minToShow = 3;
@@ -526,133 +577,194 @@ function generateDynamicWorkoutRecommendations() {
             calorieSpanId: `calorie-span-${encodeURIComponent(ex.name.replace(/[^a-zA-Z0-9]/g, '-'))}-${Math.random().toString(36).substring(2, 7)}`
         }));
 
-        if (selectedExamplesWithIds.length === 0) return '';
+        if (selectedExamplesWithIds.length === 0) return { html: '', promises: [] };
 
-        let exampleHtmlList = '<ul class="example-list workout-recommendation-detailed-list">'; // Added a new class for specific styling
+        let exampleHtmlList = '<ul class="example-list workout-recommendation-detailed-list">';
         selectedExamplesWithIds.forEach((ex) => {
             const duration = ex.defaultDurationMinutes || 0;
-            const escapedExName = ex.name.replace(/'/g, "\\\\'");
+            const escapedExName = ex.name.replace(/'/g, "\\''"); // Keep original escaping for onclick
             const isScheduled = analyticsData.scheduledWorkoutNames && analyticsData.scheduledWorkoutNames.includes(ex.name);
             const scheduledClass = isScheduled ? 'is-scheduled' : '';
-            const scheduledIndicator = isScheduled ? '<i class="fas fa-calendar-check scheduled-indicator" title="Already in your schedule"></i>' : '';
+            // Icon is now added/removed by refreshScheduledIndicators or during initial render by it
+            const scheduledIndicatorHtml = isScheduled ? ' <i class="fas fa-calendar-check scheduled-indicator" title="Already in your schedule"></i>' : '';
 
-            exampleHtmlList += `<li>\n                                    <div class="workout-rec-item ${scheduledClass}" onclick="openWorkoutModalWithRecommendation('${escapedExName}', ${duration}, '${workoutTypeKey}', '${ex.calorieSpanId}')" style="cursor: pointer;">\n                                        <div class="workout-rec-main">\n                                            <strong class="workout-rec-name">${ex.name} ${scheduledIndicator}</strong>\n                                            <span class="workout-rec-detail"> – ${ex.detail}</span>\n                                        </div>\n                                        <div class="workout-rec-stats">\n                                            <span class="workout-rec-duration">Recommended: ${duration} mins</span>\n                                            <span class="workout-rec-calories">Calories Burned: <span id="${ex.calorieSpanId}" class="estimated-calories-value">Loading...</span> kcal</span>\n                                        </div>\n                                    </div>\n                               </li>`;
-        });
-        exampleHtmlList += '</ul>';
 
-        // After HTML is constructed, kick off the calorie estimation for each selected example
-        selectedExamplesWithIds.forEach((ex) => {
-            const duration = ex.defaultDurationMinutes || 0;
-            if (duration > 0) { // Only estimate if duration is sensible
-                estimateCaloriesForWorkout(ex.name, duration, ex.calorieSpanId);
+            // Added data-workout-name attribute to the li
+            exampleHtmlList += `<li class="workout-rec-item ${scheduledClass}" data-workout-name="${ex.name.replace(/"/g, '&quot;')}"> 
+                                   <div onclick="openWorkoutModalWithRecommendation('${escapedExName}', ${duration}, '${workoutTypeKey}', '${ex.calorieSpanId}')" style="cursor: pointer;">
+                                       <div class="workout-rec-main">
+                                           <strong class="workout-rec-name">${ex.name}${scheduledIndicatorHtml}</strong>
+                                           <span class="workout-rec-detail"> – ${ex.detail}</span>
+                                       </div>
+                                       <div class="workout-rec-stats">
+                                           <span class="workout-rec-duration">Recommended: ${duration} mins</span>
+                                           <span class="workout-rec-calories">Calories Burned: <span id="${ex.calorieSpanId}" class="estimated-calories-value">Loading...</span> kcal</span>
+                                       </div>
+                                   </div>
+                              </li>`;
+            if (duration > 0) {
+                localPromises.push(estimateCaloriesForWorkout(ex.name, duration, ex.calorieSpanId));
             }
         });
-
-        return exampleHtmlList;
+        exampleHtmlList += '</ul>';
+        return { html: exampleHtmlList, promises: localPromises };
     };
     
     const exampleIntroText = '<div class="recommendation-examples-intro">For instance:</div>';
-
     const allTypeKeys = Object.keys(WORKOUT_TYPES);
     const loggedTypeKeys = Object.keys(workoutFreq);
-
     const getFrequency = (typeKey) => workoutFreq[typeKey] || 0;
 
     if (!bmiCategory) {
-        recommendationsHtml.push('<div class="workout-recommendation-card"><p>Complete your profile (height and weight) to receive personalized workout recommendations.</p></div>');
+        recommendationsHtmlParts.push('<div class="workout-recommendation-card"><p>Complete your profile (height and weight) to receive personalized workout recommendations.</p></div>');
     } else {
-        // This is the line to be removed/commented out
-        // recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Your BMI Category: ${bmiCategory}</h5><p>Here are some tailored suggestions:</p></div>`);
-
         if (bmiCategory === 'Underweight') {
-            recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Healthy Weight Gain & Muscle Building</h5></div>');
+            recommendationsHtmlParts.push('<div class="workout-recommendation-card"><h5>Goal Focus: Healthy Weight Gain & Muscle Building</h5></div>');
             if (getFrequency('STRENGTH') < 8) {
-                let content = `<p>You should aim for 2-3 sessions weekly, focusing on compound movements and progressive overload.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Prioritize ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
+                const res = formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key);
+                let content = `<p>You should aim for 2-3 sessions weekly, focusing on compound movements and progressive overload.</p>${exampleIntroText}${res.html}`;
+                allEstimationPromises.push(...res.promises);
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Prioritize ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>Ensure progressive overload for continued muscle growth.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Continue Your Great Work with ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
+                const res = formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key);
+                let content = `<p>Ensure progressive overload for continued muscle growth.</p>${exampleIntroText}${res.html}`;
+                allEstimationPromises.push(...res.promises);
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Continue Your Great Work with ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             }
             if (getFrequency('CARDIO') < 4 && avgExerciseCalories < 200) {
-                let content = `<p>Aiming for 2-3 times per week (20-30 mins) for cardiovascular health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate Moderate ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
+                const res = formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key);
+                let content = `<p>Aiming for 2-3 times per week (20-30 mins) for cardiovascular health.</p>${exampleIntroText}${res.html}`;
+                allEstimationPromises.push(...res.promises);
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Incorporate Moderate ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>Balance your cardio with your strength goals. Ensure it\'s supportive, not excessive, for muscle gain.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Balance Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
+                const res = formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key);
+                let content = `<p>Balance your cardio with your strength goals. Ensure it's supportive, not excessive, for muscle gain.</p>${exampleIntroText}${res.html}`;
+                allEstimationPromises.push(...res.promises);
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Balance Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             }
         } else if (bmiCategory === 'Overweight' || bmiCategory.toLowerCase().includes('obese')) {
-            recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Fat Loss & Improved Metabolic Health</h5></div>');
+            recommendationsHtmlParts.push('<div class="workout-recommendation-card"><h5>Goal Focus: Fat Loss & Improved Metabolic Health</h5></div>');
+            const cardioRes = formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key);
+            allEstimationPromises.push(...cardioRes.promises);
             if (getFrequency('CARDIO') < 12) {
-                let content = `<p>Aiming for 3-5 sessions of moderate-intensity for 30+ minutes.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Increase Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
+                let content = `<p>Aiming for 3-5 sessions of moderate-intensity for 30+ minutes.</p>${exampleIntroText}${cardioRes.html}`;
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Increase Your ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>Maintain 150-300 minutes of moderate-intensity cardio weekly. Consider varying type or intensity.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Excellent Consistency with ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
+                let content = `<p>Maintain 150-300 minutes of moderate-intensity cardio weekly. Consider varying type or intensity.</p>${exampleIntroText}${cardioRes.html}`;
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Excellent Consistency with ${WORKOUT_TYPES.CARDIO.name}</h5>${content}</div>`);
             }
+            const strengthRes = formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key);
+            allEstimationPromises.push(...strengthRes.promises);
             if (getFrequency('STRENGTH') < 8) {
-                let content = `<p>Aiming for 2-3 times per week as this builds muscle and boosts metabolism.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
+                let content = `<p>Aiming for 2-3 times per week as this builds muscle and boosts metabolism.</p>${exampleIntroText}${strengthRes.html}`;
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             } else {
-                let content = `<p>It\'s crucial for preserving muscle mass during fat loss.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Keep Up ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
+                let content = `<p>It's crucial for preserving muscle mass during fat loss.</p>${exampleIntroText}${strengthRes.html}`;
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Keep Up ${WORKOUT_TYPES.STRENGTH.name}</h5>${content}</div>`);
             }
             if (avgExerciseCalories > 150 && getFrequency('HIIT') < 4) {
-                let content = `<p>These are an efficient way to boost calorie burn.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.HIIT.examples, WORKOUT_TYPES.HIIT.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.HIIT.name}</h5>${content}</div>`);
+                const hiitRes = formatExamples(WORKOUT_TYPES.HIIT.examples, WORKOUT_TYPES.HIIT.key);
+                allEstimationPromises.push(...hiitRes.promises);
+                let content = `<p>These are an efficient way to boost calorie burn.</p>${exampleIntroText}${hiitRes.html}`;
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.HIIT.name}</h5>${content}</div>`);
             }
         } else if (bmiCategory === 'Normal') {
-            recommendationsHtml.push('<div class="workout-recommendation-card"><h5>Goal Focus: Maintain Health & Optimize Overall Fitness</h5></div>');
-            let cardioContent = `<p>Include regular sessions (3-5 times/week).</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key)}`;
-            recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Aim for Balanced ${WORKOUT_TYPES.CARDIO.name}</h5>${cardioContent}</div>`);
+            recommendationsHtmlParts.push('<div class="workout-recommendation-card"><h5>Goal Focus: Maintain Health & Optimize Overall Fitness</h5></div>');
+            const cardioRes = formatExamples(WORKOUT_TYPES.CARDIO.examples, WORKOUT_TYPES.CARDIO.key);
+            allEstimationPromises.push(...cardioRes.promises);
+            let cardioContent = `<p>Include regular sessions (3-5 times/week).</p>${exampleIntroText}${cardioRes.html}`;
+            recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Aim for Balanced ${WORKOUT_TYPES.CARDIO.name}</h5>${cardioContent}</div>`);
+            
+            const strengthRes = formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key);
+            allEstimationPromises.push(...strengthRes.promises);
             if (getFrequency('STRENGTH') < 8) {
-                let strengthContent = `<p>Incorporate sessions (2-3 times per week) for muscle and bone health.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
+                let strengthContent = `<p>Incorporate sessions (2-3 times per week) for muscle and bone health.</p>${exampleIntroText}${strengthRes.html}`;
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Incorporate ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
             } else {
-                let strengthContent = `<p>Keep it consistent.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.STRENGTH.examples, WORKOUT_TYPES.STRENGTH.key)}`;
-                recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Well Done on ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
+                let strengthContent = `<p>Keep it consistent.</p>${exampleIntroText}${strengthRes.html}`;
+                recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Well Done on ${WORKOUT_TYPES.STRENGTH.name}</h5>${strengthContent}</div>`);
             }
-            recommendationsHtml.push('<div class="workout-recommendation-card"><p>Explore a variety of activities to keep your fitness journey engaging and well-rounded!</p></div>');
+            recommendationsHtmlParts.push('<div class="workout-recommendation-card"><p>Explore a variety of activities to keep your fitness journey engaging and well-rounded!</p></div>');
         }
 
-        if (getFrequency('FLEXIBILITY') < 8) {
-            let content = `<p>This improves range of motion and aids recovery.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FLEXIBILITY.examples, WORKOUT_TYPES.FLEXIBILITY.key)}`;
-            recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Don\'t Forget ${WORKOUT_TYPES.FLEXIBILITY.name}</h5>${content}</div>`);
+        // General recommendations for flexibility, functional, balance
+        const flexRes = formatExamples(WORKOUT_TYPES.FLEXIBILITY.examples, WORKOUT_TYPES.FLEXIBILITY.key);
+        if (getFrequency('FLEXIBILITY') < 8 && flexRes.html) {
+            allEstimationPromises.push(...flexRes.promises);
+            let content = `<p>This improves range of motion and aids recovery.</p>${exampleIntroText}${flexRes.html}`;
+            recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Don't Forget ${WORKOUT_TYPES.FLEXIBILITY.name}</h5>${content}</div>`);
         }
-        if (getFrequency('FUNCTIONAL_TRAINING') < 4 && bmiCategory !== 'Underweight') {
-             let content = `<p>It enhances everyday strength and movement.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.FUNCTIONAL_TRAINING.examples, WORKOUT_TYPES.FUNCTIONAL_TRAINING.key)}`;
-             recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.FUNCTIONAL_TRAINING.name}</h5>${content}</div>`);
+        const funcRes = formatExamples(WORKOUT_TYPES.FUNCTIONAL_TRAINING.examples, WORKOUT_TYPES.FUNCTIONAL_TRAINING.key);
+        if (getFrequency('FUNCTIONAL_TRAINING') < 4 && bmiCategory !== 'Underweight' && funcRes.html) {
+             allEstimationPromises.push(...funcRes.promises);
+             let content = `<p>It enhances everyday strength and movement.</p>${exampleIntroText}${funcRes.html}`;
+             recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Consider Adding ${WORKOUT_TYPES.FUNCTIONAL_TRAINING.name}</h5>${content}</div>`);
         }
-        if (getFrequency('BALANCE_STABILITY') < 4) {
-            let content = `<p>These exercises can improve coordination and reduce injury risk.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES.BALANCE_STABILITY.examples, WORKOUT_TYPES.BALANCE_STABILITY.key)}`;
-            recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Try Basic ${WORKOUT_TYPES.BALANCE_STABILITY.name}</h5>${content}</div>`);
+        const balRes = formatExamples(WORKOUT_TYPES.BALANCE_STABILITY.examples, WORKOUT_TYPES.BALANCE_STABILITY.key);
+        if (getFrequency('BALANCE_STABILITY') < 4 && balRes.html) {
+            allEstimationPromises.push(...balRes.promises);
+            let content = `<p>These exercises can improve coordination and reduce injury risk.</p>${exampleIntroText}${balRes.html}`;
+            recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Try Basic ${WORKOUT_TYPES.BALANCE_STABILITY.name}</h5>${content}</div>`);
         }
         
         let suggestedNew = 0;
         const highlyRecommendedForVariety = ['SPORTS_RECREATION', 'FUNCTIONAL_TRAINING', 'HIIT'];
         for (const typeKey of allTypeKeys) {
             if (typeKey === 'OTHER' || WORKOUT_TYPES[typeKey].examples.length === 0) continue;
-
             if (getFrequency(typeKey) === 0 && suggestedNew < 2) {
                 if ( (bmiCategory === 'Normal' && highlyRecommendedForVariety.includes(typeKey)) || 
                      (bmiCategory !== 'Underweight' && typeKey === 'SPORTS_RECREATION') || 
                      (bmiCategory === 'Underweight' && typeKey === 'FLEXIBILITY') 
                    ) {
-                    let content = `<p>${WORKOUT_TYPES[typeKey].name} could be a great addition to your routine.</p>${exampleIntroText}${formatExamples(WORKOUT_TYPES[typeKey].examples, WORKOUT_TYPES[typeKey].key)}`;
-                    recommendationsHtml.push(`<div class="workout-recommendation-card"><h5>Explore Something New: ${WORKOUT_TYPES[typeKey].name}</h5>${content}</div>`);
-                    suggestedNew++;
+                    const res = formatExamples(WORKOUT_TYPES[typeKey].examples, WORKOUT_TYPES[typeKey].key);
+                    if(res.html){
+                        allEstimationPromises.push(...res.promises);
+                        let content = `<p>${WORKOUT_TYPES[typeKey].name} could be a great addition to your routine.</p>${exampleIntroText}${res.html}`;
+                        recommendationsHtmlParts.push(`<div class="workout-recommendation-card"><h5>Explore Something New: ${WORKOUT_TYPES[typeKey].name}</h5>${content}</div>`);
+                        suggestedNew++;
+                    }
                 }
             }
         }
-         if (loggedTypeKeys.length === 0 && recommendationsHtml.length <= 2) { // Check new array name
-            recommendationsHtml.push('<div class="workout-recommendation-card"><p>Log your workouts regularly to get even more specific feedback and track your progress effectively.</p></div>');
+        if (loggedTypeKeys.length === 0 && recommendationsHtmlParts.length <= 2) {
+            recommendationsHtmlParts.push('<div class="workout-recommendation-card"><p>Log your workouts regularly to get even more specific feedback and track your progress effectively.</p></div>');
         }
     }
 
-    if (recommendationsHtml.length === 0) {
-        recommendationsHtml.push('<div class="workout-recommendation-card"><p>Keep logging your activities to receive personalized workout recommendations!</p></div>');
+    if (recommendationsHtmlParts.length === 0) {
+        recommendationsHtmlParts.push('<div class="workout-recommendation-card"><p>Keep logging your activities to receive personalized workout recommendations!</p></div>');
+    }
+    
+    // Prepend refresh button HTML, then add recommendation parts
+    recommendationContainer.innerHTML = refreshBtnHtml + recommendationsHtmlParts.join('');
+    setupRefreshButtonListener(); // Re-attach listener after final HTML update
+    
+    try {
+        await Promise.all(allEstimationPromises);
+        console.log("All calorie estimations completed.");
+    } catch (error) {
+        console.warn("Some calorie estimations may have failed:", error);
     }
 
-    recommendationContainer.innerHTML = recommendationsHtml.join(''); // Use the new array and join directly
+    try {
+        // Cache the final HTML which includes the refresh button and populated calories
+        localStorage.setItem(RECOMMENDATIONS_CACHE_KEY, recommendationContainer.innerHTML);
+        localStorage.setItem(RECOMMENDATIONS_CACHE_TIMESTAMP_KEY, Date.now().toString());
+        console.log("Workout recommendations cached.");
+    } catch (e) {
+        console.error("Error saving recommendations to localStorage:", e);
+    }
+}
+
+function handleRefreshRecommendations() {
+    console.log("Refreshing recommendations...");
+    try {
+        localStorage.removeItem(RECOMMENDATIONS_CACHE_KEY);
+        localStorage.removeItem(RECOMMENDATIONS_CACHE_TIMESTAMP_KEY);
+    } catch (e) {
+        console.error("Error clearing recommendations from localStorage:", e);
+    }
+    generateDynamicWorkoutRecommendations(); // Regenerate
 }
 
 function updateCalorieTargetRecommendations() {
@@ -832,7 +944,9 @@ generateDynamicWorkoutRecommendations();
 updateCalorieTargetRecommendations(); // Call the new function
 
 // Function to open workout modal with pre-filled data from recommendations
-function openWorkoutModalWithRecommendation(workoutName, durationMinutes, workoutTypeKey, calorieSpanId) {
+async function openWorkoutModalWithRecommendation(workoutName, durationMinutes, workoutTypeKey, calorieSpanId) {
+    window.analyticsContextSave = true; // Signal that this save originates from analytics context
+
     // Ensure the global openModal function from dashboard.js is available
     if (typeof openModal !== 'function') {
         console.error('Global openModal function not found. Cannot open workout modal.');
@@ -865,17 +979,23 @@ function openWorkoutModalWithRecommendation(workoutName, durationMinutes, workou
         workoutTypeSelect.value = modalWorkoutType;
     }
     
-    // if (caloriesBurnedInput) caloriesBurnedInput.value = ''; // Clear previous estimate - NOW WE POPULATE IT
-    if (caloriesBurnedInput && calorieSpanId) {
-        const calorieSpan = document.getElementById(calorieSpanId);
-        if (calorieSpan && calorieSpan.textContent && !isNaN(parseFloat(calorieSpan.textContent))) {
+    const calorieSpan = document.getElementById(calorieSpanId);
+    if (caloriesBurnedInput && calorieSpanId && calorieSpan) {
+        // If calories are not yet estimated (e.g., show 'Loading...' or empty), estimate them now.
+        if (calorieSpan.textContent === 'Loading...' || calorieSpan.textContent.trim() === '' || calorieSpan.textContent.trim() === '--' || !parseFloat(calorieSpan.textContent)) {
+            if (durationMinutes > 0) { // Only estimate if duration is sensible
+                await estimateCaloriesForWorkout(workoutName, durationMinutes, calorieSpanId);
+            }
+        }
+        // Now that it's (potentially) estimated, populate the input field
+        if (calorieSpan.textContent && !isNaN(parseFloat(calorieSpan.textContent))) {
             caloriesBurnedInput.value = Math.round(parseFloat(calorieSpan.textContent));
         } else {
-            caloriesBurnedInput.value = ''; // Clear if not found or not a number
-            console.warn(`Could not find or parse calories from spanId: ${calorieSpanId}`);
+            caloriesBurnedInput.value = ''; // Clear if still not a number (e.g., API error)
+            console.warn(`Could not find or parse calories from spanId: ${calorieSpanId} after attempting estimation.`);
         }
     } else if (caloriesBurnedInput) {
-        caloriesBurnedInput.value = ''; // Clear if no calorieSpanId provided
+        caloriesBurnedInput.value = ''; // Clear if no calorieSpanId provided or span not found
     }
 
     if (workoutIdInput) workoutIdInput.value = ''; // Ensure it's a new workout
@@ -927,4 +1047,58 @@ function openWorkoutModalWithRecommendation(workoutName, durationMinutes, workou
     //     workoutDateInput.value = now.toISOString().slice(0,16);
     // }
 }
+
+// Expose functions to be callable from HTML onclick attributes
+window.openWorkoutModalWithRecommendation = openWorkoutModalWithRecommendation;
+window.showLoggedMeals = showLoggedMeals;
+window.closeLoggedMeals = closeLoggedMeals;
+window.openMeasurementModal = openMeasurementModal;
+window.closeMeasurementModal = closeMeasurementModal;
+window.handleRefreshRecommendations = handleRefreshRecommendations;
+
+function refreshScheduledIndicators() {
+    if (!window.analyticsData || !window.analyticsData.scheduledWorkoutNames) {
+        return;
+    }
+    const scheduledWorkoutNames = window.analyticsData.scheduledWorkoutNames;
+    const recommendationItems = document.querySelectorAll('.workout-rec-item');
+
+    recommendationItems.forEach(item => {
+        const workoutName = item.dataset.workoutName;
+        if (!workoutName) return;
+
+        const nameStrongTag = item.querySelector('.workout-rec-name');
+        let icon = item.querySelector('.scheduled-indicator');
+
+        if (scheduledWorkoutNames.includes(workoutName)) {
+            item.classList.add('is-scheduled');
+            if (nameStrongTag && !icon) { // Add icon if not present
+                const newIcon = document.createElement('i');
+                newIcon.className = 'fas fa-calendar-check scheduled-indicator';
+                newIcon.title = 'Already in your schedule';
+                // Add a space before the icon
+                nameStrongTag.appendChild(document.createTextNode(' ')); 
+                nameStrongTag.appendChild(newIcon);
+            }
+        } else {
+            item.classList.remove('is-scheduled');
+            if (icon) { // Remove icon if present
+                // Also remove preceding space if it was added for the icon
+                if (icon.previousSibling && icon.previousSibling.nodeType === Node.TEXT_NODE && icon.previousSibling.textContent === ' ') {
+                    icon.previousSibling.remove();
+                }
+                icon.remove();
+            }
+        }
+    });
+}
+
+// Expose functions to be callable from HTML onclick attributes
+window.openWorkoutModalWithRecommendation = openWorkoutModalWithRecommendation;
+window.showLoggedMeals = showLoggedMeals;
+window.closeLoggedMeals = closeLoggedMeals;
+window.openMeasurementModal = openMeasurementModal;
+window.closeMeasurementModal = closeMeasurementModal;
+window.handleRefreshRecommendations = handleRefreshRecommendations;
+window.refreshScheduledIndicators = refreshScheduledIndicators; // Expose the new function
 } 

@@ -38,13 +38,15 @@ public class MealService {
                 item.setMeal(meal); // Set bidirectional relationship
                 
                 // Condition to check if a Nutritionix lookup is needed
-                boolean needsNutritionixLookup = (item.getCalories() == 0);
-                // Potentially add more conditions, e.g., if protein/carbs/fat are also null/zero
+                boolean needsNutritionixLookup = (item.getCalories() == 0) && // Calories is int, check for 0
+                                                 (item.getProtein() == null || item.getProtein() == 0.0) &&
+                                                 (item.getCarbs() == null || item.getCarbs() == 0.0) &&
+                                                 (item.getFat() == null || item.getFat() == 0.0);
 
                 // Call NutritionixService only if data seems missing and key fields are present
                 if (needsNutritionixLookup && 
                     item.getFoodItem() != null && !item.getFoodItem().isEmpty() &&
-                    item.getQuantity() > 0 && // quantity > 0 check is sufficient for primitive double
+                    item.getQuantity() > 0 && // quantity is double, check if greater than 0
                     item.getUnit() != null && !item.getUnit().isEmpty()) {
                     try {
                         // NutritionixService.getCalories updates the item's calories, protein, carbs, fat

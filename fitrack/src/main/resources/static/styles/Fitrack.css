@@ -2907,7 +2907,7 @@ button.primary {
 
 .calorie-target-card h5 {
     margin-top: 0;
-    color: #333; /* Or your theme\'s primary color */
+    color: #333; /* Or your theme's primary color */
 }
 
 .calorie-target-card p {
@@ -3095,5 +3095,42 @@ button.primary {
     margin-top: 10px;
     font-style: italic;
     color: #666; /* Or your standard small text color */
+}
+
+.refresh-recs-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns button to the right */
+    margin-bottom: 0.5rem; /* Space below the button */
+    margin-top: -10px; /* Pull it up a bit closer to the card top */
+    margin-right: -5px; /* Pull it a bit to the right */
+}
+
+.btn-icon-refresh {
+    background-color: transparent;
+    border: none;
+    color: #007AFF; /* Primary theme color, or choose another */
+    font-size: 1.2rem; /* Adjust icon size */
+    padding: 0.3rem 0.5rem; /* Smaller padding for an icon button */
+    cursor: pointer;
+    border-radius: 50%; /* Make it circular */
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; /* Explicit width */
+    height: 30px; /* Explicit height */
+}
+
+.btn-icon-refresh:hover {
+    background-color: #f0f0f0; /* Light background on hover */
+    color: #0056b3; /* Darker shade of primary on hover */
+}
+
+.btn-icon-refresh:active {
+    background-color: #e0e0e0;
+}
+
+.btn-icon-refresh i {
+    line-height: 1; /* Helps with vertical alignment of the icon */
 }
 

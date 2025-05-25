@@ -95,13 +95,6 @@ public class MealController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found. Please log in again.");
             }
             
-            // Populate nutritional information for each food item
-            if (meal.getFoodItems() != null) {
-                for (MealFoodItem foodItem : meal.getFoodItems()) {
-                    nutritionixService.getCalories(foodItem); // This will populate protein, carbs, and fat
-                }
-            }
-            
             Meal savedMeal = mealService.saveMeal(meal); 
             
             goalService.updateGoalsBasedOnActivity(user);
