@@ -383,6 +383,7 @@ document.getElementById('measurementForm').addEventListener('submit', function(e
 
 const RECOMMENDATIONS_CACHE_KEY = 'fitrackAnalyticsRecommendationsHTML';
 const RECOMMENDATIONS_CACHE_TIMESTAMP_KEY = 'fitrackAnalyticsRecommendationsTimestamp';
+const RECOMMENDATIONS_CACHE_BMI_CATEGORY_KEY = 'fitrackAnalyticsRecommendationsBmiCategory';
 const CACHE_DURATION_MS = 6 * 60 * 60 * 1000; // 6 hours cache duration
 
 async function estimateCaloriesForWorkout(workoutName, durationMinutes, calorieSpanId) {
@@ -435,36 +436,43 @@ async function generateDynamicWorkoutRecommendations() {
     const recommendationContainer = document.getElementById('dynamic-workout-recommendations-content');
     if (!recommendationContainer) return;
 
+    const personalizedRecommendationsSection = recommendationContainer.closest('.personalized-recommendations-section');
+    if (!personalizedRecommendationsSection) {
+        console.error("Could not find parent '.personalized-recommendations-section' to append refresh button.");
+        return;
+    }
+
     const refreshBtnId = 'refreshRecommendationsBtn';
-    const refreshBtnHtml = `<div class="refresh-recs-container">
-                                <button id="${refreshBtnId}" class="btn btn-icon-refresh" title="Refresh Recommendations">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
+    // Button to be full width and display as block
+    const refreshBtnContainerId = 'refresh-recs-btn-container';
+    const refreshBtnHtml = `<div id="${refreshBtnContainerId}" class="refresh-recs-container-bottom" style="margin-top: 20px;">
+                                <button id="${refreshBtnId}" class="btn btn-secondary btn-sm" style="width: 100%; display: block;">Refresh Recommendations</button>
                             </div>`;
 
     function setupRefreshButtonListener() {
-        setTimeout(() => { // Ensure DOM is updated
+        setTimeout(() => {
             const button = document.getElementById(refreshBtnId);
             if (button) {
-                // Remove existing listener to prevent duplicates if this function is called multiple times
                 button.removeEventListener('click', handleRefreshRecommendations);
                 button.addEventListener('click', handleRefreshRecommendations);
-                console.log("Refresh button event listener attached.");
+                console.log("Refresh button event listener attached (bottom).");
             } else {
-                console.error("Refresh button element not found in DOM. Cannot attach listener.");
+                console.error("Refresh button (bottom) element not found. Listener not attached.");
             }
         }, 0);
     }
 
-    // Try to load from cache
     try {
         const cachedHTML = localStorage.getItem(RECOMMENDATIONS_CACHE_KEY);
         const cachedTimestamp = localStorage.getItem(RECOMMENDATIONS_CACHE_TIMESTAMP_KEY);
+        const cachedBmiCategory = localStorage.getItem(RECOMMENDATIONS_CACHE_BMI_CATEGORY_KEY);
+        const currentBmiCategory = window.analyticsData ? window.analyticsData.currentBmiCategory : null;
 
-        if (cachedHTML && cachedTimestamp && (Date.now() - parseInt(cachedTimestamp)) < CACHE_DURATION_MS) {
-            console.log("Using cached workout recommendations.");
+        if (cachedHTML && cachedTimestamp && cachedBmiCategory && 
+            (Date.now() - parseInt(cachedTimestamp)) < CACHE_DURATION_MS && 
+            currentBmiCategory === cachedBmiCategory) {
+            console.log("Using cached workout recommendations (category match).");
             recommendationContainer.innerHTML = cachedHTML;
-            // The button should be part of cachedHTML. If not, something is wrong with caching step.
             setupRefreshButtonListener();
             return; 
         }
@@ -473,11 +481,8 @@ async function generateDynamicWorkoutRecommendations() {
     }
     
     console.log("Cache miss or stale. Fetching fresh workout recommendations.");
-    recommendationContainer.innerHTML = `${refreshBtnHtml}<p class="loading-text">Loading recommendations...</p>`; 
-    // Initial render includes loading text and the refresh button container.
-    // Actual recommendations will replace loading text later.
-    setupRefreshButtonListener(); // Attach listener to the initially placed button
-
+    recommendationContainer.innerHTML = '<p class="loading-text" style="text-align:center;">Loading recommendations...</p>'; 
+    
     const bmiCategory = analyticsData.currentBmiCategory;
     const workoutFreq = analyticsData.workoutTypeFrequency || {}; 
     const avgExerciseCalories = analyticsData.avgDailyExerciseCalories;
@@ -735,9 +740,18 @@ async function generateDynamicWorkoutRecommendations() {
         recommendationsHtmlParts.push('<div class="workout-recommendation-card"><p>Keep logging your activities to receive personalized workout recommendations!</p></div>');
     }
     
-    // Prepend refresh button HTML, then add recommendation parts
-    recommendationContainer.innerHTML = refreshBtnHtml + recommendationsHtmlParts.join('');
-    setupRefreshButtonListener(); // Re-attach listener after final HTML update
+    const finalHtmlContent = recommendationsHtmlParts.join(''); // Refresh button HTML is NOT added here
+    recommendationContainer.innerHTML = finalHtmlContent;
+    
+    // Remove existing button container if it exists to prevent duplicates on re-generation without full page refresh
+    const existingBtnContainer = document.getElementById(refreshBtnContainerId);
+    if (existingBtnContainer) {
+        existingBtnContainer.remove();
+    }
+    // Append the refresh button to the parent section, after the workout recommendations content
+    personalizedRecommendationsSection.insertAdjacentHTML('beforeend', refreshBtnHtml);
+
+    setupRefreshButtonListener();
     
     try {
         await Promise.all(allEstimationPromises);
@@ -747,10 +761,12 @@ async function generateDynamicWorkoutRecommendations() {
     }
 
     try {
-        // Cache the final HTML which includes the refresh button and populated calories
         localStorage.setItem(RECOMMENDATIONS_CACHE_KEY, recommendationContainer.innerHTML);
         localStorage.setItem(RECOMMENDATIONS_CACHE_TIMESTAMP_KEY, Date.now().toString());
-        console.log("Workout recommendations cached.");
+        if (window.analyticsData && window.analyticsData.currentBmiCategory) {
+            localStorage.setItem(RECOMMENDATIONS_CACHE_BMI_CATEGORY_KEY, window.analyticsData.currentBmiCategory);
+        }
+        console.log("Workout recommendations cached (with bottom button and BMI category).");
     } catch (e) {
         console.error("Error saving recommendations to localStorage:", e);
     }
@@ -761,8 +777,16 @@ function handleRefreshRecommendations() {
     try {
         localStorage.removeItem(RECOMMENDATIONS_CACHE_KEY);
         localStorage.removeItem(RECOMMENDATIONS_CACHE_TIMESTAMP_KEY);
+        localStorage.removeItem(RECOMMENDATIONS_CACHE_BMI_CATEGORY_KEY);
+
+        // Also remove the button container itself if it was manually added outside the cache
+        const btnContainer = document.getElementById('refresh-recs-btn-container');
+        if (btnContainer) {
+            btnContainer.remove();
+        }
+
     } catch (e) {
-        console.error("Error clearing recommendations from localStorage:", e);
+        console.error("Error clearing recommendations from localStorage or removing button:", e);
     }
     generateDynamicWorkoutRecommendations(); // Regenerate
 }
@@ -799,7 +823,7 @@ function updateCalorieTargetRecommendations() {
     const weeklyDeficitForLoss = dailyDeficitForLoss * 7;
     const weeklyKgLoss = weeklyDeficitForLoss / 7700;
     if (weeklyKgLoss >= 0.05) {
-        document.getElementById('weightLossRate').textContent = `(approx. ${weeklyKgLoss.toFixed(1)} kg/week)`;
+        document.getElementById('weightLossRate').textContent = `(lose approx. ${weeklyKgLoss.toFixed(1)} kg/week)`;
     } else {
         document.getElementById('weightLossRate').textContent = '';
     }
@@ -810,7 +834,7 @@ function updateCalorieTargetRecommendations() {
     const weeklySurplusForGain = dailySurplusForGain * 7;
     const weeklyKgGain = weeklySurplusForGain / 7700;
     if (weeklyKgGain >= 0.05) {
-        document.getElementById('weightGainRate').textContent = `(approx. ${weeklyKgGain.toFixed(1)} kg/week)`;
+        document.getElementById('weightGainRate').textContent = `(gain approx. ${weeklyKgGain.toFixed(1)} kg/week)`;
     } else {
         document.getElementById('weightGainRate').textContent = '';
     }
@@ -822,19 +846,40 @@ function updateCalorieTargetRecommendations() {
     
     document.getElementById('recommendedActivityCalories').textContent = '--'; // Default
     document.getElementById('activityBurnRate').textContent = ''; // Initialize to empty
+    const activityDescriptionSpan = document.getElementById('activityTargetDescription');
+    if(activityDescriptionSpan) activityDescriptionSpan.textContent = 'Activity Level:'; // General Default, refined below
 
     if (analyticsData.recommendedActivityCalories != null && analyticsData.recommendedActivityCalories > 0) {
         const recommendedActivityKcal = Math.round(analyticsData.recommendedActivityCalories);
         document.getElementById('recommendedActivityCalories').textContent = `${recommendedActivityKcal} kcal`;
 
-        const dailyActivityDeficit = analyticsData.recommendedActivityCalories;
-        const weeklyActivityDeficit = dailyActivityDeficit * 7;
-        const weeklyKgChange = weeklyActivityDeficit / 7700; 
+        const dailyActivityBurn = analyticsData.recommendedActivityCalories; // Renaming for clarity
+        const weeklyActivityBurn = dailyActivityBurn * 7;
+        const weeklyKgChangeFromActivity = weeklyActivityBurn / 7700; 
 
-        if (weeklyKgChange >= 0.05) { 
-            document.getElementById('activityBurnRate').textContent = `(approx. ${weeklyKgChange.toFixed(1)} kg/week)`;
+        if (weeklyKgChangeFromActivity >= 0.05) { 
+            // For underweight, burning calories reduces potential gain, for others it contributes to loss
+            if (bmiCategory.includes('underweight')) {
+                if(activityDescriptionSpan) activityDescriptionSpan.textContent = 'Limit calorie burn to around'; // Corrected: calorie burn
+                document.getElementById('activityBurnRate').textContent = `(offsets gain by approx. ${weeklyKgChangeFromActivity.toFixed(1)} kg/week)`;
+            } else if (bmiCategory.includes('overweight') || bmiCategory.includes('obese')) { // Only show for overweight/obese
+                if(activityDescriptionSpan) activityDescriptionSpan.textContent = 'Aim to burn at least'; 
+                document.getElementById('activityBurnRate').textContent = `(contributes approx. ${weeklyKgChangeFromActivity.toFixed(1)} kg/week to loss)`;
+            } else { // For 'Normal' or any other category not 'underweight', 'overweight', or 'obese'
+                document.getElementById('activityBurnRate').textContent = ''; 
+                if(activityDescriptionSpan && bmiCategory.includes('normal')) activityDescriptionSpan.textContent = 'Aim to burn around'; // Slightly different phrasing for normal
+                else if(activityDescriptionSpan) activityDescriptionSpan.textContent = 'Aim to burn at least'; // Fallback for other cases
+            }
         } else {
             document.getElementById('activityBurnRate').textContent = ''; 
+            // If no significant weekly kg change, set appropriate description
+            if(activityDescriptionSpan && bmiCategory.includes('underweight')) {
+                activityDescriptionSpan.textContent = 'Limit calorie burn to around'; // Corrected: calorie burn
+            } else if(activityDescriptionSpan && bmiCategory.includes('normal')) {
+                activityDescriptionSpan.textContent = 'Aim to burn around';
+            } else {
+                if(activityDescriptionSpan) activityDescriptionSpan.textContent = 'Aim to burn at least';
+            }
         }
     } else {
         // recommendedActivityCalories is already defaulted to '--'
@@ -842,8 +887,6 @@ function updateCalorieTargetRecommendations() {
     }
 
     // This section now only handles showing the relevant dietary card.
-    // The "(Recommended)" text is removed.
-    // Rates for loss/gain/maintenance and activity are handled above.
     if (bmiCategory.includes('overweight') || bmiCategory.includes('obese')) {
         if(weightLossCard) weightLossCard.style.display = 'block'; 
     } else if (bmiCategory.includes('underweight')) {
@@ -852,83 +895,108 @@ function updateCalorieTargetRecommendations() {
         if(maintenanceCard) maintenanceCard.style.display = 'block'; 
     } else {
         // No specific card shown if no BMI category matches, or handle default display here.
-        // For now, all dietary cards remain hidden by default setting above if no match.
     }
 
     // --- Combined Effect Summary Calculation ---
     const combinedEffectCard = document.getElementById('combinedEffectCard');
-    const combinedDailyDeficitEl = document.getElementById('combinedDailyDeficit');
-    const combinedWeeklyKgLossEl = document.getElementById('combinedWeeklyKgLoss');
+    const combinedDailySummaryEl = document.getElementById('combinedDailySummary'); // Changed ID for generic term
+    const combinedWeeklyKgChangeEl = document.getElementById('combinedWeeklyKgChange'); // Changed ID for generic term
+    const combinedSummaryTitleEl = document.getElementById('combinedSummaryTitle');
+    const combinedSummaryIntroEl = combinedEffectCard.querySelector('p');
+    const combinedSummaryListEl = combinedEffectCard.querySelector('ul');
 
-    let dietaryDailyDeficitForSummary = 0;
-    let weeklyKgLossFromDietForSummary = 0;
+
+    let dietaryDailyChangeForSummary = 0;
+    let weeklyKgChangeFromDietForSummary = 0;
     let showCombinedSummary = false;
+    let summaryType = 'loss'; // Default to loss
 
     if (bmiCategory.includes('overweight') || bmiCategory.includes('obese')) {
-        dietaryDailyDeficitForSummary = tdee - weightLossCalories; 
-        const rawWeeklyKgLoss = dietaryDailyDeficitForSummary * 7 / 7700;
+        dietaryDailyChangeForSummary = tdee - weightLossCalories; // Deficit
+        const rawWeeklyKgLoss = dietaryDailyChangeForSummary * 7 / 7700;
         if (rawWeeklyKgLoss >= 0.05) {
-            weeklyKgLossFromDietForSummary = parseFloat(rawWeeklyKgLoss.toFixed(1));
+            weeklyKgChangeFromDietForSummary = parseFloat(rawWeeklyKgLoss.toFixed(1));
         }
         showCombinedSummary = true;
+        summaryType = 'loss';
+    } else if (bmiCategory.includes('underweight')) {
+        dietaryDailyChangeForSummary = weightGainCalories - tdee; // Surplus
+        const rawWeeklyKgGain = dietaryDailyChangeForSummary * 7 / 7700;
+        if (rawWeeklyKgGain >= 0.05) {
+            weeklyKgChangeFromDietForSummary = parseFloat(rawWeeklyKgGain.toFixed(1));
+        }
+        showCombinedSummary = true;
+        summaryType = 'gain';
     }
-    // Add similar block for 'underweight' if combined summary for weight gain is desired later
+    // No combined summary for 'Normal' weight by default unless specifically designed
 
-    const activityDailyDeficitForSummary = (analyticsData.recommendedActivityCalories != null && analyticsData.recommendedActivityCalories > 0) ? analyticsData.recommendedActivityCalories : 0;
-    let weeklyKgLossFromActivityForSummary = 0;
-    if (activityDailyDeficitForSummary > 0) {
-        const rawWeeklyActivityLoss = activityDailyDeficitForSummary * 7 / 7700;
-        if (rawWeeklyActivityLoss >= 0.05) {
-            weeklyKgLossFromActivityForSummary = parseFloat(rawWeeklyActivityLoss.toFixed(1));
+    const activityDailyBurnForSummary = (analyticsData.recommendedActivityCalories != null && analyticsData.recommendedActivityCalories > 0) ? analyticsData.recommendedActivityCalories : 0;
+    let weeklyKgChangeFromActivityForSummary = 0;
+    if (activityDailyBurnForSummary > 0) {
+        const rawWeeklyActivityEffect = activityDailyBurnForSummary * 7 / 7700;
+        if (rawWeeklyActivityEffect >= 0.05) {
+            weeklyKgChangeFromActivityForSummary = parseFloat(rawWeeklyActivityEffect.toFixed(1));
         }
     }
 
-    if (showCombinedSummary && (weeklyKgLossFromDietForSummary > 0 || weeklyKgLossFromActivityForSummary > 0) ) {
-        const totalCombinedDailyDeficitDisplay = dietaryDailyDeficitForSummary + activityDailyDeficitForSummary;
-        // Sum the already rounded (and potentially displayed) kg loss values
-        const totalCombinedWeeklyKgLossDisplay = weeklyKgLossFromDietForSummary + weeklyKgLossFromActivityForSummary;
+    if (showCombinedSummary && (weeklyKgChangeFromDietForSummary > 0 || (summaryType === 'loss' && weeklyKgChangeFromActivityForSummary > 0) ) ) {
+        let totalCombinedDailyEffectDisplay = 0;
+        let totalCombinedWeeklyKgChangeDisplay = 0;
+        let introText = "";
+        let dailySummaryText = "";
+        let weeklyChangeText = "";
 
-        combinedDailyDeficitEl.textContent = Math.round(totalCombinedDailyDeficitDisplay);
-        
-        if (totalCombinedWeeklyKgLossDisplay >= 0.05) {
-            combinedWeeklyKgLossEl.textContent = totalCombinedWeeklyKgLossDisplay.toFixed(1);
-        } else if (totalCombinedWeeklyKgLossDisplay > 0) {
-            combinedWeeklyKgLossEl.textContent = "<0.1";
-        } else {
-            combinedWeeklyKgLossEl.textContent = "0.0"; // Or hide if both are zero
+        if (summaryType === 'loss') {
+            if(combinedSummaryTitleEl) combinedSummaryTitleEl.textContent = "Combined Weight Loss Projection";
+            totalCombinedDailyEffectDisplay = dietaryDailyChangeForSummary + activityDailyBurnForSummary; // Both contribute to deficit
+            totalCombinedWeeklyKgChangeDisplay = weeklyKgChangeFromDietForSummary + weeklyKgChangeFromActivityForSummary;
+            
+            introText = "If you follow your recommended dietary intake and meet your activity calorie target:";
+            dailySummaryText = `Your estimated total daily calorie deficit could be around <strong>${Math.round(totalCombinedDailyEffectDisplay)}</strong> kcal.`;
+            weeklyChangeText = `This could lead to an estimated total weight loss of <strong>${totalCombinedWeeklyKgChangeDisplay.toFixed(1)}</strong> kg/week.`;
+
+        } else if (summaryType === 'gain') {
+            if(combinedSummaryTitleEl) combinedSummaryTitleEl.textContent = "Combined Weight Gain Projection";
+            totalCombinedDailyEffectDisplay = dietaryDailyChangeForSummary - activityDailyBurnForSummary; // Activity offsets surplus
+            totalCombinedWeeklyKgChangeDisplay = weeklyKgChangeFromDietForSummary - weeklyKgChangeFromActivityForSummary;
+
+            introText = "If you follow your recommended dietary intake and account for your activity level:";
+            if (totalCombinedDailyEffectDisplay > 0) {
+                dailySummaryText = `Your estimated total daily calorie surplus could be around <strong>${Math.round(totalCombinedDailyEffectDisplay)}</strong> kcal.`;
+            } else {
+                dailySummaryText = `Your activity may lead to a net calorie deficit of <strong>${Math.round(Math.abs(totalCombinedDailyEffectDisplay))}</strong> kcal, potentially hindering weight gain.`;
+            }
+            if (totalCombinedWeeklyKgChangeDisplay > 0.05) {
+                weeklyChangeText = `This could lead to an estimated total weight gain of <strong>${totalCombinedWeeklyKgChangeDisplay.toFixed(1)}</strong> kg/week.`;
+            } else if (totalCombinedWeeklyKgChangeDisplay < -0.05) {
+                 weeklyChangeText = `This could lead to an estimated net weight loss of <strong>${Math.abs(totalCombinedWeeklyKgChangeDisplay).toFixed(1)}</strong> kg/week. Consider adjusting intake or activity.`;
+            } else {
+                weeklyChangeText = "Your diet and activity may result in minimal net weight change. Adjust as needed for gain.";
+            }
         }
         
-        // Adjust introductory text based on what contributes to the summary
-        let summaryIntroText = "If you follow your recommended dietary intake";
-        if (weeklyKgLossFromDietForSummary > 0 && weeklyKgLossFromActivityForSummary > 0) {
-            summaryIntroText += " and meet your activity calorie target:";
-        } else if (weeklyKgLossFromActivityForSummary > 0) {
-            summaryIntroText = "If you meet your activity calorie target:"; // Assuming diet part is 0 if not weight loss
-        } else { // Only dietary for loss
-            summaryIntroText += ":";
-        }
-        combinedEffectCard.querySelector('p').textContent = summaryIntroText;
+        if(combinedSummaryIntroEl) combinedSummaryIntroEl.textContent = introText;
+        if(combinedDailySummaryEl) combinedDailySummaryEl.innerHTML = Math.round(totalCombinedDailyEffectDisplay); // Just the number for the IDed span
+        if(combinedWeeklyKgChangeEl) combinedWeeklyKgChangeEl.innerHTML = totalCombinedWeeklyKgChangeDisplay.toFixed(1); // Just the number for the IDed span
 
-        // Adjust bullet point text based on contributions
-        const dailyDeficitText = `Your estimated total daily calorie deficit could be around <strong id="combinedDailyDeficit">${Math.round(totalCombinedDailyDeficitDisplay)}</strong> kcal.`;
-        const weeklyLossText = `This could lead to an estimated total weight loss of <strong id="combinedWeeklyKgLoss">${totalCombinedWeeklyKgLossDisplay.toFixed(1)}</strong> kg/week.`;
-        
-        const listItems = combinedEffectCard.querySelector('ul');
-        listItems.innerHTML = ''; // Clear existing items
+        if(combinedSummaryListEl) combinedSummaryListEl.innerHTML = ''; // Clear existing items
 
-        if (totalCombinedDailyDeficitDisplay > 0) {
-            const liDeficit = document.createElement('li');
-            liDeficit.innerHTML = dailyDeficitText;
-            listItems.appendChild(liDeficit);
+        if (totalCombinedDailyEffectDisplay !== 0 || summaryType === 'gain') { // Show daily summary if there is an effect or if it's for gain (even if zero surplus)
+            const liDaily = document.createElement('li');
+            liDaily.innerHTML = dailySummaryText;
+            if(combinedSummaryListEl) combinedSummaryListEl.appendChild(liDaily);
         }
 
-        if (totalCombinedWeeklyKgLossDisplay > 0) {
-            const liLoss = document.createElement('li');
-            liLoss.innerHTML = weeklyLossText;
-            listItems.appendChild(liLoss);
+        // Only show weekly change if it's significant or meaningful for the context
+        if ( (summaryType === 'loss' && totalCombinedWeeklyKgChangeDisplay >= 0.05) || 
+             (summaryType === 'gain' && Math.abs(totalCombinedWeeklyKgChangeDisplay) >= 0.05) ||
+             (summaryType === 'gain' && totalCombinedDailyEffectDisplay <=0) ) { // Also show for gain if daily effect is not positive surplus
+            const liWeekly = document.createElement('li');
+            liWeekly.innerHTML = weeklyChangeText;
+            if(combinedSummaryListEl) combinedSummaryListEl.appendChild(liWeekly);
         }
         
-        if (listItems.children.length > 0) { // Only show card if there's something to list
+        if (combinedSummaryListEl && combinedSummaryListEl.children.length > 0) { 
             combinedEffectCard.style.display = 'block'; 
         } else {
             combinedEffectCard.style.display = 'none';
