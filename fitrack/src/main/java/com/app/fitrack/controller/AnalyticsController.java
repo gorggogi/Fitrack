@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.time.LocalDate;
@@ -98,7 +100,6 @@ public class AnalyticsController {
 
         AnalyticsPageDTO analyticsData = analyticsService.getAnalyticsPageData(user);
         
-        // Check if DTO is null and log fullName just before adding to model
         if (analyticsData != null) { 
             log.debug("AnalyticsData DTO retrieved. FullName from DTO: {}", analyticsData.getFullName());
         } else {
@@ -137,5 +138,26 @@ public class AnalyticsController {
                     .collect(Collectors.toList())
             ))
             .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/analytics/data")
+    @ResponseBody
+    public ResponseEntity<AnalyticsPageDTO> getAnalyticsDataJson(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+        }
+
+        AnalyticsPageDTO analyticsData = analyticsService.getAnalyticsPageData(user);
+        if (analyticsData == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        
+        return ResponseEntity.ok(analyticsData);
     }
 } 

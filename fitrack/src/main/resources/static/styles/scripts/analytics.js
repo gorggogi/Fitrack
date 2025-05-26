@@ -1191,4 +1191,254 @@ window.openMeasurementModal = openMeasurementModal;
 window.closeMeasurementModal = closeMeasurementModal;
 window.handleRefreshRecommendations = handleRefreshRecommendations;
 window.refreshScheduledIndicators = refreshScheduledIndicators; // Expose the new function
+
+// Global or module-scoped variable for scheduled workout names
+let scheduledWorkoutNames;
+
+// Function to initialize/re-initialize data and trigger necessary UI updates
+function initAnalyticsPage() {
+    // Ensure analyticsData is available globally
+    if (typeof window.analyticsData === 'undefined' || window.analyticsData === null) {
+        console.error("analyticsData is not defined or null. Ensure it's provided by the server or fetched.");
+        // Attempt to set to a default or empty state to prevent further errors if critical
+        window.analyticsData = { scheduledWorkoutNames: [], /* other essential defaults */ }; 
+        // Depending on how critical analyticsData is, you might want to show an error message to the user
+        // or prevent further execution of functions that rely heavily on it.
+    }
+
+    // Use the (potentially freshly updated) window.analyticsData
+    scheduledWorkoutNames = new Set(window.analyticsData.scheduledWorkoutNames || []);
+    console.log("analytics.js: Initialized/Re-initialized scheduledWorkoutNames:", Array.from(scheduledWorkoutNames));
+
+    // Re-run functions that render UI based on analyticsData
+    if (typeof updateCalorieTargetRecommendations === 'function') {
+        updateCalorieTargetRecommendations(); // This also triggers workout recommendations display
+    } else {
+        console.warn('updateCalorieTargetRecommendations function not found. UI might not update correctly.');
+    }
+    
+    // Explicitly refresh indicators for workout recommendations if the main rendering doesn't cover it
+    // generateDynamicWorkoutRecommendations should handle this via its internal logic now, 
+    // but an explicit call to refresh just the indicators might be useful if issues persist.
+    if (typeof refreshScheduledIndicators === 'function') {
+         refreshScheduledIndicators();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("analytics.js: DOMContentLoaded event");
+    // Initial page load: analyticsData is injected by Thymeleaf
+    initAnalyticsPage(); 
+});
+
+// Listen for the pageshow event to handle bfcache
+window.addEventListener('pageshow', async function(event) {
+    console.log("analytics.js: pageshow event - persisted:", event.persisted);
+    if (event.persisted) {
+        console.log("analytics.js: Page was restored from bfcache. Fetching fresh data.");
+        try {
+            const response = await fetch(contextPath + 'api/analytics/data'); // Use contextPath if defined
+            if (!response.ok) {
+                throw new Error(`Failed to fetch analytics data: ${response.status} ${response.statusText}`);
+            }
+            const freshAnalyticsData = await response.json();
+            window.analyticsData = freshAnalyticsData; // Update global analyticsData
+            console.log("analytics.js: Successfully fetched and updated window.analyticsData from API.");
+            initAnalyticsPage(); // Re-initialize the page with fresh data
+        } catch (error) {
+            console.error("analytics.js: Error fetching fresh data on bfcache restore:", error);
+            // Optionally, inform the user or attempt a fallback
+            // For now, it will proceed with potentially stale data if API fails,
+            // or you could force a reload: window.location.reload();
+        }
+    }
+});
+
+// Ensure that functions like toggleWorkoutSchedule continue to update the global scheduledWorkoutNames
+// and then call displayWorkoutRecommendations or a similar function to refresh the view.
+
+// Original initialization of scheduledWorkoutNames (if it was at the top level)
+// let scheduledWorkoutNames = new Set(window.analyticsData.scheduledWorkoutNames || []); // This should be removed or handled by initAnalyticsPage
+
+// Example of how displayWorkoutRecommendations uses scheduledWorkoutNames
+// Make sure it uses the (now potentially re-initialized) global scheduledWorkoutNames
+/*
+function displayWorkoutRecommendations(recommendationsToDisplay) {
+    const recommendationsContainer = document.getElementById('dynamic-workout-recommendations-content');
+    if (!recommendationsContainer) {
+        console.error('Recommendations container not found');
+        return;
+    }
+    recommendationsContainer.innerHTML = ''; // Clear previous recommendations
+
+    if (!recommendationsToDisplay || recommendationsToDisplay.length === 0) {
+        recommendationsContainer.innerHTML = '<p>No workout recommendations available at this moment. Try adjusting your profile or check back later.</p>';
+        return;
+    }
+
+    const list = document.createElement('ul');
+    list.className = 'recommendations-list';
+
+    recommendationsToDisplay.forEach(workout => {
+        const listItem = document.createElement('li');
+        listItem.className = 'recommendation-item card'; // Added card class for styling
+
+        // Workout Name
+        const nameElement = document.createElement('h5');
+        nameElement.textContent = workout.name;
+        listItem.appendChild(nameElement);
+
+        // Workout Type
+        if(workout.type) {
+            const typeElement = document.createElement('p');
+            typeElement.innerHTML = `<strong>Type:</strong> ${workout.type}`;
+            listItem.appendChild(typeElement);
+        }
+        
+        // Workout Intensity
+        if(workout.intensity) {
+            const intensityElement = document.createElement('p');
+            intensityElement.innerHTML = `<strong>Intensity:</strong> ${workout.intensity}`;
+            listItem.appendChild(intensityElement);
+        }
+
+        // Workout Duration
+        if(workout.duration) {
+            const durationElement = document.createElement('p');
+            durationElement.innerHTML = `<strong>Duration:</strong> ${workout.duration} minutes`;
+            listItem.appendChild(durationElement);
+        }
+
+        // Calories Burned
+        if (workout.caloriesBurned) {
+            const caloriesElement = document.createElement('p');
+            caloriesElement.innerHTML = `<strong>Estimated Calories Burned:</strong> ${workout.caloriesBurned} kcal`;
+            listItem.appendChild(caloriesElement);
+        }
+        
+        // Description
+        if (workout.description) {
+            const descriptionElement = document.createElement('p');
+            descriptionElement.className = 'recommendation-description';
+            descriptionElement.textContent = workout.description;
+            listItem.appendChild(descriptionElement);
+        }
+
+        // Instructions (Optional - if you have them)
+        if (workout.instructions && workout.instructions.length > 0) {
+            const instructionsTitle = document.createElement('h6');
+            instructionsTitle.textContent = 'Instructions:';
+            listItem.appendChild(instructionsTitle);
+            const instructionsList = document.createElement('ul');
+            workout.instructions.forEach(instruction => {
+                const instructionItem = document.createElement('li');
+                instructionItem.textContent = instruction;
+                instructionsList.appendChild(instructionItem);
+            });
+            listItem.appendChild(instructionsList);
+        }
+        
+        // Check if this workout is already scheduled
+        const isScheduled = scheduledWorkoutNames.has(workout.name); // Uses the global scheduledWorkoutNames
+
+        const scheduleButton = document.createElement('button');
+        scheduleButton.textContent = isScheduled ? 'Unschedule' : 'Schedule Workout';
+        scheduleButton.className = isScheduled ? 'button-secondary' : 'button-primary';
+        scheduleButton.onclick = () => toggleWorkoutSchedule(workout.name, scheduleButton);
+        
+        listItem.appendChild(scheduleButton);
+        list.appendChild(listItem);
+    });
+    recommendationsContainer.appendChild(list);
+}
+*/
+
+// ... existing code ...
+// Ensure all functions that were previously in DOMContentLoaded and relied on analyticsData
+// are either part of initAnalyticsPage or are robust enough to be called by it.
+
+// Example: refreshButton event listener setup
+// This can remain in DOMContentLoaded if it's just setting up an event listener
+// that itself calls functions which will use the latest scheduledWorkoutNames.
+/*
+document.addEventListener('DOMContentLoaded', () => {
+    // ... other initializations ...
+    initAnalyticsPage(); // Called here
+
+    const refreshButton = document.getElementById('refreshRecommendationsButton');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', handleRefreshRecommendations);
+    } else {
+        // console.warn("Refresh recommendations button not found.");
+    }
+    // ...
+});
+*/
+
+// ... existing code ...
+// Move the old initialization of scheduledWorkoutNames from the top level into initAnalyticsPage.
+// Remove:
+// let scheduledWorkoutNames = new Set(window.analyticsData.scheduledWorkoutNames || []);
+// if it's at the very top of the file.
+// The new `let scheduledWorkoutNames;` at the top (without assignment) is correct.
+
+// ... existing code ...
+// Ensure that the `saveWorkoutToSchedule` and `removeWorkoutFromSchedule` functions correctly
+// update the `scheduledWorkoutNames` Set and then trigger a re-render of the recommendations
+// (e.g., by calling `displayWorkoutRecommendations(currentRecommendations)` or similar).
+// This part seems to be handled by `toggleWorkoutSchedule` which updates the Set and then
+// calls `displayWorkoutRecommendations`.
+
+/*
+async function toggleWorkoutSchedule(workoutName, buttonElement) {
+    const isScheduled = scheduledWorkoutNames.has(workoutName);
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+    const endpoint = isScheduled ? `${contextPath}api/schedule/remove` : `${contextPath}api/schedule/add`;
+
+    // console.log(`Attempting to ${isScheduled ? 'unschedule' : 'schedule'} workout: ${workoutName}`);
+    // console.log(`Endpoint: ${endpoint}`);
+    // console.log(`CSRF Token: ${csrfToken}`);
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ workoutName: workoutName })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // console.log(`Workout "${workoutName}" ${isScheduled ? 'unscheduled' : 'scheduled'} successfully.`);
+            if (isScheduled) {
+                scheduledWorkoutNames.delete(workoutName);
+                // console.log("Removed from scheduledWorkoutNames Set:", workoutName);
+            } else {
+                scheduledWorkoutNames.add(workoutName);
+                // console.log("Added to scheduledWorkoutNames Set:", workoutName);
+            }
+            // Update button text and class (already done by re-rendering recommendations)
+            // Refresh recommendations to reflect the change in scheduled status
+             displayWorkoutRecommendations(currentRecommendations); // Ensure currentRecommendations is accessible or passed
+            // console.log("Updated scheduledWorkoutNames:", Array.from(scheduledWorkoutNames));
+
+
+            // Show toast notification
+            const toastMessage = result.message || `Workout ${isScheduled ? 'unscheduled' : 'scheduled'} successfully.`;
+            showToast(toastMessage, 'success');
+
+        } else {
+            // console.error(`Failed to ${isScheduled ? 'unschedule' : 'schedule'} workout:`, result.message);
+            showToast(result.message || `Error ${isScheduled ? 'unscheduling' : 'scheduling'} workout. Please try again.`, 'error');
+        }
+    } catch (error) {
+        // console.error('Error in toggleWorkoutSchedule:', error);
+        showToast('An unexpected error occurred. Please check your connection and try again.', 'error');
+    }
+}
+*/
+// ... existing code ...
 } 
