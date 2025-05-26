@@ -2,8 +2,6 @@ package com.app.fitrack.controller;
 
 import com.app.fitrack.dto.AnalyticsPageDTO;
 import com.app.fitrack.model.User;
-import com.app.fitrack.model.BodyMeasurement;
-import com.app.fitrack.model.WorkoutLog;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.service.*;
 import org.slf4j.Logger;
@@ -20,11 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
 // DTOs for /api/meals/last-7-days - kept here as they are specific to this controller's API endpoint

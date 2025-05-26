@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.app.fitrack.model.Meal;
 import com.app.fitrack.model.User;
@@ -43,7 +42,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ConstraintViolation;
 import java.util.Set;
 import org.springframework.validation.BindingResult;
-import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDate;
 import com.app.fitrack.model.WorkoutLog;
 

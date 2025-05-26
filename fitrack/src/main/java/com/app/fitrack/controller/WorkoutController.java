@@ -2,7 +2,6 @@ package com.app.fitrack.controller;
 
 import com.app.fitrack.model.Workout;
 import com.app.fitrack.service.WorkoutService;
-import com.app.fitrack.service.ExerciseService;
 import com.app.fitrack.service.GoalService;
 import com.app.fitrack.model.User;
 import com.app.fitrack.service.UserService;
