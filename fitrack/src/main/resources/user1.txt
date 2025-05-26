@@ -16,7 +16,7 @@ VALUES
 (1, 0, NULL, 68.5, 'My weight journey', 'WEIGHT_LOSS', '2025-05-12 21:08:01.000000', 69.3, 'IN_PROGRESS', '2025-06-06 00:00:00.000000', 50, 1);
 
 -- Update user's current weight to match latest measurement
-UPDATE users SET weight = 68.5 WHERE id = 1;
+UPDATE users SET weight = 67.9	 WHERE id = 1;
 
 -- Insert body measurements for user 1 (weekly measurements showing weight loss)
 INSERT INTO body_measurement (id, user_id, date_time, weight, notes)
@@ -251,7 +251,10 @@ VALUES
 (169, 1, 'Upper Back Stretching', 30, 150, '2025-05-24 07:00:00', 'FLEXIBILITY'),
 (170, 1, 'Yoga', 30, 120, '2025-05-24 10:00:00', 'FLEXIBILITY'),
 (171, 1, 'Upper Back Stretching', 30, 150, '2025-05-25 07:00:00', 'FLEXIBILITY'),
-(172, 1, 'Yoga', 30, 120, '2025-05-25 10:00:00', 'FLEXIBILITY');
+(172, 1, 'Yoga', 30, 120, '2025-05-25 10:00:00', 'FLEXIBILITY'),
+(173, 1, 'Upper Back Stretching', 30, 150, '2025-05-26 07:00:00', 'FLEXIBILITY'),
+(174, 1, 'Full Body Workout', 45, 180, '2025-05-26 10:00:00', 'STRENGTH'),
+(175, 1, 'HIIT Circuit Training', 30, 220, '2025-05-26 18:00:00', 'HIIT');
 
 -- Insert meals for the extended period (sample days)
 INSERT INTO meal (id, user_id, date_time, meal_name)
@@ -549,7 +552,13 @@ VALUES
 (193, 1, '2025-05-25 08:00:00', 'Breakfast'),
 (194, 1, '2025-05-25 12:00:00', 'Lunch'),
 (195, 1, '2025-05-25 18:00:00', 'Dinner'),
-(196, 1, '2025-05-25 21:00:00', 'Snack');
+(196, 1, '2025-05-25 21:00:00', 'Snack'),
+
+-- May 26
+(197, 1, '2025-05-26 08:00:00', 'Breakfast'),
+(198, 1, '2025-05-26 12:00:00', 'Lunch'),
+(199, 1, '2025-05-26 18:00:00', 'Dinner'),
+(200, 1, '2025-05-26 21:00:00', 'Snack');
 
 -- Insert meal food items for the extended period
 INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
@@ -1098,7 +1107,17 @@ VALUES
 (445, 195, 'Grilled Chicken', 300, 120, 'g', 40, 0, 12),
 (446, 195, 'Brown Rice', 180, 0.8, 'cup', 4, 40, 1.5),
 (447, 196, 'Greek Yogurt', 180, 0.8, 'cup', 12, 7, 4),
-(448, 196, 'Mixed Berries', 80, 0.8, 'cup', 1, 20, 0);
+(448, 196, 'Mixed Berries', 80, 0.8, 'cup', 1, 20, 0),
+
+-- May 26
+(449, 197, 'Scrambled Eggs', 280, 2, 'large', 20, 2, 18),
+(450, 197, 'Whole Wheat Toast', 130, 1.5, 'slices', 6, 25, 1.5),
+(451, 198, 'Turkey Wrap', 400, 0.8, 'serving', 25, 35, 12),
+(452, 198, 'Mixed Vegetables', 80, 0.8, 'cup', 3, 18, 0),
+(453, 199, 'Grilled Chicken', 300, 120, 'g', 40, 0, 12),
+(454, 199, 'Brown Rice', 180, 0.8, 'cup', 4, 40, 1.5),
+(455, 200, 'Greek Yogurt', 180, 0.8, 'cup', 12, 7, 4),
+(456, 200, 'Mixed Berries', 80, 0.8, 'cup', 1, 20, 0);
 
 
 
