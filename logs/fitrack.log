@@ -74692,3 +74692,1876 @@ Caused by: java.lang.ClassNotFoundException: com.app.fitrack.service.CloudinaryS
 2025-05-26 02:59:04 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/fitrack'
 2025-05-26 02:59:04 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Started FitrackApplication in 3.236 seconds (process running for 9235.388)
 2025-05-26 02:59:04 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-05-26 09:47:01 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Starting FitrackApplication using Java 19.0.1 with PID 25836 (C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack\fitrack\target\classes started by Charlene C. Dilig in C:\Users\Charlene C. Dilig\OneDrive\Documents\Github\Fitrack)
+2025-05-26 09:47:01 [restartedMain] DEBUG com.app.fitrack.FitrackApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-05-26 09:47:01 [restartedMain] INFO  com.app.fitrack.FitrackApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-26 09:47:01 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-26 09:47:01 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-26 09:47:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-26 09:47:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 68 ms. Found 7 JPA repository interfaces.
+2025-05-26 09:47:03 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-26 09:47:03 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-26 09:47:03 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-26 09:47:03 [restartedMain] INFO  o.a.c.c.C.[.[localhost].[/fitrack] - Initializing Spring embedded WebApplicationContext
+2025-05-26 09:47:03 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2310 ms
+2025-05-26 09:47:04 [restartedMain] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+2025-05-26 09:47:04 [restartedMain] DEBUG o.s.o.j.LocalContainerEntityManagerFactoryBean - Building JPA container EntityManagerFactory for persistence unit 'default'
+2025-05-26 09:47:04 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-26 09:47:04 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-26 09:47:04 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-26 09:47:04 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-26 09:47:04 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-26 09:47:05 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@679d3d06
+2025-05-26 09:47:05 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-26 09:47:05 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-26 09:47:05 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-26 09:47:05 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@7a46e761) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@51cecec2)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@39abf25a) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6687b906)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@2bb72758) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@c284432)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6af75ecf) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@31e3851e)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@23fcf99d) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6dbb2004)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3dea0a5a) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@108cb38c)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@54788011) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6077319a)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@da24f14) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@78479dff)
+2025-05-26 09:47:05 [restartedMain] DEBUG o.h.t.d.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@68afe2ee) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@310de580)
+2025-05-26 09:47:06 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-26 09:47:06 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-26 09:47:09 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:09 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:09 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:09 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:09 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendVerificationEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.EmailService.sendPasswordResetEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateTDEE' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateBMR' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.findByEmail' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.registerUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.updateUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.verifyEmailChange' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resetPassword' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.createUserProfile' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.saveUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.calculateDynamicActivityFactor' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.getAuthenticatedUser' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.resendVerificationCode' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.requestEmailChangeVerification' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.UserService.generatePasswordResetToken' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] INFO  c.a.f.service.NutritionixService - NutritionixService initialized. App ID loaded: true, API Key loaded: true
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalProgress' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.createGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.deleteGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.archiveGoal' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] TRACE o.s.t.a.AnnotationTransactionAttributeSource - Adding transactional method 'com.app.fitrack.service.GoalService.updateGoalsBasedOnActivity' with attribute: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:10 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-26 09:47:10 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-26 09:47:11 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 50 mappings in 'requestMappingHandlerMapping'
+2025-05-26 09:47:11 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-05-26 09:47:11 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-05-26 09:47:11 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CsrfFilter, LogoutFilter, UsernamePasswordAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-26 09:47:11 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-26 09:47:11 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-26 09:47:11 [restartedMain] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:mysql://localhost:3306/fitrackerapp'
+2025-05-26 09:47:11 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-26 09:47:12 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/fitrack'
+2025-05-26 09:47:12 [restartedMain] INFO  com.app.fitrack.FitrackApplication - Started FitrackApplication in 10.819 seconds (process running for 11.494)
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] INFO  o.a.c.c.C.[.[localhost].[/fitrack] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5b9df5b0
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@335e98ab
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-05-26 09:47:13 [RMI TCP Connection(2)-127.0.0.1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-05-26 09:47:23 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /user/analytics
+2025-05-26 09:47:23 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-05-26 09:47:23 [http-nio-8080-exec-1] DEBUG o.s.s.w.s.HttpSessionRequestCache - Saved request http://localhost:8080/fitrack/user/analytics?continue to session
+2025-05-26 09:47:23 [http-nio-8080-exec-1] DEBUG o.s.s.web.DefaultRedirectStrategy - Redirecting to http://localhost:8080/fitrack/user/login
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /user/login
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /user/login
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/user/login", parameters={}
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.UserController#showLoginPage(Model)
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.w.s.v.ContentNegotiatingViewResolver - Selected 'text/html' given [text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8]
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:23 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /styles/Join.css
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /styles/Join.css
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/styles/Join.css", parameters={}
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [static/], URL [file:uploads/], ServletContext [/]]
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:23 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing POST /user/login
+2025-05-26 09:47:30 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.s.a.d.DaoAuthenticationProvider - Authenticated user
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.s.ChangeSessionIdAuthenticationStrategy - Changed session id from 8BDE53DD3B56DA7236D0CCDEA596CC5A
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Stored SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]] to HttpSession [org.apache.catalina.session.StandardSessionFacade@d9171ab]
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.UsernamePasswordAuthenticationFilter - Set SecurityContextHolder to UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.findByEmail]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Opened new EntityManager [SessionImpl(467865907<open>)] for JPA transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@16b57979]
+2025-05-26 09:47:30 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.findByEmail]
+2025-05-26 09:47:30 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:30 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.findByEmail]
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(467865907<open>)]
+2025-05-26 09:47:30 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Closing JPA EntityManager [SessionImpl(467865907<open>)] after transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /user/dashboard
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /user/dashboard
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/user/dashboard", parameters={}
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.UserController#showDashboard(UserDetails, Model)
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(505330433<open>)] for JPA transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.findByEmail]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@6da29241]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.findByEmail]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.findByEmail]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(505330433<open>)]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(505330433<open>)] for JPA transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@e98787f]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(505330433<open>)]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUser]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id,
+        w1_0.burned_calories,
+        w1_0.date_time,
+        w1_0.duration,
+        w1_0.user_id,
+        w1_0.workout_name,
+        w1_0.workout_type 
+    from
+        workout w1_0 
+    where
+        w1_0.user_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.existsByUserAndWorkoutNameBetweenDates]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id)>0 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.workout_name=? 
+        and wl1_0.completed_at>=? 
+        and wl1_0.completed_at<?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.existsByUserAndWorkoutNameBetweenDates]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id)>0 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.workout_name=? 
+        and wl1_0.completed_at>=? 
+        and wl1_0.completed_at<?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.existsByUserAndWorkoutNameBetweenDates]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id)>0 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.workout_name=? 
+        and wl1_0.completed_at>=? 
+        and wl1_0.completed_at<?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.existsByUserAndWorkoutNameBetweenDates]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id)>0 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.workout_name=? 
+        and wl1_0.completed_at>=? 
+        and wl1_0.completed_at<?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.existsByUserAndWorkoutNameBetweenDates]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id)>0 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.workout_name=? 
+        and wl1_0.completed_at>=? 
+        and wl1_0.completed_at<?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.existsByUserAndWorkoutNameBetweenDates]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id)>0 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.workout_name=? 
+        and wl1_0.completed_at>=? 
+        and wl1_0.completed_at<?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.existsByUserAndWorkoutNameBetweenDates]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id)>0 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.workout_name=? 
+        and wl1_0.completed_at>=? 
+        and wl1_0.completed_at<?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(505330433<open>)] for JPA transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@2c25da6]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(505330433<open>)]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndDateTimeBetween]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        distinct m1_0.id,
+        m1_0.date_time,
+        fi1_0.meal_id,
+        fi1_0.id,
+        fi1_0.calories,
+        fi1_0.carbs,
+        fi1_0.fat,
+        fi1_0.food_item,
+        fi1_0.protein,
+        fi1_0.quantity,
+        fi1_0.unit,
+        m1_0.meal_name,
+        m1_0.user_id 
+    from
+        meal m1_0 
+    left join
+        meal_food_item fi1_0 
+            on m1_0.id=fi1_0.meal_id 
+    where
+        m1_0.user_id=? 
+        and m1_0.date_time between ? and ?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG com.app.fitrack.service.GoalService - Fetching active goals for user: diligcharlene@gmail.com
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndArchivedFalse]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        g1_0.id,
+        g1_0.archived,
+        g1_0.completion_date,
+        g1_0.current_value,
+        g1_0.description,
+        g1_0.goal_type,
+        g1_0.start_date,
+        g1_0.start_value,
+        g1_0.status,
+        g1_0.target_date,
+        g1_0.target_value,
+        g1_0.user_id 
+    from
+        goals g1_0 
+    where
+        g1_0.user_id=? 
+        and not(g1_0.archived)
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndCompletedAtBetween]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        wl1_0.id,
+        wl1_0.burned_calories,
+        wl1_0.completed_at,
+        wl1_0.duration,
+        wl1_0.user_id,
+        wl1_0.workout_name,
+        wl1_0.workout_type 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.completed_at between ? and ?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.countByUserAndCompletedAtBetween]: This method is not transactional.
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        count(wl1_0.id) 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.completed_at between ? and ?
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.w.s.v.ContentNegotiatingViewResolver - Selected 'text/html' given [text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8]
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /styles/Fitrack.css
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /styles/Fitrack.css
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/styles/Fitrack.css", parameters={}
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [static/], URL [file:uploads/], ServletContext [/]]
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:30 [http-nio-8080-exec-6] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /styles/scripts/dashboard.js
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /styles/scripts/dashboard.js
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/styles/scripts/dashboard.js", parameters={}
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [static/], URL [file:uploads/], ServletContext [/]]
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:30 [http-nio-8080-exec-7] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /images/Fitrack.ico
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /images/Fitrack.ico
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/images/Fitrack.ico", parameters={}
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [static/], URL [file:uploads/], ServletContext [/]]
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:30 [http-nio-8080-exec-8] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /user/analytics
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /user/analytics
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/user/analytics", parameters={}
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.AnalyticsController#showAnalytics(UserDetails, Model)
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.f.controller.AnalyticsController - Analytics page requested for user: diligcharlene@gmail.com
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(853822439<open>)] for JPA transaction
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.findByEmail]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@36dbd963]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.findByEmail]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.findByEmail]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(853822439<open>)]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - Entering getAnalyticsPageData for user: diligcharlene@gmail.com
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - User details: firstName=charlene, lastName=dilig
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - DTO fullName set to: charlene dilig
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUser]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id,
+        w1_0.burned_calories,
+        w1_0.date_time,
+        w1_0.duration,
+        w1_0.user_id,
+        w1_0.workout_name,
+        w1_0.workout_type 
+    from
+        workout w1_0 
+    where
+        w1_0.user_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        rd1_0.workout_id,
+        rd1_0.repeat_day 
+    from
+        workout_repeat_days rd1_0 
+    where
+        rd1_0.workout_id=?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - Scheduled workout names for DTO: [Full Body Workout, HIIT Circuit Training, Running, Upper Back Stretching, Yoga, Low Lunge Twists, Core Workout]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] INFO  c.a.f.service.BodyMeasurementService - Fetching measurements for UserID=1
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserOrderByDateTimeDesc]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        bm1_0.id,
+        bm1_0.date_time,
+        bm1_0.notes,
+        bm1_0.user_id,
+        bm1_0.weight 
+    from
+        body_measurement bm1_0 
+    where
+        bm1_0.user_id=? 
+    order by
+        bm1_0.date_time desc
+2025-05-26 09:47:33 [http-nio-8080-exec-9] INFO  c.a.f.service.BodyMeasurementService - Found 13 measurements for UserID=1
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - Setting currentUserWeight from User object: 67.9
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndDateTimeBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        distinct m1_0.id,
+        m1_0.date_time,
+        fi1_0.meal_id,
+        fi1_0.id,
+        fi1_0.calories,
+        fi1_0.carbs,
+        fi1_0.fat,
+        fi1_0.food_item,
+        fi1_0.protein,
+        fi1_0.quantity,
+        fi1_0.unit,
+        m1_0.meal_name,
+        m1_0.user_id 
+    from
+        meal m1_0 
+    left join
+        meal_food_item fi1_0 
+            on m1_0.id=fi1_0.meal_id 
+    where
+        m1_0.user_id=? 
+        and m1_0.date_time between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndCompletedAtBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        wl1_0.id,
+        wl1_0.burned_calories,
+        wl1_0.completed_at,
+        wl1_0.duration,
+        wl1_0.user_id,
+        wl1_0.workout_name,
+        wl1_0.workout_type 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.completed_at between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(853822439<open>)] for JPA transaction
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.calculateDynamicActivityFactor]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@3ad618f3]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.calculateDynamicActivityFactor]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndCompletedAtBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        wl1_0.id,
+        wl1_0.burned_calories,
+        wl1_0.completed_at,
+        wl1_0.duration,
+        wl1_0.user_id,
+        wl1_0.workout_name,
+        wl1_0.workout_type 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.completed_at between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.calculateDynamicActivityFactor]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(853822439<open>)]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(853822439<open>)] for JPA transaction
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.calculateTDEE]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@45d18a8f]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.calculateTDEE]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.calculateTDEE]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(853822439<open>)]
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndDateTimeBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        distinct m1_0.id,
+        m1_0.date_time,
+        fi1_0.meal_id,
+        fi1_0.id,
+        fi1_0.calories,
+        fi1_0.carbs,
+        fi1_0.fat,
+        fi1_0.food_item,
+        fi1_0.protein,
+        fi1_0.quantity,
+        fi1_0.unit,
+        m1_0.meal_name,
+        m1_0.user_id 
+    from
+        meal m1_0 
+    left join
+        meal_food_item fi1_0 
+            on m1_0.id=fi1_0.meal_id 
+    where
+        m1_0.user_id=? 
+        and m1_0.date_time between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndDateTimeBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        distinct m1_0.id,
+        m1_0.date_time,
+        fi1_0.meal_id,
+        fi1_0.id,
+        fi1_0.calories,
+        fi1_0.carbs,
+        fi1_0.fat,
+        fi1_0.food_item,
+        fi1_0.protein,
+        fi1_0.quantity,
+        fi1_0.unit,
+        m1_0.meal_name,
+        m1_0.user_id 
+    from
+        meal m1_0 
+    left join
+        meal_food_item fi1_0 
+            on m1_0.id=fi1_0.meal_id 
+    where
+        m1_0.user_id=? 
+        and m1_0.date_time between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndDateTimeBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        distinct m1_0.id,
+        m1_0.date_time,
+        fi1_0.meal_id,
+        fi1_0.id,
+        fi1_0.calories,
+        fi1_0.carbs,
+        fi1_0.fat,
+        fi1_0.food_item,
+        fi1_0.protein,
+        fi1_0.quantity,
+        fi1_0.unit,
+        m1_0.meal_name,
+        m1_0.user_id 
+    from
+        meal m1_0 
+    left join
+        meal_food_item fi1_0 
+            on m1_0.id=fi1_0.meal_id 
+    where
+        m1_0.user_id=? 
+        and m1_0.date_time between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndCompletedAtBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        wl1_0.id,
+        wl1_0.burned_calories,
+        wl1_0.completed_at,
+        wl1_0.duration,
+        wl1_0.user_id,
+        wl1_0.workout_name,
+        wl1_0.workout_type 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.completed_at between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - Populating workout frequency data for user: diligcharlene@gmail.com from 2025-02-25T09:47:33.104388800 to 2025-05-26T09:47:33.104388800
+2025-05-26 09:47:33 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByUserAndCompletedAtBetween]: This method is not transactional.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        wl1_0.id,
+        wl1_0.burned_calories,
+        wl1_0.completed_at,
+        wl1_0.duration,
+        wl1_0.user_id,
+        wl1_0.workout_name,
+        wl1_0.workout_type 
+    from
+        workout_log wl1_0 
+    where
+        wl1_0.user_id=? 
+        and wl1_0.completed_at between ? and ?
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - Workout type frequency map: {FLEXIBILITY=104, STRENGTH=47, HIIT=21}
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.f.service.BodyMeasurementService - Calculated current BMI: 30.58420791856223 for Weight=67.9, Height=149.0
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.fitrack.service.AnalyticsService - Returning AnalyticsPageDTO for user: diligcharlene@gmail.com
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.f.controller.AnalyticsController - AnalyticsData DTO retrieved. FullName from DTO: charlene dilig
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG c.a.f.controller.AnalyticsController - Added analyticsData and user to model for view.
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.w.s.v.ContentNegotiatingViewResolver - Selected 'text/html' given [text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8]
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /styles/Fitrack.css
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /styles/Fitrack.css
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/styles/Fitrack.css", parameters={}
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [static/], URL [file:uploads/], ServletContext [/]]
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:33 [http-nio-8080-exec-10] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /styles/scripts/dashboard.js
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /styles/scripts/dashboard.js
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/styles/scripts/dashboard.js", parameters={}
+2025-05-26 09:47:33 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /styles/scripts/analytics.js
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [static/], URL [file:uploads/], ServletContext [/]]
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /styles/scripts/analytics.js
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - GET "/fitrack/styles/scripts/analytics.js", parameters={}
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [static/], URL [file:uploads/], ServletContext [/]]
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:33 [http-nio-8080-exec-1] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:33 [http-nio-8080-exec-2] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Deadlifts, duration=20}]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Running, duration=20}]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Squats, duration=20}]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Push-ups, duration=15}]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(916671356<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Quad Stretch, duration=5}]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Jumping Jacks, duration=10}]
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Brisk Walking, duration=30}]
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Lunges, duration=15}]
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Cycling, duration=30}]
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1375865159<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(481441535<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1584303250<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(53406999<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1759907970<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(498445343<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1333099378<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1221984447<open>)] for JPA transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@7c973dbc]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@3b3a7947]
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@22427f8b]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@481bea8b]
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@236cdca7]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@3cccacb6]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@3471571e]
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@52e4902a]
+2025-05-26 09:47:39 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@33d5214f]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-1] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-8] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-1] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-6] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-8] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(481441535<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:39 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-1] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-8] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1375865159<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(916671356<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1584303250<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(53406999<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(498445343<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1759907970<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1333099378<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Squats, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1221984447<open>)]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:39 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Deadlifts, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Brisk Walking, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:39 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Running, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=15 minutes of Push-ups, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Quad Stretch, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=10 minutes of Jumping Jacks, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=15 minutes of Lunges, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Cycling, age=21}
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:39 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Brisk Walking, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Deadlifts, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=10 minutes of Jumping Jacks, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Cycling, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Quad Stretch, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Squats, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=15 minutes of Push-ups, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=15 minutes of Lunges, age=21}] as "application/json"
+2025-05-26 09:47:39 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Running, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":317,"user_input":"running","duration_min":20,"met":9.8,"nf_calories":221.81,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/317_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/317_thumb.jpg","is_user_uploaded":false},"compendium_code":12050,"name":"running","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":894,"user_input":"jumping jacks","duration_min":10,"met":8,"nf_calories":90.53,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/894_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/894_thumb.jpg","is_user_uploaded":false},"compendium_code":2020,"name":"jumping jacks","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":824,"user_input":"push ups","duration_min":15,"met":3.8,"nf_calories":64.5,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/824_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/824_thumb.jpg","is_user_uploaded":false},"compendium_code":2022,"name":"push-up","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":766,"user_input":"deadlifts","duration_min":20,"met":3.5,"nf_calories":79.22,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/766_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/766_thumb.jpg","is_user_uploaded":false},"compendium_code":2054,"name":"weight lifting","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":771,"user_input":"lunges","duration_min":15,"met":3.8,"nf_calories":64.5,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/771_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/771_thumb.jpg","is_user_uploaded":false},"compendium_code":2022,"name":"calisthenics","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":5,"user_input":"cycling","duration_min":30,"met":10,"nf_calories":339.5,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/5_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/5_thumb.jpg","is_user_uploaded":false},"compendium_code":1040,"name":"road cycling","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":100,"user_input":"walking","duration_min":30,"met":3.5,"nf_calories":118.83,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/100_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/100_thumb.jpg","is_user_uploaded":false},"compendium_code":17190,"name":"walking","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Calculated calories: 221.81
+2025-05-26 09:47:40 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Calculated calories: 90.53
+2025-05-26 09:47:40 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Calculated calories: 64.5
+2025-05-26 09:47:40 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Calculated calories: 79.22
+2025-05-26 09:47:40 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Calculated calories: 64.5
+2025-05-26 09:47:40 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Calculated calories: 339.5
+2025-05-26 09:47:40 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Calculated calories: 118.83
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=79}]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=119}]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=340}]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=222}]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=65}]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=65}]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=91}]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Hiking, duration=45}]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1733931527<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":780,"user_input":"squats","duration_min":20,"met":5,"nf_calories":113.17,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/780_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/780_thumb.jpg","is_user_uploaded":false},"compendium_code":2052,"name":"squats","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Farmer's Walks, duration=10}]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Yoga (e.g., Downward Dog), duration=20}]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Basketball, duration=30}]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Calculated calories: 113.17
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Hamstring Stretch, duration=5}]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":758,"user_input":"stretch","duration_min":5,"met":2.3,"nf_calories":13.01,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/758_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/758_thumb.jpg","is_user_uploaded":false},"compendium_code":2101,"name":"stretching","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1607006864<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Kettlebell Swings, duration=15}]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@31da0fb0]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(415622861<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Dancing, duration=30}]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1069427853<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(160992000<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Calculated calories: 13.01
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(215073365<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1089669431<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=113}]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@2125638b]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@216ad215]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@663ca333]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@7a6056f6]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=13}]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-2] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@5515b68c]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@791512e0]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-2] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-8] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-8] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-6] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-2] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1733931527<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-4] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-8] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-6] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1607006864<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1069427853<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(415622861<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(160992000<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(215073365<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1089669431<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=45 minutes of Hiking, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-2] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-2] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Medicine Ball Slams, duration=10}]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Hamstring Stretch, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Heel-to-Toe Walk, duration=5}]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Basketball, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-2] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=10 minutes of Farmer's Walks, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Yoga (e.g., Downward Dog), age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1841049304<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1011698242<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=45 minutes of Hiking, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=15 minutes of Kettlebell Swings, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Dancing, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Basketball, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Hamstring Stretch, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@1696fe81]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@41221d15]
+2025-05-26 09:47:40 [http-nio-8080-exec-2] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=10 minutes of Farmer's Walks, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Yoga (e.g., Downward Dog), age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=15 minutes of Kettlebell Swings, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=30 minutes of Dancing, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-10] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1841049304<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1011698242<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=10 minutes of Medicine Ball Slams, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Heel-to-Toe Walk, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Heel-to-Toe Walk, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=10 minutes of Medicine Ball Slams, age=21}] as "application/json"
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":129,"user_input":"hiking","duration_min":45,"met":7.8,"nf_calories":397.22,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/129_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/129_thumb.jpg","is_user_uploaded":false},"compendium_code":17012,"name":"hiking","description":null,"benefits":null}]}
+2025-05-26 09:47:40 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Calculated calories: 397.22
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=397}]
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Single-Leg Stands, duration=5}]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(1451002071<open>)] for JPA transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@1c2c5a04]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:40 [http-nio-8080-exec-1] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1451002071<open>)]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:40 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:40 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Single-Leg Stands, age=21}
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:40 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=5 minutes of Single-Leg Stands, age=21}] as "application/json"
+2025-05-26 09:47:41 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-7] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":765,"user_input":"yoga","duration_min":20,"met":3.3,"nf_calories":74.69,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/765_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/765_thumb.jpg","is_user_uploaded":false},"compendium_code":2180,"name":"yoga","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-7] INFO  c.a.f.service.NutritionixService - Calculated calories: 74.69
+2025-05-26 09:47:41 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=75}]
+2025-05-26 09:47:41 [http-nio-8080-exec-7] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing POST /workouts/estimate-calories
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.s.w.c.HttpSessionSecurityContextRepository - Retrieved SecurityContextImpl [Authentication=UsernamePasswordAuthenticationToken [Principal=org.springframework.security.core.userdetails.User [Username=diligcharlene@gmail.com, Password=[PROTECTED], Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[ROLE_USER]], Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=8BDE53DD3B56DA7236D0CCDEA596CC5A], Granted Authorities=[ROLE_USER]]]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured POST /workouts/estimate-calories
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - POST "/fitrack/workouts/estimate-calories", parameters={}
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.app.fitrack.controller.WorkoutController#estimateCalories(Map)
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [{workoutName=Tai Chi movements, duration=20}]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Found thread-bound EntityManager [SessionImpl(854609696<open>)] for JPA transaction
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [com.app.fitrack.service.UserService.getAuthenticatedUser]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@6004aa05]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - Getting transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - No need to create transaction for [org.springframework.data.jpa.repository.support.SimpleJpaRepository.findByEmail]: This method is not transactional.
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.id,
+        u1_0.age,
+        u1_0.email,
+        u1_0.email_change_code,
+        u1_0.email_change_code_expiry,
+        u1_0.firstname,
+        u1_0.gender,
+        u1_0.height,
+        u1_0.lastname,
+        u1_0.password,
+        u1_0.pending_email,
+        u1_0.profile_picture,
+        u1_0.verified,
+        u1_0.weight 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-05-26 09:47:41 [http-nio-8080-exec-3] TRACE o.s.t.i.TransactionInterceptor - Completing transaction for [com.app.fitrack.service.UserService.getAuthenticatedUser]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(854609696<open>)]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.orm.jpa.JpaTransactionManager - Not closing pre-bound JPA EntityManager after transaction
+2025-05-26 09:47:41 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Sending request to Nutritionix for exercise calorie estimation:
+2025-05-26 09:47:41 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - URL: https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:41 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Request Body: {weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Tai Chi movements, age=21}
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - HTTP POST https://trackapi.nutritionix.com/v2/natural/exercise
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Accept=[application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Writing [{weight_kg=67.9, gender=female, height_cm=149.0, query=20 minutes of Tai Chi movements, age=21}] as "application/json"
+2025-05-26 09:47:41 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-8] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-10] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":847,"user_input":"kettlebell","duration_min":15,"met":3.5,"nf_calories":59.41,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/847_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/847_thumb.jpg","is_user_uploaded":false},"compendium_code":2054,"name":"kettlebells","description":null,"benefits":null},{"tag_id":969,"user_input":"swings","duration_min":15,"met":4,"nf_calories":67.9,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/969_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/969_thumb.jpg","is_user_uploaded":false},"compendium_code":15335,"name":"swinging","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":174,"user_input":"ball","duration_min":10,"met":2.5,"nf_calories":28.29,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/174_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/174_thumb.jpg","is_user_uploaded":false},"compendium_code":15235,"name":"playing catch","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-4] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-8] INFO  c.a.f.service.NutritionixService - Calculated calories: 59.41
+2025-05-26 09:47:41 [http-nio-8080-exec-10] INFO  c.a.f.service.NutritionixService - Calculated calories: 28.29
+2025-05-26 09:47:41 [http-nio-8080-exec-2] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-6] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":242,"user_input":"basketball","duration_min":30,"met":6.5,"nf_calories":220.68,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/242_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/242_thumb.jpg","is_user_uploaded":false},"compendium_code":15055,"name":"basketball","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-2] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":750,"user_input":"dancing","duration_min":30,"met":7.8,"nf_calories":264.81,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/750_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/750_thumb.jpg","is_user_uploaded":false},"compendium_code":3031,"name":"dancing","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-4] INFO  c.a.f.service.NutritionixService - Calculated calories: 220.68
+2025-05-26 09:47:41 [http-nio-8080-exec-5] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=59}]
+2025-05-26 09:47:41 [http-nio-8080-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=28}]
+2025-05-26 09:47:41 [http-nio-8080-exec-9] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-2] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":100,"user_input":"walks","duration_min":10,"met":3.5,"nf_calories":39.61,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/100_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/100_thumb.jpg","is_user_uploaded":false},"compendium_code":17190,"name":"walking","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-6] INFO  c.a.f.service.NutritionixService - Calculated calories: 264.81
+2025-05-26 09:47:41 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-10] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-8] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-2] INFO  c.a.f.service.NutritionixService - Calculated calories: 39.61
+2025-05-26 09:47:41 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":1048,"user_input":"hamstring","duration_min":5,"met":3.5,"nf_calories":19.8,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/1048_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/1048_thumb.jpg","is_user_uploaded":false},"compendium_code":2054,"name":"hamstring curl","description":null,"benefits":null},{"tag_id":758,"user_input":"stretch","duration_min":15,"met":2.3,"nf_calories":39.04,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/758_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/758_thumb.jpg","is_user_uploaded":false},"compendium_code":2101,"name":"stretching","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":100,"user_input":"walk","duration_min":5,"met":3.5,"nf_calories":19.8,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/100_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/100_thumb.jpg","is_user_uploaded":false},"compendium_code":17190,"name":"walking","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=221}]
+2025-05-26 09:47:41 [http-nio-8080-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-5] INFO  c.a.f.service.NutritionixService - Calculated calories: 19.8
+2025-05-26 09:47:41 [http-nio-8080-exec-4] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-9] INFO  c.a.f.service.NutritionixService - Calculated calories: 19.8
+2025-05-26 09:47:41 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-6] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=265}]
+2025-05-26 09:47:41 [http-nio-8080-exec-2] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=40}]
+2025-05-26 09:47:41 [http-nio-8080-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=20}]
+2025-05-26 09:47:41 [http-nio-8080-exec-2] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-5] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-6] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=20}]
+2025-05-26 09:47:41 [http-nio-8080-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-9] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-1] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":841,"user_input":"leg","duration_min":5,"met":3.5,"nf_calories":19.8,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/841_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/841_thumb.jpg","is_user_uploaded":false},"compendium_code":2054,"name":"leg workout","description":null,"benefits":null},{"tag_id":517,"user_input":"stands","duration_min":30,"met":2.5,"nf_calories":84.88,"photo":{"highres":null,"thumb":null,"is_user_uploaded":false},"compendium_code":9071,"name":"standing","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-1] INFO  c.a.f.service.NutritionixService - Calculated calories: 19.8
+2025-05-26 09:47:41 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=20}]
+2025-05-26 09:47:41 [http-nio-8080-exec-1] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Response 200 OK
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.web.client.RestTemplate - Reading to [com.fasterxml.jackson.databind.JsonNode]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Nutritionix Response: {"exercises":[{"tag_id":179,"user_input":"tai chi","duration_min":20,"met":3,"nf_calories":67.9,"photo":{"highres":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/179_highres.jpg","thumb":"https://d2xdmhkmkbyw75.cloudfront.net/exercise/179_thumb.jpg","is_user_uploaded":false},"compendium_code":15670,"name":"tai chi","description":null,"benefits":null}]}
+2025-05-26 09:47:41 [http-nio-8080-exec-3] INFO  c.a.f.service.NutritionixService - Calculated calories: 67.9
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{calories=68}]
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.o.j.s.OpenEntityManagerInViewInterceptor - Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2025-05-26 09:47:41 [http-nio-8080-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK

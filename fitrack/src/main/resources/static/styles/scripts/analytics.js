@@ -449,17 +449,14 @@ async function generateDynamicWorkoutRecommendations() {
                                 <button id="${refreshBtnId}" class="btn btn-secondary btn-sm" style="width: 100%; display: block;">Refresh Recommendations</button>
                             </div>`;
 
-    function setupRefreshButtonListener() {
-        setTimeout(() => {
-            const button = document.getElementById(refreshBtnId);
-            if (button) {
-                button.removeEventListener('click', handleRefreshRecommendations);
-                button.addEventListener('click', handleRefreshRecommendations);
-                console.log("Refresh button event listener attached (bottom).");
-            } else {
-                console.error("Refresh button (bottom) element not found. Listener not attached.");
-            }
-        }, 0);
+    function setupRefreshButtonListener(buttonElement) {
+        if (buttonElement) {
+            buttonElement.removeEventListener('click', handleRefreshRecommendations);
+            buttonElement.addEventListener('click', handleRefreshRecommendations);
+            console.log("Refresh button event listener attached (bottom).");
+        } else {
+            console.error("Refresh button (bottom) element not found or passed incorrectly. Listener not attached.");
+        }
     }
 
     try {
@@ -473,7 +470,25 @@ async function generateDynamicWorkoutRecommendations() {
             currentBmiCategory === cachedBmiCategory) {
             console.log("Using cached workout recommendations (category match).");
             recommendationContainer.innerHTML = cachedHTML;
-            setupRefreshButtonListener();
+
+            // Ensure the refresh button is present when loading from cache
+            // First, remove any existing one to prevent duplicates if any survived somehow
+            const existingBtnContainer = document.getElementById(refreshBtnContainerId);
+            if (existingBtnContainer) {
+                existingBtnContainer.remove();
+            }
+            // Append the refresh button HTML again, as it's not part of the cached recommendationContainer.innerHTML
+            personalizedRecommendationsSection.insertAdjacentHTML('beforeend', refreshBtnHtml);
+
+            setTimeout(() => { // Keep a short delay for DOM update
+                const button = document.getElementById(refreshBtnId);
+                if (button) {
+                    setupRefreshButtonListener(button);
+                } else {
+                    // This error should ideally not happen now if IDs are correct and insertion worked
+                    console.error("Refresh button element not found after attempting to re-add it on cache load.");
+                }
+            }, 50);
             return; 
         }
     } catch (e) {
@@ -751,7 +766,14 @@ async function generateDynamicWorkoutRecommendations() {
     // Append the refresh button to the parent section, after the workout recommendations content
     personalizedRecommendationsSection.insertAdjacentHTML('beforeend', refreshBtnHtml);
 
-    setupRefreshButtonListener();
+    // Get the button element immediately after inserting it
+    const newRefreshButton = document.getElementById(refreshBtnId);
+    if (newRefreshButton) {
+        setupRefreshButtonListener(newRefreshButton);
+    } else {
+        // This case should be rare if insertAdjacentHTML worked and IDs are correct
+        console.error("CRITICAL: Refresh button element could not be found immediately after insertion.");
+    }
     
     try {
         await Promise.all(allEstimationPromises);
