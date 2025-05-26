@@ -146,6 +146,12 @@ public class AnalyticsService {
         populateWeightProgressAndTrend(dto, measurements, latestMeasurement);
         populateNutrientNeeds(dto, latestMeasurement, tdee);
         
+        // Check for new user activity
+        boolean noMealLogs = !mealService.hasAnyMealLogs(user);
+        boolean noWorkoutLogs = !workoutService.hasAnyWorkoutLogs(user);
+        dto.setNewUserActivity(noMealLogs && noWorkoutLogs);
+        log.debug("Set newUserActivity to: {} (noMealLogs: {}, noWorkoutLogs: {}) for user: {}", dto.isNewUserActivity(), noMealLogs, noWorkoutLogs, user.getEmail());
+        
         log.debug("Returning AnalyticsPageDTO for user: {}", user.getEmail());
         return dto;
     }

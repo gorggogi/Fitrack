@@ -216,4 +216,8 @@ public class WorkoutService {
     public List<WorkoutLog> getAllWorkoutLogsSorted(User user) {
         return workoutLogRepository.findByUserOrderByCompletedAtDesc(user);
     }
+
+    public boolean hasAnyWorkoutLogs(User user) {
+        return workoutLogRepository.countByUser(user) > 0;
+    }
 }

@@ -28,18 +28,21 @@ class MealDTO { // Note: Made package-private or ensure it's accessible if moved
     private LocalDateTime dateTime;
     private String mealName;
     private List<FoodItemDTO> foodItems;
+    private int totalCalories; // Should be int to match Meal entity and separate DTO file
 
-    public MealDTO(Long id, LocalDateTime dateTime, String mealName, List<FoodItemDTO> foodItems) {
+    public MealDTO(Long id, LocalDateTime dateTime, String mealName, List<FoodItemDTO> foodItems, int totalCalories) {
         this.id = id;
         this.dateTime = dateTime;
         this.mealName = mealName;
         this.foodItems = foodItems;
+        this.totalCalories = totalCalories;
     }
     // Getters
     public Long getId() { return id; }
     public LocalDateTime getDateTime() { return dateTime; }
     public String getMealName() { return mealName; }
     public List<FoodItemDTO> getFoodItems() { return foodItems; }
+    public int getTotalCalories() { return totalCalories; } // Getter for total calories
 }
 
 class FoodItemDTO { // Note: Made package-private
@@ -47,18 +50,21 @@ class FoodItemDTO { // Note: Made package-private
     private Double protein;
     private Double carbs;
     private Double fat;
+    private int calories; // Should be int to match MealFoodItem entity and separate DTO file
 
-    public FoodItemDTO(String foodItem, Double protein, Double carbs, Double fat) {
+    public FoodItemDTO(String foodItem, Double protein, Double carbs, Double fat, int calories) {
         this.foodItem = foodItem;
         this.protein = protein;
         this.carbs = carbs;
         this.fat = fat;
+        this.calories = calories;
     }
     // Getters
     public String getFoodItem() { return foodItem; }
     public Double getProtein() { return protein; }
     public Double getCarbs() { return carbs; }
     public Double getFat() { return fat; }
+    public int getCalories() { return calories; } // Getter for calories
 }
 
 @Controller
@@ -127,9 +133,11 @@ public class AnalyticsController {
                         food.getFoodItem(),
                         food.getProtein(),
                         food.getCarbs(),
-                        food.getFat()
+                        food.getFat(),
+                        food.getCalories() // Pass calories (int) to FoodItemDTO
                     ))
-                    .collect(Collectors.toList())
+                    .collect(Collectors.toList()),
+                meal.getTotalCalories() // Pass totalCalories (int) to MealDTO
             ))
             .collect(Collectors.toList());
     }

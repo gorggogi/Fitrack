@@ -250,8 +250,15 @@ function showLoggedMeals() {
     mealsList.innerHTML = ''; // Clear previous content
 
     // Get the meals data from the server
-    fetch('/api/meals/last-7-days')
-        .then(response => response.json())
+    fetch(contextPath + 'api/meals/last-7-days')
+        .then(response => {
+            if (!response.ok) {
+                // If response is not OK, throw an error to be caught by .catch()
+                // This helps in debugging non-JSON error responses like 404s, 500s etc.
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json(); // Only parse if response.ok
+        })
         .then(meals => {
             meals.forEach(meal => {
                 const mealElement = document.createElement('div');

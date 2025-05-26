@@ -33,4 +33,6 @@ boolean existsByUserAndWorkoutNameAndDate(@Param("user") User user,
 
     // Find all logs for a user, ordered by completion time descending
     List<WorkoutLog> findByUserOrderByCompletedAtDesc(User user);
+
+    long countByUser(User user);
 }

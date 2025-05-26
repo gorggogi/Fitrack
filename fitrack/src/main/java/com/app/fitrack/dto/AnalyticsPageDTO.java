@@ -42,6 +42,9 @@ public class AnalyticsPageDTO {
     // Set of names of workouts currently scheduled by the user
     private java.util.Set<String> scheduledWorkoutNames;
 
+    // Field to indicate if the user has no logged meals or workouts
+    private boolean newUserActivity;
+
     // Chart data
     private int[] dailyWorkoutCounts7Days; // Count of workouts per day for last 7 days
     private int[] dailyCaloriesBurned7Days; // Calories burned from workouts per day
@@ -288,5 +291,13 @@ public class AnalyticsPageDTO {
 
     public void setScheduledWorkoutNames(java.util.Set<String> scheduledWorkoutNames) {
         this.scheduledWorkoutNames = scheduledWorkoutNames;
+    }
+
+    public boolean isNewUserActivity() {
+        return newUserActivity;
+    }
+
+    public void setNewUserActivity(boolean newUserActivity) {
+        this.newUserActivity = newUserActivity;
     }
 } 
