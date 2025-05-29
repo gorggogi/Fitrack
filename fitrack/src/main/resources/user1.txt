@@ -7,7 +7,7 @@ TRUNCATE TABLE workout_log;
 TRUNCATE TABLE meal;
 TRUNCATE TABLE meal_food_item;
 TRUNCATE TABLE goals;
-DELETE FROM users WHERE id = 8;
+DELETE FROM users WHERE id = 2;
 DELETE FROM verification_token WHERE id = 8; 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -254,7 +254,18 @@ VALUES
 (172, 1, 'Yoga', 30, 120, '2025-05-25 10:00:00', 'FLEXIBILITY'),
 (173, 1, 'Upper Back Stretching', 30, 150, '2025-05-26 07:00:00', 'FLEXIBILITY'),
 (174, 1, 'Full Body Workout', 45, 180, '2025-05-26 10:00:00', 'STRENGTH'),
-(175, 1, 'HIIT Circuit Training', 30, 220, '2025-05-26 18:00:00', 'HIIT');
+(175, 1, 'HIIT Circuit Training', 30, 220, '2025-05-26 18:00:00', 'HIIT'),
+
+-- Additional workout logs from May 27 to May 29, 2025
+(176, 1, 'Upper Back Stretching', 30, 150, '2025-05-27 07:00:00', 'FLEXIBILITY'),
+(177, 1, 'Low Lunge Twists', 30, 160, '2025-05-27 10:00:00', 'FLEXIBILITY'),
+(178, 1, 'Core Workout', 30, 150, '2025-05-27 18:00:00', 'STRENGTH'),
+(179, 1, 'Upper Back Stretching', 30, 150, '2025-05-28 07:00:00', 'FLEXIBILITY'),
+(180, 1, 'Full Body Workout', 45, 180, '2025-05-28 10:00:00', 'STRENGTH'),
+(181, 1, 'HIIT Circuit Training', 30, 220, '2025-05-28 18:00:00', 'HIIT'),
+(182, 1, 'Upper Back Stretching', 30, 150, '2025-05-29 07:00:00', 'FLEXIBILITY'),
+(183, 1, 'Low Lunge Twists', 30, 160, '2025-05-29 10:00:00', 'FLEXIBILITY'),
+(184, 1, 'Core Workout', 30, 150, '2025-05-29 18:00:00', 'STRENGTH');
 
 -- Insert meals for the extended period (sample days)
 INSERT INTO meal (id, user_id, date_time, meal_name)
@@ -558,7 +569,25 @@ VALUES
 (197, 1, '2025-05-26 08:00:00', 'Breakfast'),
 (198, 1, '2025-05-26 12:00:00', 'Lunch'),
 (199, 1, '2025-05-26 18:00:00', 'Dinner'),
-(200, 1, '2025-05-26 21:00:00', 'Snack');
+(200, 1, '2025-05-26 21:00:00', 'Snack'),
+
+-- May 27
+(201, 1, '2025-05-27 08:00:00', 'Breakfast'),
+(202, 1, '2025-05-27 12:00:00', 'Lunch'),
+(203, 1, '2025-05-27 18:00:00', 'Dinner'),
+(204, 1, '2025-05-27 21:00:00', 'Snack'),
+
+-- May 28
+(205, 1, '2025-05-28 08:00:00', 'Breakfast'),
+(206, 1, '2025-05-28 12:00:00', 'Lunch'),
+(207, 1, '2025-05-28 18:00:00', 'Dinner'),
+(208, 1, '2025-05-28 21:00:00', 'Snack'),
+
+-- May 29
+(209, 1, '2025-05-29 08:00:00', 'Breakfast'),
+(210, 1, '2025-05-29 12:00:00', 'Lunch'),
+(211, 1, '2025-05-29 18:00:00', 'Dinner'),
+(212, 1, '2025-05-29 21:00:00', 'Snack');
 
 -- Insert meal food items for the extended period
 INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
@@ -1117,7 +1146,38 @@ VALUES
 (453, 199, 'Grilled Chicken', 300, 120, 'g', 40, 0, 12),
 (454, 199, 'Brown Rice', 180, 0.8, 'cup', 4, 40, 1.5),
 (455, 200, 'Greek Yogurt', 180, 0.8, 'cup', 12, 7, 4),
-(456, 200, 'Mixed Berries', 80, 0.8, 'cup', 1, 20, 0);
+(456, 200, 'Mixed Berries', 80, 0.8, 'cup', 1, 20, 0),
+
+-- May 27
+(457, 201, 'Oatmeal with Protein', 300, 0.75, 'cup', 12, 40, 7),
+(458, 201, 'Greek Yogurt', 120, 0.75, 'cup', 12, 6, 4),
+(459, 202, 'Grilled Chicken Salad', 350, 0.75, 'serving', 30, 10, 18),
+(460, 202, 'Quinoa', 180, 0.75, 'cup', 6, 30, 3),
+(461, 203, 'Baked Salmon', 300, 120, 'g', 35, 0, 18),
+(462, 203, 'Steamed Vegetables', 80, 1.5, 'cup', 3, 15, 0),
+(463, 204, 'Apple', 80, 0.8, 'medium', 0, 20, 0),
+(464, 204, 'Almonds', 130, 20, 'g', 5, 5, 11),
+
+-- May 28
+(465, 205, 'Scrambled Eggs', 280, 2, 'large', 20, 2, 18),
+(466, 205, 'Whole Wheat Toast', 130, 1.5, 'slices', 6, 25, 1.5),
+(467, 206, 'Turkey Wrap', 400, 0.8, 'serving', 25, 35, 12),
+(468, 206, 'Mixed Vegetables', 80, 0.8, 'cup', 3, 18, 0),
+(469, 207, 'Grilled Chicken', 300, 120, 'g', 40, 0, 12),
+(470, 207, 'Brown Rice', 180, 0.8, 'cup', 4, 40, 1.5),
+(471, 208, 'Greek Yogurt', 180, 0.8, 'cup', 12, 7, 4),
+(472, 208, 'Mixed Berries', 80, 0.8, 'cup', 1, 20, 0),
+
+-- May 29
+(473, 209, 'Protein Pancakes', 350, 2, 'medium', 20, 40, 10),
+(474, 209, 'Maple Syrup', 50, 1, 'tbsp', 0, 13, 0),
+(475, 209, 'Banana', 105, 1, 'medium', 1, 27, 0),
+(476, 210, 'Chicken Caesar Salad', 450, 1, 'serving', 35, 20, 25),
+(477, 210, 'Whole Grain Bread', 160, 2, 'slices', 8, 30, 2),
+(478, 211, 'Baked Fish', 300, 150, 'g', 40, 0, 15),
+(479, 211, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
+(480, 212, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
+(481, 212, 'Almond Milk', 100, 1, 'cup', 1, 2, 9);
 
 
 

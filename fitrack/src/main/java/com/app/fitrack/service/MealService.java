@@ -47,7 +47,7 @@ public class MealService {
                 // Condition to check if a Nutritionix lookup is needed for macros
                 boolean needsMacroLookup = (item.getProtein() == null || item.getProtein() == 0.0) ||
                                            (item.getCarbs() == null || item.getCarbs() == 0.0) ||
-                                           (item.getFat() == null || item.getFat() == 0.0);
+                                                 (item.getFat() == null || item.getFat() == 0.0);
 
                 logger.debug("needsMacroLookup for '{}': {} (Protein: {}, Carbs: {}, Fat: {})", 
                     item.getFoodItem(), needsMacroLookup, item.getProtein(), item.getCarbs(), item.getFat());

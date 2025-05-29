@@ -63,14 +63,14 @@
                             <span class="summary-label">Calorie Balance:</span>
                             <span th:if="${analyticsData.newUserActivity}" class="summary-value"><small>No data yet. Add a meal or workout to get started!</small></span>
                             <span th:unless="${analyticsData.newUserActivity}" class="summary-value"
-                                  th:classappend="${analyticsData.avgDailyCalories != null && analyticsData.avgDailyExerciseCalories != null && analyticsData.tdee != null ?
+                                  th:classappend="${analyticsData.avgDailyCalories != null && analyticsData.avgDailyExerciseCalories != null && analyticsData.tdee != null ? 
                                       ((analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee) > 0 ? 'positive' : 'negative') : ''}"
-                                  th:text="${analyticsData.avgDailyCalories != null && analyticsData.avgDailyExerciseCalories != null && analyticsData.tdee != null ?
-                                      ((analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee) > 0 ?
-                                          'Surplus: ' + #numbers.formatDecimal(analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee, 0, 0) + ' kcal' :
+                                  th:text="${analyticsData.avgDailyCalories != null && analyticsData.avgDailyExerciseCalories != null && analyticsData.tdee != null ? 
+                                      ((analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee) > 0 ? 
+                                          'Surplus: ' + #numbers.formatDecimal(analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories - analyticsData.tdee, 0, 0) + ' kcal' : 
                                           'Deficit: ' + #numbers.formatDecimal(analyticsData.tdee - (analyticsData.avgDailyCalories - analyticsData.avgDailyExerciseCalories), 0, 0) + ' kcal') : '--'}">
                             --
-                            </span>
+                        </span>
                         </div>
                     </div>
                 </div>
