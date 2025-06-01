@@ -267,6 +267,25 @@ VALUES
 (183, 1, 'Low Lunge Twists', 30, 160, '2025-05-29 10:00:00', 'FLEXIBILITY'),
 (184, 1, 'Core Workout', 30, 150, '2025-05-29 18:00:00', 'STRENGTH');
 
+-- Additional workout logs for May 30, 2025
+INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at, workout_type)
+VALUES
+(185, 1, 'Upper Back Stretching', 30, 150, '2025-05-30 07:00:00', 'FLEXIBILITY'),
+(186, 1, 'Full Body Workout', 45, 180, '2025-05-30 10:00:00', 'STRENGTH');
+
+-- Additional workout logs for May 31, 2025
+INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at, workout_type)
+VALUES
+(187, 1, 'Upper Back Stretching', 30, 150, '2025-05-31 07:00:00', 'FLEXIBILITY'),
+(188, 1, 'Yoga', 30, 120, '2025-05-31 10:00:00', 'FLEXIBILITY');
+
+-- Additional workout logs for June 1, 2025
+INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at, workout_type)
+VALUES
+(189, 1, 'Upper Back Stretching', 30, 150, '2025-06-01 07:00:00', 'FLEXIBILITY'),
+(190, 1, 'Full Body Workout', 45, 250, '2025-06-01 10:00:00', 'STRENGTH'),
+(191, 1, 'HIIT Circuit Training', 30, 300, '2025-06-01 18:00:00', 'HIIT');
+
 -- Insert meals for the extended period (sample days)
 INSERT INTO meal (id, user_id, date_time, meal_name)
 VALUES
@@ -588,6 +607,30 @@ VALUES
 (210, 1, '2025-05-29 12:00:00', 'Lunch'),
 (211, 1, '2025-05-29 18:00:00', 'Dinner'),
 (212, 1, '2025-05-29 21:00:00', 'Snack');
+
+-- Meals for May 30, 2025
+INSERT INTO meal (id, user_id, date_time, meal_name)
+VALUES
+(213, 1, '2025-05-30 08:00:00', 'Breakfast'),
+(214, 1, '2025-05-30 12:00:00', 'Lunch'),
+(215, 1, '2025-05-30 18:00:00', 'Dinner'),
+(216, 1, '2025-05-30 21:00:00', 'Snack');
+
+-- Meals for May 31, 2025
+INSERT INTO meal (id, user_id, date_time, meal_name)
+VALUES
+(217, 1, '2025-05-31 08:00:00', 'Breakfast'),
+(218, 1, '2025-05-31 12:00:00', 'Lunch'),
+(219, 1, '2025-05-31 18:00:00', 'Dinner'),
+(220, 1, '2025-05-31 21:00:00', 'Snack');
+
+-- Meals for June 1, 2025
+INSERT INTO meal (id, user_id, date_time, meal_name)
+VALUES
+(221, 1, '2025-06-01 08:00:00', 'Breakfast'),
+(222, 1, '2025-06-01 12:00:00', 'Lunch'),
+(223, 1, '2025-06-01 18:00:00', 'Dinner'),
+(224, 1, '2025-06-01 21:00:00', 'Snack');
 
 -- Insert meal food items for the extended period
 INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
@@ -1178,6 +1221,58 @@ VALUES
 (479, 211, 'Sweet Potato', 180, 1, 'medium', 2, 41, 0),
 (480, 212, 'Protein Bar', 200, 1, 'bar', 20, 25, 5),
 (481, 212, 'Almond Milk', 100, 1, 'cup', 1, 2, 9);
+
+-- Meal Food Items for May 30, 2025
+INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
+VALUES
+-- Breakfast (Meal ID 213)
+(482, 213, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(483, 213, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(484, 213, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+-- Lunch (Meal ID 214)
+(485, 214, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(486, 214, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+-- Dinner (Meal ID 215)
+(487, 215, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(488, 215, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(489, 215, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+-- Snack (Meal ID 216)
+(490, 216, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(491, 216, 'Almonds', 160, 30, 'g', 6, 6, 14);
+
+-- Meal Food Items for May 31, 2025
+INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
+VALUES
+-- Breakfast (Meal ID 217)
+(492, 217, 'Scrambled Eggs', 280, 2, 'large', 20, 2, 18),
+(493, 217, 'Whole Wheat Toast', 130, 1.5, 'slices', 6, 25, 1.5),
+-- Lunch (Meal ID 218)
+(494, 218, 'Turkey Wrap', 400, 0.8, 'serving', 25, 35, 12),
+(495, 218, 'Mixed Vegetables', 80, 0.8, 'cup', 3, 18, 0),
+-- Dinner (Meal ID 219)
+(496, 219, 'Grilled Chicken', 300, 120, 'g', 40, 0, 12),
+(497, 219, 'Brown Rice', 180, 0.8, 'cup', 4, 40, 1.5),
+-- Snack (Meal ID 220)
+(498, 220, 'Greek Yogurt', 180, 0.8, 'cup', 12, 7, 4),
+(499, 220, 'Mixed Berries', 80, 0.8, 'cup', 1, 20, 0);
+
+-- Meal Food Items for June 1, 2025
+INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
+VALUES
+-- Breakfast (Meal ID 221)
+(500, 221, 'Oatmeal with Protein', 350, 1, 'cup', 15, 54, 8),
+(501, 221, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(502, 221, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0),
+-- Lunch (Meal ID 222)
+(503, 222, 'Grilled Chicken Salad', 400, 1, 'serving', 35, 15, 20),
+(504, 222, 'Quinoa', 220, 1, 'cup', 8, 39, 4),
+-- Dinner (Meal ID 223)
+(505, 223, 'Baked Salmon', 350, 150, 'g', 40, 0, 20),
+(506, 223, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+(507, 223, 'Steamed Vegetables', 100, 2, 'cup', 4, 20, 0),
+-- Snack (Meal ID 224)
+(508, 224, 'Apple', 95, 1, 'medium', 0, 25, 0),
+(509, 224, 'Almonds', 160, 30, 'g', 6, 6, 14);
 
 
 

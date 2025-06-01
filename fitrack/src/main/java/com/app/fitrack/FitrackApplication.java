@@ -33,16 +33,6 @@ public class FitrackApplication extends SpringBootServletInitializer {
 		System.out.println("Default JVM TimeZone Display Name: " + TimeZone.getDefault().getDisplayName());
 		System.out.println("Current LocalDate.now(): " + LocalDate.now());
 		System.out.println("Current LocalDateTime.now(): " + LocalDateTime.now());
-
-		try {
-			System.out.println("Attempting to upload application logo...");
-			String logoUrl = cloudinaryService.uploadApplicationLogo();
-			System.out.println("Application logo uploaded successfully. URL: " + logoUrl);
-		} catch (IOException e) {
-			System.err.println("Failed to upload application logo: " + e.getMessage());
-			// Decide if you want to throw a runtime exception or just log the error
-			// For now, just printing to error stream
-		}
 	}
 
 	public static void main(String[] args) {
