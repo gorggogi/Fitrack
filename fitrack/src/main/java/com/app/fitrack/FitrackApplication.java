@@ -5,11 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableAsync;
-import com.app.fitrack.service.CloudinaryService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.annotation.PostConstruct;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
@@ -17,9 +14,6 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableAsync
 public class FitrackApplication extends SpringBootServletInitializer {
-
-	@Autowired
-	private CloudinaryService cloudinaryService;
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
