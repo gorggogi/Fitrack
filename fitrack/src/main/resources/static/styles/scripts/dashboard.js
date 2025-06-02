@@ -773,7 +773,7 @@ function removeFoodItem(button) {
 async function estimateCalories() {
     const foodItemsContainer = document.getElementById('foodItemsContainer');
     const foodItemRows = foodItemsContainer.querySelectorAll('.food-item-row');
-    const estimateButton = document.getElementById('estimateCaloriesButton');
+    const estimateButton = document.getElementById('estimateMealCaloriesButton');
     const csrfTokenElement = document.querySelector('input[name="_csrf"]');
 
     if (!csrfTokenElement || !csrfTokenElement.value) {
@@ -785,7 +785,7 @@ async function estimateCalories() {
 
     if (estimateButton) {
         estimateButton.disabled = true;
-        estimateButton.textContent = 'Estimating...';
+        estimateButton.textContent = 'Estimating Calories...';
     }
 
     const foodDataToSend = [];
@@ -876,63 +876,48 @@ async function estimateCalories() {
 }
 
 async function estimateBurnedCalories() {
-    console.log("estimateBurnedCalories called");
-    const exerciseNameInput = document.getElementById('workoutName');
-    const durationInput = document.getElementById('duration');
-    const caloriesBurnedInput = document.getElementById('caloriesBurned');
-    const estimateButton = document.getElementById('estimateBurnedCaloriesButton'); // Get the estimate button
+    const workoutName = document.getElementById('workoutName').value;
+    const duration = document.getElementById('duration').value;
+    let estimateButton = document.getElementById('estimateWorkoutCaloriesButton'); // Try dashboard ID first
 
-    const csrfTokenElement = document.querySelector('input[name="_csrf"]');
-    if (!csrfTokenElement || !csrfTokenElement.value) {
-        console.error("⚠️ CSRF token not found for burned calorie estimation!");
-        alert('Security token missing. Please refresh and try again.');
-        if (estimateButton) estimateButton.disabled = false; // Re-enable if CSRF is missing
-        return;
+    if (!estimateButton) { // If not found, try analytics ID
+        estimateButton = document.getElementById('estimateWorkoutCaloriesAnalyticsButton');
     }
-    const csrfToken = csrfTokenElement.value;
 
-    const exerciseName = exerciseNameInput.value;
-    const duration = parseFloat(durationInput.value);
-    
-    if (!exerciseName || !duration || duration <= 0) {
-        alert('Please enter both exercise name and a valid duration.');
-        if (estimateButton) estimateButton.disabled = false; // Re-enable if input is invalid
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+    if (!workoutName || !duration) {
+        alert('Please enter workout name and duration.');
         return;
     }
 
     if (estimateButton) {
-        estimateButton.disabled = true; // Disable the button
-        estimateButton.textContent = 'Estimating...'; // Change text
+        estimateButton.disabled = true;
+        estimateButton.textContent = 'Estimating Calories...';
     }
 
-    console.log(`Sending burned calorie estimation request:`, { exerciseName, duration });
-
     try {
-        const response = await fetch(contextPath + 'workouts/estimate-calories', { // Corrected URL: removed -burned
-        method: 'POST',
-        headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken
-        },
-        body: JSON.stringify({
-                workoutName: exerciseName, // Corrected JSON key to workoutName
-            duration: duration
-        })
+        const response = await fetch(contextPath + 'workouts/estimate-calories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ workoutName, duration: parseInt(duration) })
         });
 
-        if (!response.ok) {
-            throw new Error(`Network response was not ok. Status: ${response.status}`);
-        }
-
         const data = await response.json();
-        if (data && typeof data.calories === 'number') {
-            caloriesBurnedInput.value = data.calories.toFixed(0); // Display as whole number
+
+        if (response.ok) {
+            document.getElementById('caloriesBurned').value = data.calories;
         } else {
-            throw new Error('Invalid response format from calorie estimation service.');
+            alert('Failed to estimate calories: ' + (data.error || 'Unknown error'));
+            document.getElementById('caloriesBurned').value = ''; // Clear on error
         }
     } catch (error) {
         console.error('Error estimating burned calories:', error);
-        alert('Failed to estimate calories: ' + error.message);
+        alert('Error estimating burned calories. See console for details.');
+        document.getElementById('caloriesBurned').value = ''; // Clear on error
     } finally {
         if (estimateButton) {
             estimateButton.disabled = false;

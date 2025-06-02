@@ -254,7 +254,7 @@ function estimateAllCaloriesInModal() {
     const estimateButton = document.querySelector('.btn-warning[onclick="estimateAllCaloriesInModal()"]');
     const originalButtonText = estimateButton.textContent;
     estimateButton.disabled = true;
-    estimateButton.textContent = 'Estimating...';
+    estimateButton.textContent = 'Estimating Calories...';
 
     fetch(contextPath + 'meals/estimate-calories', {
         method: 'POST',
