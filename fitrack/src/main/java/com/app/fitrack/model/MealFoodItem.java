@@ -14,7 +14,9 @@ public class MealFoodItem {
     private String foodItem;
     private int calories;
     private double quantity;  
-    private String unit; 
+    private String unit;
+    private String otherUnit;
+
     private Double protein;
     private Double carbs;
     private Double fat;
@@ -68,6 +70,14 @@ public class MealFoodItem {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public String getOtherUnit() {
+        return otherUnit;
+    }
+
+    public void setOtherUnit(String otherUnit) {
+        this.otherUnit = otherUnit;
     }
 
     public Double getProtein() {

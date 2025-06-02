@@ -567,7 +567,7 @@ function showGoalCompletedToast(goalName, storeInSession = false) {
         toast.style.display = 'flex';
 
         if (toastTimeout) {
-            clearTimeout(toastTimeout);
+            clearThoimeout(toastTimeout);
         }
 
         toastTimeout = setTimeout(function() {
@@ -691,10 +691,9 @@ function addFoodItem() {
                 <label>Quantity</label>
                 <input type="number" name="foodItems[${index}].quantity" placeholder="Quantity" class="form-control" step="any">
             </div>
-            <div class="form-group">
+            <div class="form-group unit-group">
                 <label>Unit</label>
-                <select name="foodItems[${index}].unit" class="form-control">
-                    <option value="">None</option>
+                <select name="foodItems[${index}].unit" class="form-control unit-select" data-index="${index}" onchange="handleUnitChange(this, ${index})">
                     <option value="g">Grams</option>
                     <option value="kg">Kilograms</option>
                     <option value="ml">Milliliters</option>
@@ -705,7 +704,9 @@ function addFoodItem() {
                     <option value="oz">Ounce (oz)</option>
                     <option value="serving">Serving</option>
                     <option value="piece">Piece</option>
+                    <option value="other">Other</option> 
                 </select>
+                <input type="text" name="foodItems[${index}].otherUnit" class="form-control other-unit-input" placeholder="Specify unit" style="display: none; margin-top: 5px;">
             </div>
             <div class="form-group">
                 <label>Calories</label>
@@ -717,6 +718,23 @@ function addFoodItem() {
     container.appendChild(foodItemDiv);
 }
 
+function handleUnitChange(selectElement, index) {
+    const otherUnitInput = selectElement.closest('.unit-group').querySelector('.other-unit-input');
+    if (selectElement.value === 'other') {
+        otherUnitInput.style.display = 'block';
+        otherUnitInput.name = `foodItems[${index}].otherUnit`; // Ensure name is set for submission
+        // Optionally, if you want the select to have no value when "Other" is chosen
+        // and the text input takes precedence, you might clear the select's name or value.
+        // However, for simplicity in backend, it might be better to send both 
+        // and let backend decide based on "other" selection.
+        // Or, ensure the select's name is `foodItems[${index}].unit` and backend checks if it's "other".
+    } else {
+        otherUnitInput.style.display = 'none';
+        otherUnitInput.name = `foodItems[${index}].otherUnit_disabled`; // Change name so it's not submitted
+        otherUnitInput.value = ''; // Clear value
+    }
+}
+
 function removeFoodItem(button) {
     const foodItemRow = button.closest('.food-item-row');
     if (foodItemRow) {
@@ -724,13 +742,30 @@ function removeFoodItem(button) {
         foodItemRow.remove();
         const items = container.querySelectorAll('.food-item-row');
         items.forEach((item, newIndex) => {
+            // Update index for all inputs and selects within the row
             const inputs = item.querySelectorAll('input, select');
             inputs.forEach(input => {
                 const name = input.getAttribute('name');
-                if (name) {
-                    input.setAttribute('name', name.replace(/foodItems\\[\\d+\\]/, `foodItems[${newIndex}]`));
+                if (name && name.startsWith('foodItems[')) {
+                    const newName = name.replace(/foodItems\[\d+\]/, `foodItems[${newIndex}]`);
+                    input.setAttribute('name', newName);
                 }
             });
+            // Specifically update the unit select's onchange handler if it exists
+            const unitSelect = item.querySelector('.unit-select');
+            if (unitSelect) {
+                unitSelect.setAttribute('onchange', `handleUnitChange(this, ${newIndex})`);
+                // Also update the data-index if you use it elsewhere, though onchange is key here
+                unitSelect.setAttribute('data-index', newIndex);
+
+                // Ensure the associated otherUnit input also gets its name updated if visible
+                const otherUnitInput = item.querySelector('.other-unit-input');
+                if (otherUnitInput && otherUnitInput.style.display !== 'none') {
+                    otherUnitInput.setAttribute('name', `foodItems[${newIndex}].otherUnit`);
+                } else if (otherUnitInput) {
+                     otherUnitInput.setAttribute('name', `foodItems[${newIndex}].otherUnit_disabled`);
+                }
+            }
         });
     }
 }

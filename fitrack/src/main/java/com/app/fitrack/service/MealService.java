@@ -40,6 +40,12 @@ public class MealService {
             meal.getFoodItems().forEach(item -> {
                 item.setMeal(meal); // Set bidirectional relationship
                 
+                // Handle "other" unit
+                if ("other".equalsIgnoreCase(item.getUnit()) && item.getOtherUnit() != null && !item.getOtherUnit().trim().isEmpty()) {
+                    item.setUnit(item.getOtherUnit().trim());
+                    // item.setOtherUnit(null); // Optionally clear otherUnit after processing
+                }
+                
                 logger.debug("Processing FoodItem: Name='{}', Qty={}, Unit='{}', CaloriesBeforeLookup={}, ProteinBeforeLookup={}, CarbsBeforeLookup={}, FatBeforeLookup={}",
                     item.getFoodItem(), item.getQuantity(), item.getUnit(),
                     item.getCalories(), item.getProtein(), item.getCarbs(), item.getFat());
