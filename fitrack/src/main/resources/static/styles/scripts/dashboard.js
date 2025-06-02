@@ -885,7 +885,7 @@ async function estimateBurnedCalories() {
     }
 
     const csrfToken = document.querySelector('input[name="_csrf"]').value;
-
+    
     if (!workoutName || !duration) {
         alert('Please enter workout name and duration.');
         return;
@@ -898,11 +898,11 @@ async function estimateBurnedCalories() {
 
     try {
         const response = await fetch(contextPath + 'workouts/estimate-calories', {
-            method: 'POST',
-            headers: {
+        method: 'POST',
+        headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken
-            },
+        },
             body: JSON.stringify({ workoutName, duration: parseInt(duration) })
         });
 

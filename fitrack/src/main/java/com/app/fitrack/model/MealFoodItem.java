@@ -14,7 +14,7 @@ public class MealFoodItem {
     private String foodItem;
     private int calories;
     private double quantity;  
-    private String unit;
+    private String unit; 
     private String otherUnit;
 
     private Double protein;

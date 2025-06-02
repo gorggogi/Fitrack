@@ -5,6 +5,59 @@
     <title>Sign up</title>
     <link rel="stylesheet" th:href="@{/styles/css/Join.css}">
     <script defer th:src="@{/styles/scripts/signup.js}"></script> <!-- ✅ JavaScript -->
+    <script th:src="@{/styles/scripts/registration.js}" defer></script>
+    <link rel="icon" type="image/x-icon" th:href="@{/images/Fitrack.ico}">
+    <style>
+        /* Styles for the modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* Reverted to 5% to give more vertical space if needed */
+            padding: 15px;
+            border: 1px solid #888;
+            width: 60%; 
+            max-width: 550px; /* Slightly increased max-width for better readability with more height */
+            border-radius: 6px; 
+            position: relative;
+            max-height: 85vh; /* Allow the overall modal content to be taller */
+        }
+
+        .close-modal-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-modal-button:hover,
+        .close-modal-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .terms-modal-content {
+            max-height: 75vh; /* Significantly increased max-height */
+            overflow-y: auto; /* Keep auto in case content is extremely long or screen is small */
+            padding-right: 10px; 
+            font-size: 0.9em; 
+        }
+    </style>
 </head>
 <body>
 	<div class="flex-container">
@@ -25,9 +78,9 @@
             <input type="password" th:field="*{confirmPassword}" name="confirmPassword" required> 
             <br>
 
-            <div>
-                <input type="checkbox" id="termsCheckbox">
-                <label for="termsCheckbox">I accept the <a th:href="@{/user/terms}">Terms and Conditions</a></label>
+            <div class="form-group terms-checkbox">
+                <input type="checkbox" id="termsCheckbox" name="termsAccepted" required>
+                <label for="termsCheckbox">I accept the <a href="#" id="termsLink">Terms and Conditions</a></label>
             </div>
 
  
@@ -38,5 +91,62 @@
         </form>
     </div>
     </div>
+
+    <!-- Terms and Conditions Modal -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-button" id="closeTermsModal">&times;</span>
+            <div class="terms-modal-content">
+                <h2>Fitrack Terms & Conditions</h2>
+                <p><em>By using Fitrack, you agree to these terms. Please read carefully.</em></p>
+
+                <h3>1. Acceptance of Terms</h3>
+                <p>By creating an account, you agree to follow these terms.</p>
+
+                <h3>2. Account Registration</h3>
+                <p>Provide accurate details. You are responsible for securing your login credentials.</p>
+
+                <h3>3. Use of Services</h3>
+                <p>Fitrack is for personal fitness tracking. Misuse or fraudulent activity is prohibited.</p>
+
+                <h3>4. Privacy & Data Security</h3>
+                <p>We keep your data private and secure. Your workout history is confidential.</p>
+
+                <h3>5. Health & Liability Disclaimer</h3>
+                <p>Fitrack is not liable for any health issues from workouts. Consult a professional before exercising.</p>
+
+                <h3>6. Changes to Terms</h3>
+                <p>Fitrack reserves the right to modify these terms at any time.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var termsModal = document.getElementById('termsModal');
+            var termsLink = document.getElementById('termsLink');
+            var closeTermsModal = document.getElementById('closeTermsModal');
+
+            if(termsLink) {
+                termsLink.onclick = function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+                    if(termsModal) termsModal.style.display = 'block';
+                }
+            }
+
+            if(closeTermsModal) {
+                closeTermsModal.onclick = function() {
+                    if(termsModal) termsModal.style.display = 'none';
+                }
+            }
+
+            // Close modal if user clicks outside of it
+            window.onclick = function(event) {
+                if (event.target == termsModal) {
+                    termsModal.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
