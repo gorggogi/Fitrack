@@ -4,14 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
-import lombok.Setter;
 
 @Configuration
 @ConfigurationProperties(prefix = "nutritionix")
-@Getter
-@Setter
-
 public class NutritionixConfig {
 
     private String appId;
@@ -22,4 +17,19 @@ public class NutritionixConfig {
         System.out.println("Nutritionix Config Loaded: appId=" + appId + ", appKey=" + appKey);
     }
 
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getAppKey() {
+        return appKey;
+    }
+
+    public void setAppKey(String appKey) {
+        this.appKey = appKey;
+    }
 }

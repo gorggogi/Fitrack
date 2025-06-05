@@ -33,7 +33,8 @@ VALUES
 (10, 1, '2025-05-08 08:00:00', 69.5, 'Week 9 progress - Maintaining goal weight and muscle tone'),
 (11, 1, '2025-05-13 08:00:00', 69.0, 'Week 10 progress - Consistent loss'),
 (12, 1, '2025-05-20 08:00:00', 68.5, 'Week 11 progress - Still losing steadily'),
-(13, 1, '2025-05-27 08:00:00', 67.9, 'Week 12 progress - feeling good, consistent progress');
+(13, 1, '2025-05-27 08:00:00', 67.9, 'Week 12 progress - feeling good, consistent progress'),
+(14, 1, '2025-06-03 08:00:00', 67.5, 'Week 13 progress - continued steady weight loss');
 
 -- Insert workouts (one per type with repeat days)
 INSERT INTO workout (id, user_id, date_time, workout_name, duration, burned_calories, workout_type)
@@ -283,8 +284,21 @@ VALUES
 INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at, workout_type)
 VALUES
 (189, 1, 'Upper Back Stretching', 30, 150, '2025-06-01 07:00:00', 'FLEXIBILITY'),
-(190, 1, 'Full Body Workout', 45, 250, '2025-06-01 10:00:00', 'STRENGTH'),
-(191, 1, 'HIIT Circuit Training', 30, 300, '2025-06-01 18:00:00', 'HIIT');
+(190, 1, 'Yoga', 30, 120, '2025-06-01 10:00:00', 'FLEXIBILITY');
+
+-- Additional workout logs for June 2, 2025
+INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at, workout_type)
+VALUES
+(192, 1, 'Upper Back Stretching', 30, 150, '2025-06-02 07:00:00', 'FLEXIBILITY'),
+(193, 1, 'Full Body Workout', 45, 250, '2025-06-02 10:00:00', 'STRENGTH'),
+(194, 1, 'HIIT Circuit Training', 30, 300, '2025-06-02 18:00:00', 'HIIT');
+
+-- Additional workout logs for June 3, 2025
+INSERT INTO workout_log (id, user_id, workout_name, duration, burned_calories, completed_at, workout_type)
+VALUES
+(195, 1, 'Upper Back Stretching', 30, 150, '2025-06-03 07:00:00', 'FLEXIBILITY'),
+(196, 1, 'Low Lunge Twists', 30, 200, '2025-06-03 10:00:00', 'FLEXIBILITY'),
+(197, 1, 'Core Workout', 30, 150, '2025-06-03 18:00:00', 'STRENGTH');
 
 -- Insert meals for the extended period (sample days)
 INSERT INTO meal (id, user_id, date_time, meal_name)
@@ -631,6 +645,22 @@ VALUES
 (222, 1, '2025-06-01 12:00:00', 'Lunch'),
 (223, 1, '2025-06-01 18:00:00', 'Dinner'),
 (224, 1, '2025-06-01 21:00:00', 'Snack');
+
+-- Meals for June 2, 2025
+INSERT INTO meal (id, user_id, date_time, meal_name)
+VALUES
+(225, 1, '2025-06-02 08:00:00', 'Breakfast'),
+(226, 1, '2025-06-02 12:00:00', 'Lunch'),
+(227, 1, '2025-06-02 18:00:00', 'Dinner'),
+(228, 1, '2025-06-02 21:00:00', 'Snack');
+
+-- Meals for June 3, 2025
+INSERT INTO meal (id, user_id, date_time, meal_name)
+VALUES
+(229, 1, '2025-06-03 08:00:00', 'Breakfast'),
+(230, 1, '2025-06-03 12:00:00', 'Lunch'),
+(231, 1, '2025-06-03 18:00:00', 'Dinner'),
+(232, 1, '2025-06-03 21:00:00', 'Snack');
 
 -- Insert meal food items for the extended period
 INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
@@ -1273,6 +1303,40 @@ VALUES
 -- Snack (Meal ID 224)
 (508, 224, 'Apple', 95, 1, 'medium', 0, 25, 0),
 (509, 224, 'Almonds', 160, 30, 'g', 6, 6, 14);
+
+-- Meal Food Items for June 2, 2025
+INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
+VALUES
+-- Breakfast (Meal ID 225)
+(510, 225, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(511, 225, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
+(512, 225, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
+-- Lunch (Meal ID 226)
+(513, 226, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(514, 226, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
+-- Dinner (Meal ID 227)
+(515, 227, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(516, 227, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+-- Snack (Meal ID 228)
+(517, 228, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(518, 228, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0);
+
+-- Meal Food Items for June 3, 2025
+INSERT INTO meal_food_item (id, meal_id, food_item, calories, quantity, unit, protein, carbs, fat)
+VALUES
+-- Breakfast (Meal ID 229)
+(519, 229, 'Scrambled Eggs', 280, 2, 'large', 24, 2, 20),
+(520, 229, 'Whole Wheat Toast', 160, 2, 'slices', 8, 30, 2),
+(521, 229, 'Avocado', 120, 0.5, 'medium', 1, 6, 11),
+-- Lunch (Meal ID 230)
+(522, 230, 'Turkey Wrap', 400, 1, 'serving', 30, 40, 15),
+(523, 230, 'Mixed Vegetables', 100, 1, 'cup', 4, 20, 0),
+-- Dinner (Meal ID 231)
+(524, 231, 'Grilled Chicken', 300, 150, 'g', 45, 0, 15),
+(525, 231, 'Brown Rice', 220, 1, 'cup', 5, 45, 2),
+-- Snack (Meal ID 232)
+(526, 232, 'Greek Yogurt', 150, 1, 'cup', 15, 8, 5),
+(527, 232, 'Mixed Berries', 100, 1, 'cup', 1, 25, 0);
 
 
 
