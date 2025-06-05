@@ -3,9 +3,6 @@ package com.app.fitrack.dto;
 import java.util.List;
 import java.util.Map;
 
-// Using Lombok annotations for boilerplate code, but will write out if not available.
-// For now, assuming getters/setters/constructors will be implicitly handled or written out.
-
 public class AnalyticsPageDTO {
 
     private String fullName;
